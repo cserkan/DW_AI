@@ -1,0 +1,9 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+TestResults/
+lib/SolidWorks/*.dll
+out/
+*.snapshot.json.bak

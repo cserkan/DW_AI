@@ -11,5 +11,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\RuleForge.Core\RuleForge.Core.csproj" />
     <ProjectReference Include="..\..\src\RuleForge.Inference\RuleForge.Inference.csproj" />
+    <ProjectReference Include="..\..\src\RuleForge.AI\RuleForge.AI.csproj" />
   </ItemGroup>
 </Project>

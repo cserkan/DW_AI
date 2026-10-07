@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- Anthropic SDK'nın netstandard2.0 ve net8.0 derlemeleri ikili uyumlu değil; ikisini de üret. -->
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <RootNamespace>RuleForge.AI</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Anthropic" Version="12.54.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RuleForge.Core\RuleForge.Core.csproj" />
+    <ProjectReference Include="..\RuleForge.Inference\RuleForge.Inference.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,250 @@
+{
+  "schemaVersion": 1,
+  "name": "Konveyor",
+  "sourcePath": "C:\\Master\\Konveyor\\Konveyor.SLDASM",
+  "rootDocument": "Konveyor.SLDASM",
+  "extractedAtUtc": "2026-10-07T19:05:02.1563798Z",
+  "documents": [
+    {
+      "key": "Konveyor.SLDASM",
+      "path": "",
+      "kind": "assembly",
+      "activeConfiguration": "",
+      "configurations": [],
+      "dimensions": [
+        {
+          "name": "D1@LocalLPattern1",
+          "feature": "",
+          "value": 3,
+          "unit": "none",
+          "isDriven": false
+        }
+      ],
+      "features": [],
+      "equations": [],
+      "customProperties": {
+        "Aciklama": "KONVEYOR 3000x600",
+        "Firma": "ACME"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "Govde.SLDPRT",
+      "path": "",
+      "kind": "part",
+      "activeConfiguration": "",
+      "configurations": [],
+      "dimensions": [
+        {
+          "name": "D1@Boss",
+          "feature": "",
+          "value": 2960,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Boss",
+          "feature": "",
+          "value": 120,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch2",
+          "feature": "",
+          "value": 1480,
+          "unit": "millimeter",
+          "isDriven": true
+        }
+      ],
+      "features": [
+        {
+          "name": "Boss",
+          "type": "Extrusion",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {},
+      "configurationProperties": {}
+    },
+    {
+      "key": "Bant.SLDPRT",
+      "path": "",
+      "kind": "part",
+      "activeConfiguration": "",
+      "configurations": [],
+      "dimensions": [
+        {
+          "name": "D1@Sketch1",
+          "feature": "",
+          "value": 6300,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [],
+      "equations": [],
+      "customProperties": {},
+      "configurationProperties": {}
+    },
+    {
+      "key": "Rulo.SLDPRT",
+      "path": "",
+      "kind": "part",
+      "activeConfiguration": "",
+      "configurations": [],
+      "dimensions": [
+        {
+          "name": "D2@Sketch1",
+          "feature": "",
+          "value": 650,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [],
+      "equations": [],
+      "customProperties": {},
+      "configurationProperties": {}
+    },
+    {
+      "key": "Profil.SLDPRT",
+      "path": "",
+      "kind": "part",
+      "activeConfiguration": "",
+      "configurations": [],
+      "dimensions": [
+        {
+          "name": "D1@Sketch1",
+          "feature": "",
+          "value": 60,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [],
+      "equations": [],
+      "customProperties": {},
+      "configurationProperties": {}
+    },
+    {
+      "key": "Kapak.SLDPRT",
+      "path": "",
+      "kind": "part",
+      "activeConfiguration": "",
+      "configurations": [],
+      "dimensions": [
+        {
+          "name": "D1@Sketch1",
+          "feature": "",
+          "value": 100,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [],
+      "equations": [],
+      "customProperties": {},
+      "configurationProperties": {}
+    }
+  ],
+  "components": [
+    {
+      "path": "Govde-1",
+      "name": "Govde-1",
+      "documentKey": "Govde.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Bant-1",
+      "name": "Bant-1",
+      "documentKey": "Bant.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Rulo-1",
+      "name": "Rulo-1",
+      "documentKey": "Rulo.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Rulo-2",
+      "name": "Rulo-2",
+      "documentKey": "Rulo.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Profil-1",
+      "name": "Profil-1",
+      "documentKey": "Profil.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Kapak-1",
+      "name": "Kapak-1",
+      "documentKey": "Kapak.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "MotorSol-1",
+      "name": "MotorSol-1",
+      "documentKey": "MotorSol.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "OrtaDestek-1",
+      "name": "OrtaDestek-1",
+      "documentKey": "OrtaDestek.SLDPRT",
+      "configuration": "",
+      "suppressed": true,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    }
+  ],
+  "mates": [],
+  "root": {
+    "key": "Konveyor.SLDASM",
+    "path": "",
+    "kind": "assembly",
+    "activeConfiguration": "",
+    "configurations": [],
+    "dimensions": [
+      {
+        "name": "D1@LocalLPattern1",
+        "feature": "",
+        "value": 3,
+        "unit": "none",
+        "isDriven": false
+      }
+    ],
+    "features": [],
+    "equations": [],
+    "customProperties": {
+      "Aciklama": "KONVEYOR 3000x600",
+      "Firma": "ACME"
+    },
+    "configurationProperties": {}
+  }
+}

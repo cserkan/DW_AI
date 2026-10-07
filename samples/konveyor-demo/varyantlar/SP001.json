@@ -1,0 +1,250 @@
+{
+  "schemaVersion": 1,
+  "name": "SP001",
+  "sourcePath": "C:\\DriveWorks\\Cikti\\SP001\\Konveyor_SP001.SLDASM",
+  "rootDocument": "Konveyor_SP001.SLDASM",
+  "extractedAtUtc": "2026-10-07T19:05:01.9878957Z",
+  "documents": [
+    {
+      "key": "Konveyor_SP001.SLDASM",
+      "path": "",
+      "kind": "assembly",
+      "activeConfiguration": "",
+      "configurations": [],
+      "dimensions": [
+        {
+          "name": "D1@LocalLPattern1",
+          "feature": "",
+          "value": 2,
+          "unit": "none",
+          "isDriven": false
+        }
+      ],
+      "features": [],
+      "equations": [],
+      "customProperties": {
+        "Aciklama": "KONVEYOR 1500x400",
+        "Firma": "ACME"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "Govde_SP001.SLDPRT",
+      "path": "",
+      "kind": "part",
+      "activeConfiguration": "",
+      "configurations": [],
+      "dimensions": [
+        {
+          "name": "D1@Boss",
+          "feature": "",
+          "value": 1460,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Boss",
+          "feature": "",
+          "value": 120,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch2",
+          "feature": "",
+          "value": 730,
+          "unit": "millimeter",
+          "isDriven": true
+        }
+      ],
+      "features": [
+        {
+          "name": "Boss",
+          "type": "Extrusion",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {},
+      "configurationProperties": {}
+    },
+    {
+      "key": "Bant_SP001.SLDPRT",
+      "path": "",
+      "kind": "part",
+      "activeConfiguration": "",
+      "configurations": [],
+      "dimensions": [
+        {
+          "name": "D1@Sketch1",
+          "feature": "",
+          "value": 3300,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [],
+      "equations": [],
+      "customProperties": {},
+      "configurationProperties": {}
+    },
+    {
+      "key": "Rulo_SP001.SLDPRT",
+      "path": "",
+      "kind": "part",
+      "activeConfiguration": "",
+      "configurations": [],
+      "dimensions": [
+        {
+          "name": "D2@Sketch1",
+          "feature": "",
+          "value": 450,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [],
+      "equations": [],
+      "customProperties": {},
+      "configurationProperties": {}
+    },
+    {
+      "key": "Profil_SP001.SLDPRT",
+      "path": "",
+      "kind": "part",
+      "activeConfiguration": "",
+      "configurations": [],
+      "dimensions": [
+        {
+          "name": "D1@Sketch1",
+          "feature": "",
+          "value": 40,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [],
+      "equations": [],
+      "customProperties": {},
+      "configurationProperties": {}
+    },
+    {
+      "key": "Kapak_SP001.SLDPRT",
+      "path": "",
+      "kind": "part",
+      "activeConfiguration": "",
+      "configurations": [],
+      "dimensions": [
+        {
+          "name": "D1@Sketch1",
+          "feature": "",
+          "value": 114,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [],
+      "equations": [],
+      "customProperties": {},
+      "configurationProperties": {}
+    }
+  ],
+  "components": [
+    {
+      "path": "Govde_SP001-1",
+      "name": "Govde_SP001-1",
+      "documentKey": "Govde_SP001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Bant_SP001-1",
+      "name": "Bant_SP001-1",
+      "documentKey": "Bant_SP001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Rulo_SP001-1",
+      "name": "Rulo_SP001-1",
+      "documentKey": "Rulo_SP001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Rulo_SP001-2",
+      "name": "Rulo_SP001-2",
+      "documentKey": "Rulo_SP001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Profil_SP001-1",
+      "name": "Profil_SP001-1",
+      "documentKey": "Profil_SP001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Kapak_SP001-1",
+      "name": "Kapak_SP001-1",
+      "documentKey": "Kapak_SP001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "MotorSol_SP001-1",
+      "name": "MotorSol_SP001-1",
+      "documentKey": "MotorSol.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "OrtaDestek_SP001-1",
+      "name": "OrtaDestek_SP001-1",
+      "documentKey": "OrtaDestek.SLDPRT",
+      "configuration": "",
+      "suppressed": true,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    }
+  ],
+  "mates": [],
+  "root": {
+    "key": "Konveyor_SP001.SLDASM",
+    "path": "",
+    "kind": "assembly",
+    "activeConfiguration": "",
+    "configurations": [],
+    "dimensions": [
+      {
+        "name": "D1@LocalLPattern1",
+        "feature": "",
+        "value": 2,
+        "unit": "none",
+        "isDriven": false
+      }
+    ],
+    "features": [],
+    "equations": [],
+    "customProperties": {
+      "Aciklama": "KONVEYOR 1500x400",
+      "Firma": "ACME"
+    },
+    "configurationProperties": {}
+  }
+}

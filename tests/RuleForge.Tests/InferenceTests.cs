@@ -103,3 +103,28 @@ namespace RuleForge.Tests
         }
     }
 }
+
+namespace RuleForge.Tests
+{
+    public class SampleDataWriter
+    {
+        /// <summary>RULEFORGE_WRITE_SAMPLES=klasör ile çalıştırılırsa demo veri setini yazar.</summary>
+        [Fact]
+        public void WriteDemoSamples()
+        {
+            var dir = System.Environment.GetEnvironmentVariable("RULEFORGE_WRITE_SAMPLES");
+            if (string.IsNullOrEmpty(dir)) return;
+            var csv = new System.Text.StringBuilder("Varyant;Boy;Genislik;Motor\n");
+            foreach (var s in SyntheticConveyor.Samples(suffixPattern: "yes"))
+            {
+                s.Snapshot.SourcePath = $@"C:\DriveWorks\Cikti\{s.Name}\Konveyor_{s.Name}.SLDASM";
+                RuleForge.Core.Json.JsonStore.Save(s.Snapshot, System.IO.Path.Combine(dir, "varyantlar", s.Name + ".json"));
+                csv.Append($"{s.Name};{s.Inputs["Boy"].AsText()};{s.Inputs["Genislik"].AsText()};{s.Inputs["Motor"].AsText()}\n");
+            }
+            System.IO.File.WriteAllText(System.IO.Path.Combine(dir, "girdiler.csv"), csv.ToString());
+            var master = SyntheticConveyor.Build("Konveyor", 3000, 600, "Sol");
+            master.SourcePath = @"C:\Master\Konveyor\Konveyor.SLDASM";
+            RuleForge.Core.Json.JsonStore.Save(master, System.IO.Path.Combine(dir, "master.json"));
+        }
+    }
+}

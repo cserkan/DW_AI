@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <RootNamespace>RuleForge.SolidWorks</RootNamespace>
+    <PlatformTarget>x64</PlatformTarget>
+    <SwLibDir>$(MSBuildThisFileDirectory)..\..\lib\SolidWorks\</SwLibDir>
+  </PropertyGroup>
+
+  <!-- Varsayılan: SOLIDWORKS 2015 API (geriye/ileriye uyum için en geniş taban). Bkz. lib/SolidWorks/README.md -->
+  <ItemGroup Condition="!Exists('$(SwLibDir)SolidWorks.Interop.sldworks.dll')">
+    <PackageReference Include="SolidWorks.Interop.sldworks" Version="23.5.0" />
+    <PackageReference Include="SolidWorks.Interop.swconst" Version="23.5.0" />
+  </ItemGroup>
+  <ItemGroup Condition="Exists('$(SwLibDir)SolidWorks.Interop.sldworks.dll')">
+    <Reference Include="SolidWorks.Interop.sldworks">
+      <HintPath>$(SwLibDir)SolidWorks.Interop.sldworks.dll</HintPath>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swconst">
+      <HintPath>$(SwLibDir)SolidWorks.Interop.swconst.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Interop tiplerini derlemeye göm: çalışma anında interop DLL'i gerekmez, sürüm bağımsız olur. -->
+  <Target Name="EmbedSolidWorksInterop" AfterTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <ReferencePath Condition="'%(FileName)' == 'SolidWorks.Interop.sldworks'">
+        <EmbedInteropTypes>true</EmbedInteropTypes>
+      </ReferencePath>
+    </ItemGroup>
+  </Target>
+
+  <ItemGroup>
+    <!-- Gömülü interop'ta 'object' dönen COM üyeleri dynamic olur; bağlayıcı gerekir. -->
+    <Reference Include="Microsoft.CSharp" />
+    <ProjectReference Include="..\RuleForge.Core\RuleForge.Core.csproj" />
+  </ItemGroup>
+</Project>

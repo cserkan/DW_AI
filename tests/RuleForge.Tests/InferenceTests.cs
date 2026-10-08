@@ -128,3 +128,42 @@ namespace RuleForge.Tests
         }
     }
 }
+
+namespace RuleForge.Tests
+{
+    public class BlindInferenceTests
+    {
+        private readonly Xunit.Abstractions.ITestOutputHelper _out;
+
+        public BlindInferenceTests(Xunit.Abstractions.ITestOutputHelper output)
+        {
+            _out = output;
+        }
+
+        /// <summary>Girdi tablosu olmadan: değişen değerler listelenmeli, girdiler modelden tahmin edilmeli.</summary>
+        [Fact]
+        public void DetectsDriversWithoutInputTable()
+        {
+            var samples = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Select(SyntheticConveyor.Samples(),
+                s => new RuleForge.Inference.VariantSample(s.Name, s.Snapshot)));
+            var report = RuleForge.Inference.RuleInferencer.Infer(samples);
+            _out.WriteLine(report.ToText());
+
+            var drivers = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Select(report.Drivers, d => d.ObservationKey));
+            // Boy ailesinden biri, Genişlik ailesinden biri ve motor seçimi bulunmalı
+            Assert.Contains(drivers, k => k.Contains("Bant") || k.Contains("Govde"));
+            Assert.Contains(drivers, k => k.Contains("Rulo") || k.Contains("Profil"));
+            Assert.Contains(drivers, k => k.Contains("MotorSol"));
+            Assert.Equal(3, report.Drivers.Count);
+
+            // Boy'a bağlı diğer değerler tahmini girdiyle ifade edilmeli
+            Assert.Contains(report.Rules, r => r.Target.Name == "D1@LocalLPattern1");
+            Assert.Contains(report.Rules, r => r.Target.Component == "OrtaDestek-1");
+            Assert.Contains(report.Rules, r => r.Target.Name == "Aciklama");
+            // Gürültü açıklanamaz kalmalı, değişenler listesinde görünmeli
+            Assert.Contains(report.Unexplained, u => u.Label.Contains("Kapak"));
+            Assert.Contains(report.Changes, c => c.Label.Contains("Kapak"));
+            Assert.DoesNotContain(report.Changes, c => c.Label.Contains("Firma"));
+        }
+    }
+}

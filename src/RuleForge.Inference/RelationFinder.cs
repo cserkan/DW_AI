@@ -59,7 +59,8 @@ namespace RuleForge.Inference
             _tol = tolerance;
         }
 
-        public List<RelationCandidate> Find(Observation obs, ExpectedType expected)
+        /// <param name="fast">Pahalı aramaları (iki girdili doğrusal, adet, kategoriye göre doğrular) atlar. Girdi tahmininde binlerce kez çağrılır.</param>
+        public List<RelationCandidate> Find(Observation obs, ExpectedType expected, bool fast = false)
         {
             var samples = obs.Values.Keys.Where(s => _inputs.All(i => i.Values.ContainsKey(s))).ToList();
             var y = samples.ToDictionary(s => s, s => obs.Values[s], StringComparer.OrdinalIgnoreCase);
@@ -73,10 +74,13 @@ namespace RuleForge.Inference
             {
                 var yn = y.ToDictionary(kv => kv.Key, kv => kv.Value.AsNumber(), StringComparer.OrdinalIgnoreCase);
                 Add(found, LinearOne(samples, yn));
-                Add(found, LinearTwo(samples, yn));
-                Add(found, StepFunction(samples, yn));
-                Add(found, PerCategoryLinear(samples, yn));
                 Add(found, RangeLookup(samples, y));
+                if (!fast)
+                {
+                    Add(found, LinearTwo(samples, yn));
+                    Add(found, StepFunction(samples, yn));
+                    Add(found, PerCategoryLinear(samples, yn));
+                }
             }
             if (allBool)
             {
@@ -87,6 +91,7 @@ namespace RuleForge.Inference
             {
                 Add(found, TextEqualsInput(samples, y));
                 Add(found, TextTemplate(samples, y));
+                Add(found, NumericTextTemplate(samples, y));
             }
             Add(found, CategoryMapping(samples, y));
 
@@ -462,6 +467,63 @@ namespace RuleForge.Inference
                     Evidence = $"{cat.Name} değerine göre belirleniyor ({groups.Count} seçenek, {samples.Count} varyant).",
                 };
             }
+        }
+
+        // ---------- sayılı metin: "KONVEYOR 1500x400" → "KONVEYOR " & ((Bant - 300) / 2) & "x" & (Rulo - 50) ----------
+        private static readonly System.Text.RegularExpressions.Regex NumberToken =
+            new System.Text.RegularExpressions.Regex(@"-?\d+(?:[.,]\d+)?", System.Text.RegularExpressions.RegexOptions.Compiled);
+
+        private RelationCandidate? NumericTextTemplate(List<string> samples, Dictionary<string, Value> y)
+        {
+            var texts = samples.Select(s => y[s].AsText()).ToList();
+            if (texts.Distinct(StringComparer.OrdinalIgnoreCase).Count() < 2) return null;
+
+            // Tüm varyantlarda sayılar dışındaki iskelet aynı olmalı.
+            var skeletons = texts.Select(t => NumberToken.Replace(t, "\u0001")).Distinct(StringComparer.Ordinal).ToList();
+            if (skeletons.Count != 1) return null;
+            var literals = skeletons[0].Split('\u0001');
+            int slots = literals.Length - 1;
+            if (slots == 0 || slots > 6) return null;
+
+            var numbers = texts.Select(t => NumberToken.Matches(t).Cast<System.Text.RegularExpressions.Match>()
+                .Select(m => double.Parse(m.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture)).ToArray()).ToList();
+
+            var parts = new List<string>();
+            bool anyInput = false;
+            for (int k = 0; k < slots; k++)
+            {
+                if (literals[k].Length > 0) parts.Add(NumberUtil.Literal(Value.Text(literals[k])));
+                var ys = numbers.Select(n => n[k]).ToArray();
+                if (ys.All(v => Math.Abs(v - ys[0]) < 1e-9))
+                {
+                    parts.Add(NumberUtil.Literal(Value.Text(NumberUtil.Fmt(ys[0]))));
+                    continue;
+                }
+                string? expr = null;
+                foreach (var x in Numeric)
+                {
+                    var xs = samples.Select(s => x.Values[s].AsNumber()).ToArray();
+                    var fit = FitLine(xs, ys);
+                    var snapped = fit == null ? null : SnapLine(xs, ys, fit.Value.a, fit.Value.b);
+                    if (snapped == null) continue;
+                    var linear = NumberUtil.Linear(new[] { (snapped.Value.a, x.Name) }, snapped.Value.b);
+                    expr = linear == x.Name ? x.Name : "(" + linear + ")";
+                    break;
+                }
+                if (expr == null) return null;
+                anyInput = true;
+                parts.Add(expr);
+            }
+            if (!anyInput) return null;
+            if (literals[slots].Length > 0) parts.Add(NumberUtil.Literal(Value.Text(literals[slots])));
+
+            return new RelationCandidate
+            {
+                Expression = string.Join(" & ", parts),
+                Complexity = 4,
+                Confidence = NumberUtil.Confidence(samples.Count, 2 * slots),
+                Evidence = $"{samples.Count} varyantta metin iskeleti aynı, içindeki sayılar girdilerle doğrusal ilişkili.",
+            };
         }
 
         // ---------- metin = girdi ----------

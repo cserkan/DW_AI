@@ -20,6 +20,13 @@ namespace RuleForge.Inference
         public Dictionary<string, string> Values { get; set; } = new Dictionary<string, string>();
     }
 
+    public sealed class ChangedValue
+    {
+        public string Key { get; set; } = string.Empty;
+        public string Label { get; set; } = string.Empty;
+        public string Summary { get; set; } = string.Empty;
+    }
+
     public sealed class InferenceReport
     {
         public int SampleCount { get; set; }
@@ -36,6 +43,12 @@ namespace RuleForge.Inference
         public List<string> Questions { get; set; } = new List<string>();
 
         public List<string> Notes { get; set; } = new List<string>();
+
+        /// <summary>Kör testte (girdi tablosu yokken) modelden tahmin edilen girdiler.</summary>
+        public List<DetectedDriver> Drivers { get; set; } = new List<DetectedDriver>();
+
+        /// <summary>Varyantlar arasında değişen tüm değerlerin özeti ("ne değişti?").</summary>
+        public List<ChangedValue> Changes { get; set; } = new List<ChangedValue>();
 
         public RuleSet ToRuleSet(string name, string masterAssembly)
         {
@@ -54,6 +67,17 @@ namespace RuleForge.Inference
             var sb = new StringBuilder();
             sb.AppendLine($"Varyant: {SampleCount}, gözlem: {ObservationCount}, sabit: {ConstantCount}, " +
                           $"kural önerisi: {Rules.Count}, açıklanamayan: {Unexplained.Count}");
+            if (Drivers.Count > 0)
+            {
+                sb.AppendLine();
+                sb.AppendLine("TAHMİNİ GİRDİLER (kör test: girdi tablosu verilmedi, modelden bulundu)");
+                foreach (var d in Drivers)
+                {
+                    sb.AppendLine($"  {d.Name}  ←  {d.Label}   ({d.Explains} değeri açıklıyor)");
+                    if (d.Equivalents.Count > 0)
+                        sb.AppendLine($"      birebir aynı değişenler: {string.Join(", ", d.Equivalents.Take(5))}{(d.Equivalents.Count > 5 ? $" … (+{d.Equivalents.Count - 5})" : "")}");
+                }
+            }
             sb.AppendLine();
             sb.AppendLine("GİRDİLER");
             foreach (var i in Inputs)
@@ -82,6 +106,12 @@ namespace RuleForge.Inference
                 sb.AppendLine();
                 sb.AppendLine("SORULAR");
                 foreach (var q in Questions) sb.AppendLine("  - " + q);
+            }
+            if (Changes.Count > 0)
+            {
+                sb.AppendLine();
+                sb.AppendLine($"DEĞİŞEN DEĞERLER ({Changes.Count})");
+                foreach (var c in Changes) sb.AppendLine($"  {c.Label}: {c.Summary}");
             }
             foreach (var n in Notes) sb.AppendLine("Not: " + n);
             return sb.ToString();
@@ -121,6 +151,26 @@ namespace RuleForge.Inference
                 foreach (var s in samples)
                     if (obs.Values.TryGetValue(s.Name, out var v))
                         s.Inputs[kv.Key] = v;
+            }
+
+            report.Changes = observations
+                .Where(o => o.Values.Values.Distinct().Count() > 1)
+                .Select(o => new ChangedValue { Key = o.Key, Label = o.Label, Summary = Summarize(o, samples.Count) })
+                .ToList();
+
+            // Kör test: hiç girdi verilmediyse, değerleri en iyi açıklayan gözlemleri girdi say.
+            if (options.InputObservations.Count == 0 && samples.All(s => s.Inputs.Count == 0))
+            {
+                report.Drivers = DriverDetector.Detect(observations, samples, options.Tolerance);
+                foreach (var d in report.Drivers)
+                {
+                    inputObsKeys.Add(d.ObservationKey);
+                    var obs = observations.First(o => o.Key == d.ObservationKey);
+                    foreach (var s in samples) s.Inputs[d.Name] = obs.Values[s.Name];
+                }
+                if (report.Drivers.Count > 0)
+                    report.Notes.Add("Girdi tablosu verilmediği için girdiler modelden tahmin edildi. Adlar modeldeki ölçü/özellik adlarıdır; " +
+                                     "DriveWorks'teki gerçek girdilerle karşılaştırın.");
             }
 
             var columns = BuildInputColumns(samples, master, report);
@@ -179,6 +229,24 @@ namespace RuleForge.Inference
             if (samples.Count < 6)
                 report.Notes.Add($"Sadece {samples.Count} varyant var; güven düşük. Girdi aralığının uçlarını kapsayan 8–15 varyant önerilir.");
             return report;
+        }
+
+        private static string Summarize(Observation o, int sampleCount)
+        {
+            var vals = o.Values.Values.ToList();
+            var missing = sampleCount - vals.Count;
+            var tail = missing > 0 ? $" ({missing} varyantta yok)" : string.Empty;
+            if (vals.All(v => v.Kind == ValueKind.Number))
+            {
+                var nums = vals.Select(v => v.AsNumber()).ToList();
+                return $"{Value.FormatNumber(nums.Min())} … {Value.FormatNumber(nums.Max())} ({nums.Distinct().Count()} farklı değer){tail}";
+            }
+            if (vals.All(v => v.Kind == ValueKind.Bool))
+                return $"{vals.Count(v => v.AsBool())} varyantta evet, {vals.Count(v => !v.AsBool())} varyantta hayır{tail}";
+            var distinct = vals.Select(v => v.AsText()).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            return distinct.Count <= 6
+                ? string.Join(" / ", distinct.Select(d => "\"" + d + "\"")) + tail
+                : $"{distinct.Count} farklı metin, ör. \"{distinct[0]}\"{tail}";
         }
 
         private static List<InputColumn> BuildInputColumns(IReadOnlyList<VariantSample> samples, ModelSnapshot? master,

@@ -96,6 +96,14 @@ SP002;2200;500;Sag
 `--name-pattern`, DriveWorks'ün dosya adlarına eklediği ekleri temizler (`Govde_SP001.SLDPRT` → `Govde.SLDPRT`).
 Girdi tablosu yoksa modeldeki bir ölçüyü girdi yapabilirsiniz: `--input Boy=dim:Govde.SLDPRT:D1@Boss`.
 
+**Kör test (girdi tablosu olmadan):** `--inputs` vermezseniz program DriveWorks girdilerini kendisi tahmin eder.
+Varyantlar arasında **ne değiştiğini** listeler, diğer değerlerin çoğunu açıklayan değerleri "tahmini girdi" seçer ve
+kalan her şeyi bu girdilerle ifade eder. Sonuçları DriveWorks'teki gerçek kurallarla karşılaştırarak sistemi test edebilirsiniz:
+
+```powershell
+& $rf infer varyantlar -o kor-test.json
+```
+
 Bulunan ilişki türleri:
 
 | Tür | Örnek |
@@ -107,6 +115,7 @@ Bulunan ilişki türleri:
 | Seçime göre farklı doğrular | `SWITCH(Tip, "A", Boy + 10, "B", Boy + 25)` |
 | Aralık tablosu | `RANGELOOKUP(Genislik, 500, 40, 60)` |
 | Metin şablonu | `"KONVEYOR " & Boy & "x" & Genislik` |
+| Sayılı metin | `"KONVEYOR " & ((Bant - 300) / 2) & "x" & Genislik` |
 
 Çıkan her kural **önerilen** durumundadır ve güven puanı, dayanak bilgisi taşır. Veriyle açıklanamayan değişimler
 ve belirsizlikler raporda soru olarak listelenir. Örneğin: "eşik 2800 ile 3400 arasında, kesin değer nedir?".

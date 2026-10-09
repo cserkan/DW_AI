@@ -98,6 +98,9 @@ namespace RuleForge.Core.Model
         public string Name { get; set; } = string.Empty;
 
         public string Feature { get; set; } = string.Empty;
+
+        /// <summary>SolidWorks'ün ölçüye verdiği tam ad (ör. "D1@Sketch1@Parca.Part"); tanı amaçlı.</summary>
+        public string? FullName { get; set; }
         public double Value { get; set; }
         public DimensionUnit Unit { get; set; }
 

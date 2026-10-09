@@ -213,10 +213,23 @@ namespace RuleForge.SolidWorks
             {
                 Name = name,
                 Feature = featureName,
+                FullName = SafeFullName(dim),
                 Value = Math.Round(value, 6),
                 Unit = unit,
                 IsDriven = dim.DrivenState == (int)swDimensionDrivenState_e.swDimensionDriven,
             };
+        }
+
+        private static string? SafeFullName(Dimension dim)
+        {
+            try
+            {
+                return dim.FullName;
+            }
+            catch (Exception)
+            {
+                return null; // bazı eski sürümlerde/ölçü türlerinde desteklenmeyebilir
+            }
         }
 
         private static void ReadEquations(ModelDoc2 doc, DocumentInfo info)

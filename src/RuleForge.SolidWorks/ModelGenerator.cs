@@ -104,7 +104,7 @@ namespace RuleForge.SolidWorks
                 root.ForceRebuild3(false);
                 int whatsWrong = root.Extension.GetWhatsWrongCount();
                 if (whatsWrong > 0)
-                    result.Warnings.Add($"Rebuild sonrası {whatsWrong} hata/uyarı var (SolidWorks 'What's Wrong' listesine bakın).");
+                    result.Warnings.Add($"Rebuild sonrası {whatsWrong} hata/uyarı var: {WhatsWrong(root)}");
 
                 int errors = 0, warnings = 0;
                 var saveOptions = (int)(swSaveAsOptions_e.swSaveAsOptions_Silent | swSaveAsOptions_e.swSaveAsOptions_SaveReferenced);
@@ -123,6 +123,32 @@ namespace RuleForge.SolidWorks
 
             if (request.ExportPdf) ExportDrawings(outDir, result);
             return result;
+        }
+
+        /// <summary>SolidWorks'ün "What's Wrong" listesindeki özellikler ve hata kodları (swFeatureError_e).</summary>
+        private static string WhatsWrong(ModelDoc2 doc)
+        {
+            try
+            {
+                if (!doc.Extension.GetWhatsWrong(out object featuresObj, out object codesObj, out object warningsObj))
+                    return "liste alınamadı (SolidWorks 'What's Wrong' penceresine bakın).";
+                var features = featuresObj as object[] ?? new object[0];
+                var codes = codesObj as int[] ?? new int[0];
+                var warnings = warningsObj as bool[] ?? new bool[0];
+                var items = new List<string>();
+                for (int i = 0; i < features.Length; i++)
+                {
+                    var name = (features[i] as Feature)?.Name ?? "?";
+                    var code = i < codes.Length ? codes[i].ToString() : "?";
+                    var kind = i < warnings.Length && warnings[i] ? "uyarı" : "hata";
+                    items.Add($"{name} ({kind}, kod {code})");
+                }
+                return items.Count > 0 ? string.Join(", ", items) : "ayrıntı yok.";
+            }
+            catch (Exception ex)
+            {
+                return "liste alınamadı: " + ex.Message;
+            }
         }
 
         private static int Order(TargetKind kind)
@@ -301,8 +327,10 @@ namespace RuleForge.SolidWorks
                     case TargetKind.Dimension:
                     {
                         var doc = Document(t.Document);
-                        if (!(doc.Parameter(t.Name) is Dimension dim))
-                            throw new InvalidOperationException($"Ölçü bulunamadı: {t.Name}");
+                        var dim = FindDimension(doc, t.Name!, out var available);
+                        if (dim == null)
+                            throw new InvalidOperationException($"Ölçü bulunamadı: {t.Name}" +
+                                                                (available.Length > 0 ? $". Bu özellikteki ölçüler: {available}" : ". Özellik bulunamadı."));
                         double system;
                         switch ((swDimensionParamType_e)dim.GetType())
                         {
@@ -421,6 +449,61 @@ namespace RuleForge.SolidWorks
                 foreach (var path in _modified)
                     if (_session.App.GetOpenDocumentByName(path) is ModelDoc2 doc && !ReferenceEquals(doc, _root))
                         doc.EditRebuild3();
+            }
+
+            /// <summary>
+            /// "D1@Sketch1" ölçüsünü snapshot okuyucusunun bulduğu yoldan bulur: özelliği adıyla bul, ölçülerinde ilk "D1"i al.
+            /// Böylece her zaman okunan ölçünün kendisi değişir. (ModelDoc2.Parameter bazı çizim/özellik ölçülerini bu adla
+            /// bulamıyor; sadece yedek olarak kullanılır.)
+            /// </summary>
+            private static Dimension? FindDimension(ModelDoc2 doc, string name, out string available)
+            {
+                available = string.Empty;
+                var at = name.IndexOf('@');
+                if (at > 0)
+                {
+                    var dimName = name.Substring(0, at);
+                    var featureName = name.Substring(at + 1);
+                    var feature = FindFeature(doc, featureName);
+                    if (feature != null)
+                    {
+                        var seen = new List<string>();
+                        for (var display = feature.GetFirstDisplayDimension() as DisplayDimension; display != null;
+                             display = feature.GetNextDisplayDimension(display) as DisplayDimension)
+                        {
+                            var dim = display.GetDimension2(0);
+                            if (dim == null) continue;
+                            if (string.Equals(dim.Name, dimName, StringComparison.OrdinalIgnoreCase)) return dim;
+                            seen.Add($"{dim.Name} ({dim.FullName})");
+                        }
+                        available = string.Join(", ", seen);
+                    }
+                }
+                return doc.Parameter(name) as Dimension;
+            }
+
+            private static Feature? FindFeature(ModelDoc2 doc, string name)
+            {
+                object? found = doc is PartDoc part ? part.FeatureByName(name) : doc is AssemblyDoc asm ? asm.FeatureByName(name) : null;
+                if (found is Feature direct) return direct;
+                // Yedek: tüm ağaç (alt özellikler dahil) adla taranır.
+                for (var f = doc.FirstFeature() as Feature; f != null; f = f.GetNextFeature() as Feature)
+                {
+                    var hit = FindIn(f, name);
+                    if (hit != null) return hit;
+                }
+                return null;
+            }
+
+            private static Feature? FindIn(Feature feature, string name)
+            {
+                if (string.Equals(feature.Name, name, StringComparison.OrdinalIgnoreCase)) return feature;
+                for (var sub = feature.GetFirstSubFeature() as Feature; sub != null; sub = sub.GetNextSubFeature() as Feature)
+                {
+                    var hit = FindIn(sub, name);
+                    if (hit != null) return hit;
+                }
+                return null;
             }
 
             private void Touch(ModelDoc2 doc) => _modified.Add(doc.GetPathName());

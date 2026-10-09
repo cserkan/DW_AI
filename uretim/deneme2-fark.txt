@@ -1,0 +1,59 @@
+Üretilen: uretim\deneme2.json
+Beklenen: varyantlar\Cupboard Assy 0009__Cupboard Assy Cupboard Assy9.json
+
+KARŞILAŞTIRMA: 1113/1160 değer aynı, 47 fark.
+
+ÖLÇÜLER (14)
+  Cupboard Left End Assy.SLDASM › D1@Distance4: üretilen 1, beklenen (yok)
+  Cupboard Left End Assy.SLDASM › D1@Distance5: üretilen 1, beklenen (yok)
+  Cupboard LeftEnd.SLDPRT › D1@Lower Shelf Mount Holes: üretilen 8, beklenen (yok)
+  Cupboard LeftEnd.SLDPRT › D1@Sketch5: üretilen 484, beklenen (yok)
+  Cupboard LeftEnd.SLDPRT › D3@Lower Shelf Mount Holes: üretilen 128, beklenen (yok)
+  Cupboard LeftEnd.SLDPRT › D3@Sketch5: üretilen 128, beklenen (yok)
+  Cupboard LeftEnd.SLDPRT › D4@Lower Shelf Mount Holes: üretilen 50, beklenen (yok)
+  Cupboard LeftEnd.SLDPRT › D4@Sketch5: üretilen 50, beklenen (yok)
+  Cupboard RightEnd.SLDPRT › D1@Lower Shelf Mount Holes: üretilen 10, beklenen (yok)
+  Cupboard RightEnd.SLDPRT › D1@Sketch5: üretilen 484, beklenen (yok)
+  Cupboard RightEnd.SLDPRT › D3@Lower Shelf Mount Holes: üretilen 128, beklenen (yok)
+  Cupboard RightEnd.SLDPRT › D3@Sketch5: üretilen 128, beklenen (yok)
+  Cupboard RightEnd.SLDPRT › D4@Lower Shelf Mount Holes: üretilen 50, beklenen (yok)
+  Cupboard RightEnd.SLDPRT › D4@Sketch5: üretilen 50, beklenen (yok)
+
+ÖZELLİK BASTIRMA (20)
+  Cupboard Left End Assy.SLDASM › Coincident15 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard Left End Assy.SLDASM › Coincident16 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard Left End Assy.SLDASM › CompCurve5 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard Left End Assy.SLDASM › CompCurve7 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard Left End Assy.SLDASM › Concentric16 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard Left End Assy.SLDASM › Distance4 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard Left End Assy.SLDASM › Distance5 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard LeftEnd.SLDPRT › Lower Shelf Mount Holes (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard LeftEnd.SLDPRT › Sketch5 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard Right End Assy.SLDASM › Coincident17 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard Right End Assy.SLDASM › Coincident18 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard Right End Assy.SLDASM › Coincident19 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard Right End Assy.SLDASM › Coincident20 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard Right End Assy.SLDASM › CompCurve1 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard Right End Assy.SLDASM › CompCurve2 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard Right End Assy.SLDASM › CompCurve4 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard Right End Assy.SLDASM › CompCurve6 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard Right End Assy.SLDASM › Concentric16 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard RightEnd.SLDPRT › Lower Shelf Mount Holes (bastırılmış mı): üretilen FALSE, beklenen (yok)
+  Cupboard RightEnd.SLDPRT › Sketch5 (bastırılmış mı): üretilen FALSE, beklenen (yok)
+
+KULLANILAN DOSYALAR (parça değişimi) (4)
+  Cupboard Left End Assy-1/Shelf Peg1-3 (kullanılan dosya): üretilen Shelf Peg1.SLDPRT, beklenen (yok)
+  Cupboard Left End Assy-1/Shelf Peg1-4 (kullanılan dosya): üretilen Shelf Peg1.SLDPRT, beklenen (yok)
+  Cupboard Right End Assy-1/Shelf Peg1-3 (kullanılan dosya): üretilen Shelf Peg1.SLDPRT, beklenen (yok)
+  Cupboard Right End Assy-1/Shelf Peg1-4 (kullanılan dosya): üretilen Shelf Peg1.SLDPRT, beklenen (yok)
+
+ÖZEL ÖZELLİKLER (9)
+  Cupboard Assy.SLDASM › özellik 'OrderNo': üretilen 1234, beklenen MF0009
+  Cupboard Assy.SLDASM › özellik 'Pos No': üretilen Pos No, beklenen 
+  Cupboard Base.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard LeftEnd.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard Plinth.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard Post.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard RightEnd.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard Shelf.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard Top.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009

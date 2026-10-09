@@ -38,6 +38,9 @@ namespace RuleForge.Inference
         /// <summary>Tüm varyantlarda aynı kalan (kurala gerek olmayan) gözlem sayısı.</summary>
         public int ConstantCount { get; set; }
 
+        /// <summary>Tüm varyantlarda aynı ama master'dan farklı olduğu için sabit kural verilen gözlem sayısı.</summary>
+        public int ConstantRuleCount { get; set; }
+
         public List<InputDefinition> Inputs { get; set; } = new List<InputDefinition>();
 
         /// <summary>Tekrarlanan modüller: her satırı bir kopya olan tablo girdileri.</summary>
@@ -115,7 +118,8 @@ namespace RuleForge.Inference
         {
             var sb = new StringBuilder();
             sb.AppendLine($"Varyant: {SampleCount}, gözlem: {ObservationCount}, sabit: {ConstantCount}, " +
-                          $"kural önerisi: {Rules.Count}, açıklanamayan: {Unexplained.Count}");
+                          $"kural önerisi: {Rules.Count}, açıklanamayan: {Unexplained.Count}" +
+                          (ConstantRuleCount > 0 ? $" (bunlardan {ConstantRuleCount} kural: hiç değişmiyor ama master'dan farklı)" : string.Empty));
             if (Drivers.Count > 0)
             {
                 sb.AppendLine();
@@ -237,6 +241,12 @@ namespace RuleForge.Inference
 
         public double Tolerance { get; set; }
         public HashSet<string> UsedIds { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Master modeldeki değerler (gözlem anahtarıyla). Tüm varyantlarda aynı ama master'dan farklı olan değerler
+        /// (ör. DriveWorks'ün her seferinde boşalttığı bir özellik) sabit kural olur.
+        /// </summary>
+        public Dictionary<string, Value>? MasterValues { get; set; }
     }
 
     /// <summary>Varyantlardan kural çıkarımı (deterministik). Çıktı her zaman "Proposed" durumundadır.</summary>
@@ -274,6 +284,11 @@ namespace RuleForge.Inference
             report.ObservationCount = observations.Count;
             if (extractor.SkippedCalculated.Count > 0)
                 report.Notes.Add($"SolidWorks'ün hesapladığı özellikler kural dışı bırakıldı: {string.Join(", ", extractor.SkippedCalculated)}.");
+            var structure = options.MatchByStructure ?? (options.NamePattern == null && StructureMatcher.IsNeeded(snapshots));
+            var masterValues = MasterValues(master, options, structure);
+            if (extractor.UnstableFeatureFamilies.Count > 0)
+                report.Notes.Add("Şu özelliklerin numaraları varyantlar arasında kayıyor (SolidWorks yeniden numaralıyor); adlarına güvenilemediği " +
+                                 "için bastırma kuralı çıkarılmadı: " + string.Join(", ", extractor.UnstableFeatureFamilies) + ".");
 
             // Girdi tablosu yoksa modeldeki gözlemleri girdi olarak kullan.
             var inputObsKeys = new HashSet<string>(options.InputObservations.Values, StringComparer.OrdinalIgnoreCase);
@@ -325,6 +340,7 @@ namespace RuleForge.Inference
                 InputSources = inputSources,
                 TargetOf = o => MapToMaster(o.Target, master, extractor),
                 Tolerance = options.Tolerance,
+                MasterValues = masterValues,
             };
             var needs = FindRules(report, ctx);
             foreach (var d in report.Drivers.Where(d => d.Question != null))
@@ -365,6 +381,28 @@ namespace RuleForge.Inference
                 var distinct = obs.Values.Values.Distinct().Count();
                 if (distinct <= 1 && obs.Values.Count == samples.Count)
                 {
+                    var constant = obs.Values.Values.First();
+                    if (ctx.MasterValues != null && ctx.MasterValues.TryGetValue(obs.Key, out var masterValue) &&
+                        !SameValue(masterValue, constant, ctx.Tolerance))
+                    {
+                        // Hiç değişmiyor ama master'dan farklı: üretim her seferinde bu değeri yazmalı.
+                        var constTarget = ctx.TargetOf(obs);
+                        report.Rules.Add(new Rule
+                        {
+                            Id = UniqueId(MakeId(constTarget), usedIds),
+                            Description = obs.Label,
+                            Target = constTarget,
+                            Scope = ctx.ScopeOf(obs),
+                            Expression = NumberUtil.Literal(constant),
+                            Status = RuleStatus.Proposed,
+                            Source = RuleSource.Inference,
+                            Confidence = NumberUtil.Confidence(samples.Count, 1),
+                            Evidence = $"{samples.Count} varyantın hepsinde \"{constant.AsText()}\"; master modelde \"{masterValue.AsText()}\". " +
+                                       "Değişmiyor ama master'dan farklı, bu yüzden her üretimde yazılmalı.",
+                        });
+                        report.ConstantRuleCount++;
+                        continue;
+                    }
                     report.ConstantCount++;
                     continue;
                 }
@@ -450,6 +488,24 @@ namespace RuleForge.Inference
                     ? $"{string.Join(", ", q.Value)}: {q.Key}"
                     : $"{q.Value.Count} kural ({string.Join(", ", q.Value.Take(2))} …): {q.Key}");
             return needs;
+        }
+
+        private static bool SameValue(Value a, Value b, double tolerance)
+        {
+            if (a.Kind == ValueKind.Number && b.Kind == ValueKind.Number) return Math.Abs(a.AsNumber() - b.AsNumber()) <= tolerance;
+            return Value.LooseEquals(a, b);
+        }
+
+        /// <summary>Master modelin gözlem değerleri; anahtarlar varyant gözlemleriyle aynı (master kendine eşlenir).</summary>
+        internal static Dictionary<string, Value>? MasterValues(ModelSnapshot? master, InferenceOptions options, bool structure)
+        {
+            if (master == null) return null;
+            var sample = new VariantSample("\u0001master", master);
+            var extractor = new ObservationExtractor(options);
+            if (structure) extractor.UseStructure(master, new[] { sample });
+            return extractor.Extract(new[] { sample })
+                .Where(o => o.Values.ContainsKey(sample.Name))
+                .ToDictionary(o => o.Key, o => o.Values[sample.Name], StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>Aynı girdi + aynı değer için tekrar eden ihtiyaçları birleştirir (ilk gerekçe kalır).</summary>

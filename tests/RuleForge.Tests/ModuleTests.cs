@@ -303,3 +303,70 @@ namespace RuleForge.Tests
         }
     }
 }
+
+namespace RuleForge.Tests
+{
+    /// <summary>Üretim gidiş-dönüş testinde bulunan genel durumlar.</summary>
+    public class RoundTripLessonsTests
+    {
+        /// <summary>Gövdede "Delik" özelliği Boy 3000'den büyükse var, değilse silinmiş (DriveWorks "Delete").</summary>
+        private static List<VariantSample> Samples(Action<ModelSnapshot, double, int>? edit = null)
+        {
+            var samples = SyntheticConveyor.Samples();
+            for (int i = 0; i < samples.Count; i++)
+            {
+                var boy = SyntheticConveyor.Specs[i].boy;
+                var govde = samples[i].Snapshot.Documents.First(d => d.Key.StartsWith("Govde"));
+                if (boy > 3000) govde.Features.Add(new FeatureInfo { Name = "Delik", Type = "ICE" });
+                samples[i].Snapshot.Documents.First(d => d.Key.StartsWith("Konveyor")).CustomProperties["Firma"] = "ACME";
+                edit?.Invoke(samples[i].Snapshot, boy, i);
+            }
+            return samples;
+        }
+
+        private static ModelSnapshot Master()
+        {
+            var m = SyntheticConveyor.Build("master", 3000, 600, "Sol");
+            m.Documents.First(d => d.Key.StartsWith("Govde")).Features.Add(new FeatureInfo { Name = "Delik", Type = "ICE" });
+            m.Documents.First(d => d.Key.StartsWith("Konveyor")).CustomProperties["Firma"] = "XYZ";
+            return m;
+        }
+
+        [Fact]
+        public void DeletedFeatureIsLearnedAsSuppression()
+        {
+            var report = RuleInferencer.Infer(Samples(), new InferenceOptions(), Master());
+            var rule = report.Rules.Single(r => r.Target.Kind == TargetKind.FeatureSuppression && r.Target.Name == "Delik");
+            Assert.Contains("Boy", rule.Expression);
+            Assert.Contains("<=", rule.Expression);
+        }
+
+        [Fact]
+        public void ConstantValueDifferentFromMasterBecomesARule()
+        {
+            var report = RuleInferencer.Infer(Samples(), new InferenceOptions(), Master());
+            var rule = report.Rules.Single(r => r.Target.Kind == TargetKind.CustomProperty && r.Target.Name == "Firma");
+            Assert.Equal("\"ACME\"", rule.Expression);
+            Assert.Equal(1, report.ConstantRuleCount);
+            // Master verilmezse karşılaştıracak bir şey yok: sabit kalır.
+            Assert.DoesNotContain(RuleInferencer.Infer(Samples(), new InferenceOptions()).Rules, r => r.Target.Name == "Firma");
+        }
+
+        [Fact]
+        public void RenumberedFeaturesGiveNoRules()
+        {
+            // "Egri1..3": kısa konveyörlerde biri silinmiş ama hangisi olduğu varyanttan varyanta değişiyor (SolidWorks yeniden numaralıyor).
+            var samples = Samples((snap, boy, i) =>
+            {
+                var govde = snap.Documents.First(d => d.Key.StartsWith("Govde"));
+                for (int k = 1; k <= 3; k++)
+                    if (boy > 3000 || k != 1 + i % 3)
+                        govde.Features.Add(new FeatureInfo { Name = "Egri" + k, Type = "CompositeCurve" });
+            });
+            var report = RuleInferencer.Infer(samples, new InferenceOptions(), Master());
+            Assert.DoesNotContain(report.Rules, r => r.Target.Name != null && r.Target.Name.StartsWith("Egri"));
+            Assert.Contains(report.Notes, n => n.Contains("Egri"));
+            Assert.Contains(report.Rules, r => r.Target.Name == "Delik"); // kararlı adlı silme yine öğrenilir
+        }
+    }
+}

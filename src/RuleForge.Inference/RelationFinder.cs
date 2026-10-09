@@ -735,7 +735,8 @@ namespace RuleForge.Inference
                 {
                     Expression = expr,
                     Complexity = 2 + groups.Count / 3,
-                    Confidence = NumberUtil.Confidence(samples.Count, groups.Count),
+                    // Tek örnekli bir kategorinin sonucu doğrulanmamıştır (ör. sadece 1 varyant "Maple").
+                    Confidence = Math.Min(NumberUtil.Confidence(samples.Count, groups.Count), NumberUtil.Confidence(groups.Min(g => g.Count()) + 1, 1)),
                     Evidence = $"{cat.Name} değerine göre belirleniyor ({groups.Count} seçenek, {samples.Count} varyant).",
                 };
             }

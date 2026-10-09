@@ -50,6 +50,14 @@ namespace RuleForge.Inference
             var unexplained = new HashSet<int>(Enumerable.Range(0, groups.Count));
             var chosen = new List<(int group, InputColumn column)>();
 
+            // Hazır sütunların (ör. satır sayısı) tek başına açıkladığı değerler girdi adayı değildir.
+            if (seedColumns.Count > 0)
+            {
+                var seedFinder = new RelationFinder(seedColumns.ToList(), tolerance);
+                unexplained.RemoveWhere(g => seedFinder.Find(groups[g][0], groups[g][0].Target.ExpectedType, fast: true)
+                    .Any(c => c.Confidence >= 0.7));
+            }
+
             while (chosen.Count < MaxDrivers && unexplained.Count > 1)
             {
                 (int group, InputColumn column, List<int> explained)? best = null;
@@ -79,11 +87,15 @@ namespace RuleForge.Inference
 
             // Hiçbir şeyi açıklamayan ama az seçenekli (evet/hayır, birkaç seçenek) değerler büyük ihtimalle
             // tek etkili bir seçim girdisidir (ör. "motor sağda mı"). Sayısal olanlar gürültü olabilir; onlara dokunma.
+            // Zayıf da olsa bir açıklaması olan değer (ör. tek örneğe dayanan eşik) girdi değil, düşük güvenli kuraldır.
+            var known = seedColumns.Concat(chosen.Select(c => c.column)).ToList();
+            var leftoverFinder = known.Count > 0 ? new RelationFinder(known, tolerance) : null;
             foreach (var g in unexplained.OrderBy(g => g).ToList())
             {
                 if (chosen.Count >= MaxDrivers) break;
                 var rep = groups[g][0];
                 if (rep.Values.Values.All(v => v.Kind == ValueKind.Number)) continue;
+                if (leftoverFinder != null && leftoverFinder.Find(rep, rep.Target.ExpectedType, fast: true).Any(c => c.Confidence >= 0.5)) continue;
                 var column = ToColumn(DriverName(rep), rep);
                 if (column != null) chosen.Add((g, column));
             }

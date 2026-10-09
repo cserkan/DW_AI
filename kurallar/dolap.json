@@ -1,0 +1,1782 @@
+{
+  "schemaVersion": 1,
+  "name": "Cupboard Assy",
+  "description": "9 varyanttan otomatik çıkarıldı.",
+  "masterAssembly": "C:\\Users\\pc\\Downloads\\CupboardSoloTemplate\\SOLIDWORKS Files\\Cupboard Assy.SLDASM",
+  "inputs": [
+    {
+      "name": "Assembly_Height",
+      "label": "Assembly_Height",
+      "type": "number",
+      "min": 458,
+      "max": 950,
+      "default": "827",
+      "options": [],
+      "description": "Varyantlarda görülen aralık: 458 – 950"
+    },
+    {
+      "name": "Assembly_Width",
+      "label": "Assembly_Width",
+      "type": "number",
+      "min": 759,
+      "max": 1500,
+      "default": "1310",
+      "options": [],
+      "description": "Varyantlarda görülen aralık: 759 – 1500"
+    },
+    {
+      "name": "Assembly_Depth",
+      "label": "Assembly_Depth",
+      "type": "number",
+      "min": 300,
+      "max": 888,
+      "default": "624",
+      "options": [],
+      "description": "Varyantlarda görülen aralık: 300 – 888"
+    },
+    {
+      "name": "Cupboard_LeftDoor_Shaker_Style_1_Dosyasi",
+      "label": "Cupboard_LeftDoor_Shaker_Style_1_Dosyasi",
+      "type": "choice",
+      "default": "Cupboard LeftDoor Framed.SLDPRT",
+      "options": [
+        "Cupboard LeftDoor Framed.SLDPRT",
+        "Cupboard LeftDoor Shaker Style.SLDPRT",
+        "Cupboard LeftDoor.SLDPRT"
+      ]
+    },
+    {
+      "name": "Material",
+      "label": "Material",
+      "type": "choice",
+      "default": "Mahogany",
+      "options": [
+        "Mahogany",
+        "Maple",
+        "Oak"
+      ]
+    }
+  ],
+  "tables": [],
+  "variables": [
+    {
+      "name": "Assembly_Height_Esigi",
+      "expression": "750",
+      "description": "Assembly_Height eşiği. Veriler 569 ile 800 arasındaki her değeri destekliyor; 21 kural bu değişkeni kullanıyor."
+    },
+    {
+      "name": "Cupboard_LeftEnd_D1_Sketch3",
+      "expression": "IF(Assembly_Height <= Assembly_Height_Esigi, Assembly_Height / 2 - 25, FLOOR((Assembly_Height + 20) / 3))",
+      "description": "Ara değer: Cupboard LeftEnd.SLDPRT › D1@Sketch3 (başka bir değer buna bağlı)."
+    },
+    {
+      "name": "Cupboard_Assy_D1_Nail_Pattern_1",
+      "expression": "FLOOR((Assembly_Height - 68) / 50) + 1",
+      "description": "Adet: Cupboard Assy.SLDASM › D1@Nail Pattern 1 (aralık formülleri buna bağlı)."
+    },
+    {
+      "name": "Cupboard_Assy_D1_Nail_Pattern_2",
+      "expression": "FLOOR((Assembly_Width - 18) / 50) + 1",
+      "description": "Adet: Cupboard Assy.SLDASM › D1@Nail Pattern 2 (aralık formülleri buna bağlı)."
+    }
+  ],
+  "rules": [
+    {
+      "id": "cfg_Cupboard_LeftDoor_Assy_1_Cupboard_LeftDoor_Shaker_Style_1",
+      "description": "Cupboard LeftDoor Assy-1/Cupboard LeftDoor Shaker Style-1 (konfigürasyon)",
+      "target": {
+        "kind": "configuration",
+        "component": "Cupboard LeftDoor Assy-1/Cupboard LeftDoor Shaker Style-1",
+        "key": "configuration:cupboard leftdoor assy-1/cupboard leftdoor shaker style-1",
+        "expectedType": "text"
+      },
+      "expression": "SWITCH(Cupboard_LeftDoor_Shaker_Style_1_Dosyasi, \"Cupboard LeftDoor Framed.SLDPRT\", \"Default\", \"Cupboard LeftDoor Shaker Style.SLDPRT\", \"Base Single\", \"Cupboard LeftDoor.SLDPRT\", \"Default\")",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Cupboard_LeftDoor_Shaker_Style_1_Dosyasi değerine göre belirleniyor (3 seçenek, 9 varyant)."
+    },
+    {
+      "id": "sup_Cupboard_Left_End_Assy_1_Shelf_Peg1_3",
+      "description": "Cupboard Left End Assy-1/Shelf Peg1-3 (bastırılmış mı)",
+      "target": {
+        "kind": "componentSuppression",
+        "component": "Cupboard Left End Assy-1/Shelf Peg1-3",
+        "key": "componentsuppression:cupboard left end assy-1/shelf peg1-3",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "sup_Cupboard_Left_End_Assy_1_Shelf_Peg1_4",
+      "description": "Cupboard Left End Assy-1/Shelf Peg1-4 (bastırılmış mı)",
+      "target": {
+        "kind": "componentSuppression",
+        "component": "Cupboard Left End Assy-1/Shelf Peg1-4",
+        "key": "componentsuppression:cupboard left end assy-1/shelf peg1-4",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "sup_Cupboard_Right_End_Assy_1_Shelf_Peg1_3",
+      "description": "Cupboard Right End Assy-1/Shelf Peg1-3 (bastırılmış mı)",
+      "target": {
+        "kind": "componentSuppression",
+        "component": "Cupboard Right End Assy-1/Shelf Peg1-3",
+        "key": "componentsuppression:cupboard right end assy-1/shelf peg1-3",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "sup_Cupboard_Right_End_Assy_1_Shelf_Peg1_4",
+      "description": "Cupboard Right End Assy-1/Shelf Peg1-4 (bastırılmış mı)",
+      "target": {
+        "kind": "componentSuppression",
+        "component": "Cupboard Right End Assy-1/Shelf Peg1-4",
+        "key": "componentsuppression:cupboard right end assy-1/shelf peg1-4",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "dim_Cupboard_Assy_D1_Adj_Shelf_Pattern",
+      "description": "Cupboard Assy.SLDASM › D1@Adj Shelf Pattern",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Assy.SLDASM",
+        "name": "D1@Adj Shelf Pattern",
+        "key": "dimension:cupboard assy.sldasm:d1@adj shelf pattern",
+        "expectedType": "number"
+      },
+      "expression": "RANGELOOKUP(Assembly_Height, Assembly_Height_Esigi, 1, 2)",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height aralıklarına göre 2 farklı değer. Diğer aday: RANGELOOKUP(Assembly_Depth, 750, 2, 1)"
+    },
+    {
+      "id": "dim_Cupboard_Assy_D1_Adj_Shelf_Plane",
+      "description": "Cupboard Assy.SLDASM › D1@Adj Shelf Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Assy.SLDASM",
+        "name": "D1@Adj Shelf Plane",
+        "key": "dimension:cupboard assy.sldasm:d1@adj shelf plane",
+        "expectedType": "number"
+      },
+      "expression": "IF(Assembly_Height <= Assembly_Height_Esigi, Assembly_Height / 2 - 42.5, ROUND((Assembly_Height - 34) / 3))",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.94,
+      "evidence": "Assembly_Height 569 ile 800 arasındaki bir eşikte formül değişiyor (altında 2, üstünde 7 varyant)."
+    },
+    {
+      "id": "dim_Cupboard_Assy_D1_Back_Plane",
+      "description": "Cupboard Assy.SLDASM › D1@Back Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Assy.SLDASM",
+        "name": "D1@Back Plane",
+        "key": "dimension:cupboard assy.sldasm:d1@back plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Depth",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Depth değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Assy_D1_Bottom_Plane",
+      "description": "Cupboard Assy.SLDASM › D1@Bottom Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Assy.SLDASM",
+        "name": "D1@Bottom Plane",
+        "key": "dimension:cupboard assy.sldasm:d1@bottom plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Assy_D1_Hinge_Post_RH_Door_Plane",
+      "description": "Cupboard Assy.SLDASM › D1@Hinge Post RH Door Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Assy.SLDASM",
+        "name": "D1@Hinge Post RH Door Plane",
+        "key": "dimension:cupboard assy.sldasm:d1@hinge post rh door plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width / 2 - 14",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Assy_D1_Left_Plane",
+      "description": "Cupboard Assy.SLDASM › D1@Left Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Assy.SLDASM",
+        "name": "D1@Left Plane",
+        "key": "dimension:cupboard assy.sldasm:d1@left plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Assy_D1_Nail_Pattern_1",
+      "description": "Cupboard Assy.SLDASM › D1@Nail Pattern 1",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Assy.SLDASM",
+        "name": "D1@Nail Pattern 1",
+        "key": "dimension:cupboard assy.sldasm:d1@nail pattern 1",
+        "expectedType": "number"
+      },
+      "expression": "FLOOR((Assembly_Height - 68) / 50) + 1",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.9,
+      "evidence": "9 varyantta basamak (adet) fonksiyonu uyuyor; 38 farklı biçim de veriyle uyumlu. Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Height - 68). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Height - 68)."
+    },
+    {
+      "id": "dim_Cupboard_Assy_D1_Nail_Pattern_2",
+      "description": "Cupboard Assy.SLDASM › D1@Nail Pattern 2",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Assy.SLDASM",
+        "name": "D1@Nail Pattern 2",
+        "key": "dimension:cupboard assy.sldasm:d1@nail pattern 2",
+        "expectedType": "number"
+      },
+      "expression": "FLOOR((Assembly_Width - 18) / 50) + 1",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.9,
+      "evidence": "9 varyantta basamak (adet) fonksiyonu uyuyor; 24 farklı biçim de veriyle uyumlu. Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Width - 18). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Width - 18)."
+    },
+    {
+      "id": "dim_Cupboard_Assy_D2_Nail_Pattern_1",
+      "description": "Cupboard Assy.SLDASM › D2@Nail Pattern 1",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Assy.SLDASM",
+        "name": "D2@Nail Pattern 1",
+        "key": "dimension:cupboard assy.sldasm:d2@nail pattern 1",
+        "expectedType": "number"
+      },
+      "expression": "FLOOR((Assembly_Width - 18) / 50) + 1",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.9,
+      "evidence": "9 varyantta basamak (adet) fonksiyonu uyuyor; 24 farklı biçim de veriyle uyumlu. Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Width - 18). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Width - 18)."
+    },
+    {
+      "id": "dim_Cupboard_Assy_D2_Nail_Pattern_2",
+      "description": "Cupboard Assy.SLDASM › D2@Nail Pattern 2",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Assy.SLDASM",
+        "name": "D2@Nail Pattern 2",
+        "key": "dimension:cupboard assy.sldasm:d2@nail pattern 2",
+        "expectedType": "number"
+      },
+      "expression": "FLOOR((Assembly_Height - 68) / 50) + 1",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.9,
+      "evidence": "9 varyantta basamak (adet) fonksiyonu uyuyor; 38 farklı biçim de veriyle uyumlu. Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Height - 68). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Height - 68)."
+    },
+    {
+      "id": "dim_Cupboard_Assy_D3_Adj_Shelf_Pattern",
+      "description": "Cupboard Assy.SLDASM › D3@Adj Shelf Pattern",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Assy.SLDASM",
+        "name": "D3@Adj Shelf Pattern",
+        "key": "dimension:cupboard assy.sldasm:d3@adj shelf pattern",
+        "expectedType": "number"
+      },
+      "expression": "ROUND((Assembly_Height - 86) / 3)",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "9 varyantta tam sayıya yuvarlanmış doğrusal ilişki uyuyor; 3 benzer formül de uyumlu."
+    },
+    {
+      "id": "dim_Cupboard_Back_D1_Back_Panel",
+      "description": "Cupboard Back.SLDPRT › D1@Back Panel",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Back.SLDPRT",
+        "name": "D1@Back Panel",
+        "key": "dimension:cupboard back.sldprt:d1@back panel",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 50",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Back_D1_Bottom_Plane",
+      "description": "Cupboard Back.SLDPRT › D1@Bottom Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Back.SLDPRT",
+        "name": "D1@Bottom Plane",
+        "key": "dimension:cupboard back.sldprt:d1@bottom plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 50",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Back_D1_Left_Plane",
+      "description": "Cupboard Back.SLDPRT › D1@Left Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Back.SLDPRT",
+        "name": "D1@Left Plane",
+        "key": "dimension:cupboard back.sldprt:d1@left plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Back_D1_Sketch1",
+      "description": "Cupboard Back.SLDPRT › D1@Sketch1",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Back.SLDPRT",
+        "name": "D1@Sketch1",
+        "key": "dimension:cupboard back.sldprt:d1@sketch1",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 50",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Base_D1_Back_Plane",
+      "description": "Cupboard Base.SLDPRT › D1@Back Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Base.SLDPRT",
+        "name": "D1@Back Plane",
+        "key": "dimension:cupboard base.sldprt:d1@back plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Depth - 4",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Depth değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Base_D1_Extrude2",
+      "description": "Cupboard Base.SLDPRT › D1@Extrude2",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Base.SLDPRT",
+        "name": "D1@Extrude2",
+        "key": "dimension:cupboard base.sldprt:d1@extrude2",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width - 36",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Base_D1_Left_Plane",
+      "description": "Cupboard Base.SLDPRT › D1@Left Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Base.SLDPRT",
+        "name": "D1@Left Plane",
+        "key": "dimension:cupboard base.sldprt:d1@left plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width - 36",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Base_D1_Sketch2",
+      "description": "Cupboard Base.SLDPRT › D1@Sketch2",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Base.SLDPRT",
+        "name": "D1@Sketch2",
+        "key": "dimension:cupboard base.sldprt:d1@sketch2",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width - 36",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_LeftDoor_Assy_D1_Bottom_Plane",
+      "description": "Cupboard LeftDoor Assy.SLDASM › D1@Bottom Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard LeftDoor Assy.SLDASM",
+        "name": "D1@Bottom Plane",
+        "key": "dimension:cupboard leftdoor assy.sldasm:d1@bottom plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 4",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_LeftDoor_Assy_D1_Left_Plane",
+      "description": "Cupboard LeftDoor Assy.SLDASM › D1@Left Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard LeftDoor Assy.SLDASM",
+        "name": "D1@Left Plane",
+        "key": "dimension:cupboard leftdoor assy.sldasm:d1@left plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width / 2 - 4",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_LeftDoor_Framed_D1_Bottom_Plane",
+      "description": "Cupboard LeftDoor Framed.SLDPRT › D1@Bottom Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard LeftDoor Framed.SLDPRT",
+        "name": "D1@Bottom Plane",
+        "key": "dimension:cupboard leftdoor framed.sldprt:d1@bottom plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 54",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.5,
+      "evidence": "3 varyantta tam uyum (3 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_LeftDoor_Framed_D1_Left_Plane",
+      "description": "Cupboard LeftDoor Framed.SLDPRT › D1@Left Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard LeftDoor Framed.SLDPRT",
+        "name": "D1@Left Plane",
+        "key": "dimension:cupboard leftdoor framed.sldprt:d1@left plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width / 2 - 4",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.5,
+      "evidence": "3 varyantta tam uyum (3 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_LeftDoor_Shaker_Style_D1_Bottom_Plane",
+      "description": "Cupboard LeftDoor Shaker Style.SLDPRT › D1@Bottom Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard LeftDoor Shaker Style.SLDPRT",
+        "name": "D1@Bottom Plane",
+        "key": "dimension:cupboard leftdoor shaker style.sldprt:d1@bottom plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 54",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.2,
+      "evidence": "2 varyantta tam uyum (2 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_LeftDoor_Shaker_Style_D1_Left_Plane",
+      "description": "Cupboard LeftDoor Shaker Style.SLDPRT › D1@Left Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard LeftDoor Shaker Style.SLDPRT",
+        "name": "D1@Left Plane",
+        "key": "dimension:cupboard leftdoor shaker style.sldprt:d1@left plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width / 2 - 4",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.2,
+      "evidence": "2 varyantta tam uyum (2 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_LeftDoor_D1_Bottom_Plane",
+      "description": "Cupboard LeftDoor.SLDPRT › D1@Bottom Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard LeftDoor.SLDPRT",
+        "name": "D1@Bottom Plane",
+        "key": "dimension:cupboard leftdoor.sldprt:d1@bottom plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 54",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "4 varyantta tam uyum (4 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_LeftDoor_D1_Left_Plane",
+      "description": "Cupboard LeftDoor.SLDPRT › D1@Left Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard LeftDoor.SLDPRT",
+        "name": "D1@Left Plane",
+        "key": "dimension:cupboard leftdoor.sldprt:d1@left plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width / 2 - 4",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "4 varyantta tam uyum (4 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_LeftEnd_D1_Back_Plane",
+      "description": "Cupboard LeftEnd.SLDPRT › D1@Back Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard LeftEnd.SLDPRT",
+        "name": "D1@Back Plane",
+        "key": "dimension:cupboard leftend.sldprt:d1@back plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Depth - 4",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Depth değeri)."
+    },
+    {
+      "id": "dim_Cupboard_LeftEnd_D1_Bottom_Plane",
+      "description": "Cupboard LeftEnd.SLDPRT › D1@Bottom Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard LeftEnd.SLDPRT",
+        "name": "D1@Bottom Plane",
+        "key": "dimension:cupboard leftend.sldprt:d1@bottom plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_LeftEnd_D1_Left_Hand_End",
+      "description": "Cupboard LeftEnd.SLDPRT › D1@Left Hand End",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard LeftEnd.SLDPRT",
+        "name": "D1@Left Hand End",
+        "key": "dimension:cupboard leftend.sldprt:d1@left hand end",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_LeftEnd_D1_Sketch1",
+      "description": "Cupboard LeftEnd.SLDPRT › D1@Sketch1",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard LeftEnd.SLDPRT",
+        "name": "D1@Sketch1",
+        "key": "dimension:cupboard leftend.sldprt:d1@sketch1",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_LeftEnd_D1_Sketch3",
+      "description": "Cupboard LeftEnd.SLDPRT › D1@Sketch3",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard LeftEnd.SLDPRT",
+        "name": "D1@Sketch3",
+        "key": "dimension:cupboard leftend.sldprt:d1@sketch3",
+        "expectedType": "number"
+      },
+      "expression": "IF(Assembly_Height <= Assembly_Height_Esigi, Assembly_Height / 2 - 25, FLOOR((Assembly_Height + 20) / 3))",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.94,
+      "evidence": "Assembly_Height 569 ile 800 arasındaki bir eşikte formül değişiyor (altında 2, üstünde 7 varyant)."
+    },
+    {
+      "id": "dim_Cupboard_Plinth_D1_Extrude2",
+      "description": "Cupboard Plinth.SLDPRT › D1@Extrude2",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Plinth.SLDPRT",
+        "name": "D1@Extrude2",
+        "key": "dimension:cupboard plinth.sldprt:d1@extrude2",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width - 36",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Plinth_D1_Left_Plane",
+      "description": "Cupboard Plinth.SLDPRT › D1@Left Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Plinth.SLDPRT",
+        "name": "D1@Left Plane",
+        "key": "dimension:cupboard plinth.sldprt:d1@left plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width - 36",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Plinth_D1_Sketch3",
+      "description": "Cupboard Plinth.SLDPRT › D1@Sketch3",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Plinth.SLDPRT",
+        "name": "D1@Sketch3",
+        "key": "dimension:cupboard plinth.sldprt:d1@sketch3",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width - 36",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Post_D1_Bottom_Plane",
+      "description": "Cupboard Post.SLDPRT › D1@Bottom Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Post.SLDPRT",
+        "name": "D1@Bottom Plane",
+        "key": "dimension:cupboard post.sldprt:d1@bottom plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 86",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Post_D1_Extrude2",
+      "description": "Cupboard Post.SLDPRT › D1@Extrude2",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Post.SLDPRT",
+        "name": "D1@Extrude2",
+        "key": "dimension:cupboard post.sldprt:d1@extrude2",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 86",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Post_D1_Left_Hand_End",
+      "description": "Cupboard Post.SLDPRT › D1@Left Hand End",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Post.SLDPRT",
+        "name": "D1@Left Hand End",
+        "key": "dimension:cupboard post.sldprt:d1@left hand end",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 86",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Post_D1_Sketch1",
+      "description": "Cupboard Post.SLDPRT › D1@Sketch1",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Post.SLDPRT",
+        "name": "D1@Sketch1",
+        "key": "dimension:cupboard post.sldprt:d1@sketch1",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 86",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Post_D1_Sketch3",
+      "description": "Cupboard Post.SLDPRT › D1@Sketch3",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Post.SLDPRT",
+        "name": "D1@Sketch3",
+        "key": "dimension:cupboard post.sldprt:d1@sketch3",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 86",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_RightDoor_Assy_D1_Bottom_Plane",
+      "description": "Cupboard RightDoor Assy.SLDASM › D1@Bottom Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard RightDoor Assy.SLDASM",
+        "name": "D1@Bottom Plane",
+        "key": "dimension:cupboard rightdoor assy.sldasm:d1@bottom plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 4",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_RightDoor_Assy_D1_Left_Plane",
+      "description": "Cupboard RightDoor Assy.SLDASM › D1@Left Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard RightDoor Assy.SLDASM",
+        "name": "D1@Left Plane",
+        "key": "dimension:cupboard rightdoor assy.sldasm:d1@left plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width / 2 - 4",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_RightDoor_Framed_D1_Bottom_Plane",
+      "description": "Cupboard RightDoor Framed.SLDPRT › D1@Bottom Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard RightDoor Framed.SLDPRT",
+        "name": "D1@Bottom Plane",
+        "key": "dimension:cupboard rightdoor framed.sldprt:d1@bottom plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 54",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.5,
+      "evidence": "3 varyantta tam uyum (3 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_RightDoor_Framed_D1_Left_Plane",
+      "description": "Cupboard RightDoor Framed.SLDPRT › D1@Left Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard RightDoor Framed.SLDPRT",
+        "name": "D1@Left Plane",
+        "key": "dimension:cupboard rightdoor framed.sldprt:d1@left plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width / 2 - 4",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.5,
+      "evidence": "3 varyantta tam uyum (3 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_RightDoor_Shaker_Style_D1_Bottom_Plane",
+      "description": "Cupboard RightDoor Shaker Style.SLDPRT › D1@Bottom Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard RightDoor Shaker Style.SLDPRT",
+        "name": "D1@Bottom Plane",
+        "key": "dimension:cupboard rightdoor shaker style.sldprt:d1@bottom plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 54",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.2,
+      "evidence": "2 varyantta tam uyum (2 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_RightDoor_Shaker_Style_D1_Left_Plane",
+      "description": "Cupboard RightDoor Shaker Style.SLDPRT › D1@Left Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard RightDoor Shaker Style.SLDPRT",
+        "name": "D1@Left Plane",
+        "key": "dimension:cupboard rightdoor shaker style.sldprt:d1@left plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width / 2 - 4",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.2,
+      "evidence": "2 varyantta tam uyum (2 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_RightDoor_D1_Bottom_Plane",
+      "description": "Cupboard RightDoor.SLDPRT › D1@Bottom Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard RightDoor.SLDPRT",
+        "name": "D1@Bottom Plane",
+        "key": "dimension:cupboard rightdoor.sldprt:d1@bottom plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height - 54",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "4 varyantta tam uyum (4 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_RightDoor_D1_Left_Plane",
+      "description": "Cupboard RightDoor.SLDPRT › D1@Left Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard RightDoor.SLDPRT",
+        "name": "D1@Left Plane",
+        "key": "dimension:cupboard rightdoor.sldprt:d1@left plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width / 2 - 4",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "4 varyantta tam uyum (4 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_RightEnd_D1_Back_Plane",
+      "description": "Cupboard RightEnd.SLDPRT › D1@Back Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard RightEnd.SLDPRT",
+        "name": "D1@Back Plane",
+        "key": "dimension:cupboard rightend.sldprt:d1@back plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Depth - 4",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Depth değeri)."
+    },
+    {
+      "id": "dim_Cupboard_RightEnd_D1_Bottom_Plane",
+      "description": "Cupboard RightEnd.SLDPRT › D1@Bottom Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard RightEnd.SLDPRT",
+        "name": "D1@Bottom Plane",
+        "key": "dimension:cupboard rightend.sldprt:d1@bottom plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_RightEnd_D1_Right_Hand_End",
+      "description": "Cupboard RightEnd.SLDPRT › D1@Right Hand End",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard RightEnd.SLDPRT",
+        "name": "D1@Right Hand End",
+        "key": "dimension:cupboard rightend.sldprt:d1@right hand end",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_RightEnd_D1_Sketch1",
+      "description": "Cupboard RightEnd.SLDPRT › D1@Sketch1",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard RightEnd.SLDPRT",
+        "name": "D1@Sketch1",
+        "key": "dimension:cupboard rightend.sldprt:d1@sketch1",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Height",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Shelf_D1_Back_Plane",
+      "description": "Cupboard Shelf.SLDPRT › D1@Back Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Shelf.SLDPRT",
+        "name": "D1@Back Plane",
+        "key": "dimension:cupboard shelf.sldprt:d1@back plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Depth - 82",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Depth değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Shelf_D1_Extrude3",
+      "description": "Cupboard Shelf.SLDPRT › D1@Extrude3",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Shelf.SLDPRT",
+        "name": "D1@Extrude3",
+        "key": "dimension:cupboard shelf.sldprt:d1@extrude3",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width - 38",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Shelf_D1_Left_Plane",
+      "description": "Cupboard Shelf.SLDPRT › D1@Left Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Shelf.SLDPRT",
+        "name": "D1@Left Plane",
+        "key": "dimension:cupboard shelf.sldprt:d1@left plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width - 38",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Shelf_D1_Sketch2",
+      "description": "Cupboard Shelf.SLDPRT › D1@Sketch2",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Shelf.SLDPRT",
+        "name": "D1@Sketch2",
+        "key": "dimension:cupboard shelf.sldprt:d1@sketch2",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width - 38",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Top_D1_Back_Plane",
+      "description": "Cupboard Top.SLDPRT › D1@Back Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Top.SLDPRT",
+        "name": "D1@Back Plane",
+        "key": "dimension:cupboard top.sldprt:d1@back plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Depth - 4",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Depth değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Top_D1_Extrude4",
+      "description": "Cupboard Top.SLDPRT › D1@Extrude4",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Top.SLDPRT",
+        "name": "D1@Extrude4",
+        "key": "dimension:cupboard top.sldprt:d1@extrude4",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width - 36",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Top_D1_Left_Plane",
+      "description": "Cupboard Top.SLDPRT › D1@Left Plane",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Top.SLDPRT",
+        "name": "D1@Left Plane",
+        "key": "dimension:cupboard top.sldprt:d1@left plane",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width - 36",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "dim_Cupboard_Top_D1_Sketch4",
+      "description": "Cupboard Top.SLDPRT › D1@Sketch4",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Top.SLDPRT",
+        "name": "D1@Sketch4",
+        "key": "dimension:cupboard top.sldprt:d1@sketch4",
+        "expectedType": "number"
+      },
+      "expression": "Assembly_Width - 36",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantta tam uyum (9 farklı Assembly_Width değeri)."
+    },
+    {
+      "id": "feat_Cupboard_Left_End_Assy_Coincident15",
+      "description": "Cupboard Left End Assy.SLDASM › Coincident15 (bastırılmış mı)",
+      "target": {
+        "kind": "featureSuppression",
+        "document": "Cupboard Left End Assy.SLDASM",
+        "name": "Coincident15",
+        "key": "featuresuppression:cupboard left end assy.sldasm:coincident15",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "feat_Cupboard_Left_End_Assy_Coincident16",
+      "description": "Cupboard Left End Assy.SLDASM › Coincident16 (bastırılmış mı)",
+      "target": {
+        "kind": "featureSuppression",
+        "document": "Cupboard Left End Assy.SLDASM",
+        "name": "Coincident16",
+        "key": "featuresuppression:cupboard left end assy.sldasm:coincident16",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "feat_Cupboard_Left_End_Assy_Concentric16",
+      "description": "Cupboard Left End Assy.SLDASM › Concentric16 (bastırılmış mı)",
+      "target": {
+        "kind": "featureSuppression",
+        "document": "Cupboard Left End Assy.SLDASM",
+        "name": "Concentric16",
+        "key": "featuresuppression:cupboard left end assy.sldasm:concentric16",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "feat_Cupboard_Left_End_Assy_Distance4",
+      "description": "Cupboard Left End Assy.SLDASM › Distance4 (bastırılmış mı)",
+      "target": {
+        "kind": "featureSuppression",
+        "document": "Cupboard Left End Assy.SLDASM",
+        "name": "Distance4",
+        "key": "featuresuppression:cupboard left end assy.sldasm:distance4",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "feat_Cupboard_Left_End_Assy_Distance5",
+      "description": "Cupboard Left End Assy.SLDASM › Distance5 (bastırılmış mı)",
+      "target": {
+        "kind": "featureSuppression",
+        "document": "Cupboard Left End Assy.SLDASM",
+        "name": "Distance5",
+        "key": "featuresuppression:cupboard left end assy.sldasm:distance5",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "feat_Cupboard_LeftEnd_Lower_Shelf_Mount_Holes",
+      "description": "Cupboard LeftEnd.SLDPRT › Lower Shelf Mount Holes (bastırılmış mı)",
+      "target": {
+        "kind": "featureSuppression",
+        "document": "Cupboard LeftEnd.SLDPRT",
+        "name": "Lower Shelf Mount Holes",
+        "key": "featuresuppression:cupboard leftend.sldprt:lower shelf mount holes",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "feat_Cupboard_LeftEnd_Sketch5",
+      "description": "Cupboard LeftEnd.SLDPRT › Sketch5 (bastırılmış mı)",
+      "target": {
+        "kind": "featureSuppression",
+        "document": "Cupboard LeftEnd.SLDPRT",
+        "name": "Sketch5",
+        "key": "featuresuppression:cupboard leftend.sldprt:sketch5",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "feat_Cupboard_Right_End_Assy_Coincident17",
+      "description": "Cupboard Right End Assy.SLDASM › Coincident17 (bastırılmış mı)",
+      "target": {
+        "kind": "featureSuppression",
+        "document": "Cupboard Right End Assy.SLDASM",
+        "name": "Coincident17",
+        "key": "featuresuppression:cupboard right end assy.sldasm:coincident17",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "feat_Cupboard_Right_End_Assy_Coincident18",
+      "description": "Cupboard Right End Assy.SLDASM › Coincident18 (bastırılmış mı)",
+      "target": {
+        "kind": "featureSuppression",
+        "document": "Cupboard Right End Assy.SLDASM",
+        "name": "Coincident18",
+        "key": "featuresuppression:cupboard right end assy.sldasm:coincident18",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "feat_Cupboard_Right_End_Assy_Coincident19",
+      "description": "Cupboard Right End Assy.SLDASM › Coincident19 (bastırılmış mı)",
+      "target": {
+        "kind": "featureSuppression",
+        "document": "Cupboard Right End Assy.SLDASM",
+        "name": "Coincident19",
+        "key": "featuresuppression:cupboard right end assy.sldasm:coincident19",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "feat_Cupboard_Right_End_Assy_Coincident20",
+      "description": "Cupboard Right End Assy.SLDASM › Coincident20 (bastırılmış mı)",
+      "target": {
+        "kind": "featureSuppression",
+        "document": "Cupboard Right End Assy.SLDASM",
+        "name": "Coincident20",
+        "key": "featuresuppression:cupboard right end assy.sldasm:coincident20",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "feat_Cupboard_Right_End_Assy_Concentric16",
+      "description": "Cupboard Right End Assy.SLDASM › Concentric16 (bastırılmış mı)",
+      "target": {
+        "kind": "featureSuppression",
+        "document": "Cupboard Right End Assy.SLDASM",
+        "name": "Concentric16",
+        "key": "featuresuppression:cupboard right end assy.sldasm:concentric16",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "feat_Cupboard_RightEnd_Lower_Shelf_Mount_Holes",
+      "description": "Cupboard RightEnd.SLDPRT › Lower Shelf Mount Holes (bastırılmış mı)",
+      "target": {
+        "kind": "featureSuppression",
+        "document": "Cupboard RightEnd.SLDPRT",
+        "name": "Lower Shelf Mount Holes",
+        "key": "featuresuppression:cupboard rightend.sldprt:lower shelf mount holes",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "feat_Cupboard_RightEnd_Sketch5",
+      "description": "Cupboard RightEnd.SLDPRT › Sketch5 (bastırılmış mı)",
+      "target": {
+        "kind": "featureSuppression",
+        "document": "Cupboard RightEnd.SLDPRT",
+        "name": "Sketch5",
+        "key": "featuresuppression:cupboard rightend.sldprt:sketch5",
+        "expectedType": "bool"
+      },
+      "expression": "Assembly_Height <= Assembly_Height_Esigi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750"
+    },
+    {
+      "id": "rep_Cupboard_LeftDoor_Assy_1_Bedroom_Knob_Oak_6",
+      "description": "Cupboard LeftDoor Assy-1/Bedroom Knob Oak-6 (kullanılan dosya)",
+      "target": {
+        "kind": "componentReplace",
+        "component": "Cupboard LeftDoor Assy-1/Bedroom Knob Oak-6",
+        "key": "componentreplace:cupboard leftdoor assy-1/bedroom knob oak-6",
+        "expectedType": "text"
+      },
+      "expression": "SWITCH(Material, \"Mahogany\", \"Bedroom Knob Oak.SLDPRT\", \"Maple\", \"D Handle Chrome Small.SLDPRT\", \"Oak\", \"Shaker Knob Large Steel.SLDPRT\")",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.5,
+      "evidence": "Material değerine göre belirleniyor (3 seçenek, 9 varyant)."
+    },
+    {
+      "id": "rep_Cupboard_RightDoor_Assy_1_Bedroom_Knob_Oak_1",
+      "description": "Cupboard RightDoor Assy-1/Bedroom Knob Oak-1 (kullanılan dosya)",
+      "target": {
+        "kind": "componentReplace",
+        "component": "Cupboard RightDoor Assy-1/Bedroom Knob Oak-1",
+        "key": "componentreplace:cupboard rightdoor assy-1/bedroom knob oak-1",
+        "expectedType": "text"
+      },
+      "expression": "SWITCH(Material, \"Mahogany\", \"Bedroom Knob Oak.SLDPRT\", \"Maple\", \"D Handle Chrome Small.SLDPRT\", \"Oak\", \"Shaker Knob Large Steel.SLDPRT\")",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.5,
+      "evidence": "Material değerine göre belirleniyor (3 seçenek, 9 varyant)."
+    },
+    {
+      "id": "rep_Cupboard_RightDoor_Assy_1_Cupboard_RightDoor_Shaker_Style_1",
+      "description": "Cupboard RightDoor Assy-1/Cupboard RightDoor Shaker Style-1 (kullanılan dosya)",
+      "target": {
+        "kind": "componentReplace",
+        "component": "Cupboard RightDoor Assy-1/Cupboard RightDoor Shaker Style-1",
+        "key": "componentreplace:cupboard rightdoor assy-1/cupboard rightdoor shaker style-1",
+        "expectedType": "text"
+      },
+      "expression": "SWITCH(Cupboard_LeftDoor_Shaker_Style_1_Dosyasi, \"Cupboard LeftDoor Framed.SLDPRT\", \"Cupboard RightDoor Framed.SLDPRT\", \"Cupboard LeftDoor Shaker Style.SLDPRT\", \"Cupboard RightDoor Shaker Style.SLDPRT\", \"Cupboard LeftDoor.SLDPRT\", \"Cupboard RightDoor.SLDPRT\")",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Cupboard_LeftDoor_Shaker_Style_1_Dosyasi değerine göre belirleniyor (3 seçenek, 9 varyant)."
+    },
+    {
+      "id": "prop_Assembly_Name",
+      "description": "Cupboard Assy.SLDASM › özellik 'Assembly Name'",
+      "target": {
+        "kind": "customProperty",
+        "name": "Assembly Name",
+        "key": "customproperty::assembly name",
+        "expectedType": "text"
+      },
+      "expression": "\"-\" & Assembly_Height & \" x \" & Assembly_Width & \" x \" & Assembly_Depth & \" Cupboard\"",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.88,
+      "evidence": "9 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor."
+    },
+    {
+      "id": "prop_Pos_No",
+      "description": "Cupboard Assy.SLDASM › özellik 'Pos No'",
+      "target": {
+        "kind": "customProperty",
+        "name": "Pos No",
+        "key": "customproperty::pos no",
+        "expectedType": "text"
+      },
+      "expression": "\"\"",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "9 varyantın hepsinde \"\"; master modelde \"Pos No\". Değişmiyor ama master'dan farklı, bu yüzden her üretimde yazılmalı."
+    },
+    {
+      "id": "prop_Cupboard_Back_DWMaterial",
+      "description": "Cupboard Back.SLDPRT › özellik 'DWMaterial'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Cupboard Back.SLDPRT",
+        "name": "DWMaterial",
+        "key": "customproperty:cupboard back.sldprt:dwmaterial",
+        "expectedType": "text"
+      },
+      "expression": "Material",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, \"Mahogany\", \"Mahogany\", \"Maple\", \"Maple\", \"Oak\", \"Oak\")"
+    },
+    {
+      "id": "prop_Cupboard_Base_DWMaterial",
+      "description": "Cupboard Base.SLDPRT › özellik 'DWMaterial'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Cupboard Base.SLDPRT",
+        "name": "DWMaterial",
+        "key": "customproperty:cupboard base.sldprt:dwmaterial",
+        "expectedType": "text"
+      },
+      "expression": "Material",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, \"Mahogany\", \"Mahogany\", \"Maple\", \"Maple\", \"Oak\", \"Oak\")"
+    },
+    {
+      "id": "prop_Cupboard_LeftDoor_Shaker_Style_DWMaterial",
+      "description": "Cupboard LeftDoor Shaker Style.SLDPRT › özellik 'DWMaterial'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Cupboard LeftDoor Shaker Style.SLDPRT",
+        "name": "DWMaterial",
+        "key": "customproperty:cupboard leftdoor shaker style.sldprt:dwmaterial",
+        "expectedType": "text"
+      },
+      "expression": "Material",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.5,
+      "evidence": "Material girdisiyle aynı metin. Diğer aday: Material"
+    },
+    {
+      "id": "prop_Cupboard_LeftDoor_DWMaterial",
+      "description": "Cupboard LeftDoor.SLDPRT › özellik 'DWMaterial'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Cupboard LeftDoor.SLDPRT",
+        "name": "DWMaterial",
+        "key": "customproperty:cupboard leftdoor.sldprt:dwmaterial",
+        "expectedType": "text"
+      },
+      "expression": "Material",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.88,
+      "evidence": "Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, \"Mahogany\", \"Mahogany\", \"Oak\", \"Oak\")"
+    },
+    {
+      "id": "prop_Cupboard_LeftEnd_DWMaterial",
+      "description": "Cupboard LeftEnd.SLDPRT › özellik 'DWMaterial'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Cupboard LeftEnd.SLDPRT",
+        "name": "DWMaterial",
+        "key": "customproperty:cupboard leftend.sldprt:dwmaterial",
+        "expectedType": "text"
+      },
+      "expression": "Material",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, \"Mahogany\", \"Mahogany\", \"Maple\", \"Maple\", \"Oak\", \"Oak\")"
+    },
+    {
+      "id": "prop_Cupboard_Plinth_DWMaterial",
+      "description": "Cupboard Plinth.SLDPRT › özellik 'DWMaterial'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Cupboard Plinth.SLDPRT",
+        "name": "DWMaterial",
+        "key": "customproperty:cupboard plinth.sldprt:dwmaterial",
+        "expectedType": "text"
+      },
+      "expression": "Material",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, \"Mahogany\", \"Mahogany\", \"Maple\", \"Maple\", \"Oak\", \"Oak\")"
+    },
+    {
+      "id": "prop_Cupboard_Post_DWMaterial",
+      "description": "Cupboard Post.SLDPRT › özellik 'DWMaterial'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Cupboard Post.SLDPRT",
+        "name": "DWMaterial",
+        "key": "customproperty:cupboard post.sldprt:dwmaterial",
+        "expectedType": "text"
+      },
+      "expression": "Material",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, \"Mahogany\", \"Mahogany\", \"Maple\", \"Maple\", \"Oak\", \"Oak\")"
+    },
+    {
+      "id": "prop_Cupboard_RightDoor_Shaker_Style_DWMaterial",
+      "description": "Cupboard RightDoor Shaker Style.SLDPRT › özellik 'DWMaterial'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Cupboard RightDoor Shaker Style.SLDPRT",
+        "name": "DWMaterial",
+        "key": "customproperty:cupboard rightdoor shaker style.sldprt:dwmaterial",
+        "expectedType": "text"
+      },
+      "expression": "Material",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.5,
+      "evidence": "Material girdisiyle aynı metin. Diğer aday: Material"
+    },
+    {
+      "id": "prop_Cupboard_RightDoor_DWMaterial",
+      "description": "Cupboard RightDoor.SLDPRT › özellik 'DWMaterial'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Cupboard RightDoor.SLDPRT",
+        "name": "DWMaterial",
+        "key": "customproperty:cupboard rightdoor.sldprt:dwmaterial",
+        "expectedType": "text"
+      },
+      "expression": "Material",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.88,
+      "evidence": "Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, \"Mahogany\", \"Mahogany\", \"Oak\", \"Oak\")"
+    },
+    {
+      "id": "prop_Cupboard_RightEnd_DWMaterial",
+      "description": "Cupboard RightEnd.SLDPRT › özellik 'DWMaterial'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Cupboard RightEnd.SLDPRT",
+        "name": "DWMaterial",
+        "key": "customproperty:cupboard rightend.sldprt:dwmaterial",
+        "expectedType": "text"
+      },
+      "expression": "Material",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, \"Mahogany\", \"Mahogany\", \"Maple\", \"Maple\", \"Oak\", \"Oak\")"
+    },
+    {
+      "id": "prop_Cupboard_Shelf_DWMaterial",
+      "description": "Cupboard Shelf.SLDPRT › özellik 'DWMaterial'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Cupboard Shelf.SLDPRT",
+        "name": "DWMaterial",
+        "key": "customproperty:cupboard shelf.sldprt:dwmaterial",
+        "expectedType": "text"
+      },
+      "expression": "Material",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, \"Mahogany\", \"Mahogany\", \"Maple\", \"Maple\", \"Oak\", \"Oak\")"
+    },
+    {
+      "id": "prop_Cupboard_Top_DWMaterial",
+      "description": "Cupboard Top.SLDPRT › özellik 'DWMaterial'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Cupboard Top.SLDPRT",
+        "name": "DWMaterial",
+        "key": "customproperty:cupboard top.sldprt:dwmaterial",
+        "expectedType": "text"
+      },
+      "expression": "Material",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, \"Mahogany\", \"Mahogany\", \"Maple\", \"Maple\", \"Oak\", \"Oak\")"
+    },
+    {
+      "id": "prop_Assembly_Height",
+      "description": "Cupboard Assy.SLDASM › özellik 'Assembly Height'",
+      "target": {
+        "kind": "customProperty",
+        "name": "Assembly Height",
+        "key": "customproperty::assembly height",
+        "expectedType": "text"
+      },
+      "expression": "Assembly_Height",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Bu değer girdinin kendisi."
+    },
+    {
+      "id": "prop_Assembly_Width",
+      "description": "Cupboard Assy.SLDASM › özellik 'Assembly Width'",
+      "target": {
+        "kind": "customProperty",
+        "name": "Assembly Width",
+        "key": "customproperty::assembly width",
+        "expectedType": "text"
+      },
+      "expression": "Assembly_Width",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Bu değer girdinin kendisi."
+    },
+    {
+      "id": "prop_Assembly_Depth",
+      "description": "Cupboard Assy.SLDASM › özellik 'Assembly Depth'",
+      "target": {
+        "kind": "customProperty",
+        "name": "Assembly Depth",
+        "key": "customproperty::assembly depth",
+        "expectedType": "text"
+      },
+      "expression": "Assembly_Depth",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Bu değer girdinin kendisi."
+    },
+    {
+      "id": "rep_Cupboard_LeftDoor_Assy_1_Cupboard_LeftDoor_Shaker_Style_1",
+      "description": "Cupboard LeftDoor Assy-1/Cupboard LeftDoor Shaker Style-1 (kullanılan dosya)",
+      "target": {
+        "kind": "componentReplace",
+        "component": "Cupboard LeftDoor Assy-1/Cupboard LeftDoor Shaker Style-1",
+        "key": "componentreplace:cupboard leftdoor assy-1/cupboard leftdoor shaker style-1",
+        "expectedType": "text"
+      },
+      "expression": "Cupboard_LeftDoor_Shaker_Style_1_Dosyasi",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Bu değer girdinin kendisi."
+    },
+    {
+      "id": "prop_Material",
+      "description": "Cupboard Assy.SLDASM › özellik 'Material'",
+      "target": {
+        "kind": "customProperty",
+        "name": "Material",
+        "key": "customproperty::material",
+        "expectedType": "text"
+      },
+      "expression": "Material",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Bu değer girdinin kendisi."
+    },
+    {
+      "id": "dim_Cupboard_LeftEnd_D1_Sketch5",
+      "description": "Cupboard LeftEnd.SLDPRT › D1@Sketch5",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard LeftEnd.SLDPRT",
+        "name": "D1@Sketch5",
+        "key": "dimension:cupboard leftend.sldprt:d1@sketch5",
+        "expectedType": "number"
+      },
+      "expression": "2 * Cupboard_LeftEnd_D1_Sketch3 - 35",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.97,
+      "evidence": "7 varyantta Cupboard LeftEnd.SLDPRT › D1@Sketch3 değeriyle doğrusal ilişki tam uyuyor."
+    },
+    {
+      "id": "dim_Cupboard_RightEnd_D1_Sketch5",
+      "description": "Cupboard RightEnd.SLDPRT › D1@Sketch5",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard RightEnd.SLDPRT",
+        "name": "D1@Sketch5",
+        "key": "dimension:cupboard rightend.sldprt:d1@sketch5",
+        "expectedType": "number"
+      },
+      "expression": "2 * Cupboard_LeftEnd_D1_Sketch3 - 35",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.97,
+      "evidence": "7 varyantta Cupboard LeftEnd.SLDPRT › D1@Sketch3 değeriyle doğrusal ilişki tam uyuyor."
+    },
+    {
+      "id": "dim_Cupboard_Assy_D3_Nail_Pattern_1",
+      "description": "Cupboard Assy.SLDASM › D3@Nail Pattern 1",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Assy.SLDASM",
+        "name": "D3@Nail Pattern 1",
+        "key": "dimension:cupboard assy.sldasm:d3@nail pattern 1",
+        "expectedType": "number"
+      },
+      "expression": "ROUND((Assembly_Height - 68) / (Cupboard_Assy_D1_Nail_Pattern_1 - 1), 2)",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.98,
+      "evidence": "9 varyantta eşit aralık formülü tam uyuyor: aralık = (Assembly_Height - 68) / (Cupboard Assy.SLDASM › D1@Nail Pattern 1 - 1)."
+    },
+    {
+      "id": "dim_Cupboard_Assy_D3_Nail_Pattern_2",
+      "description": "Cupboard Assy.SLDASM › D3@Nail Pattern 2",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Assy.SLDASM",
+        "name": "D3@Nail Pattern 2",
+        "key": "dimension:cupboard assy.sldasm:d3@nail pattern 2",
+        "expectedType": "number"
+      },
+      "expression": "ROUND((Assembly_Width - 18) / (Cupboard_Assy_D1_Nail_Pattern_2 - 1), 2)",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.98,
+      "evidence": "9 varyantta eşit aralık formülü tam uyuyor: aralık = (Assembly_Width - 18) / (Cupboard Assy.SLDASM › D1@Nail Pattern 2 - 1)."
+    },
+    {
+      "id": "dim_Cupboard_Assy_D4_Nail_Pattern_1",
+      "description": "Cupboard Assy.SLDASM › D4@Nail Pattern 1",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Assy.SLDASM",
+        "name": "D4@Nail Pattern 1",
+        "key": "dimension:cupboard assy.sldasm:d4@nail pattern 1",
+        "expectedType": "number"
+      },
+      "expression": "ROUND((Assembly_Width - 18) / (Cupboard_Assy_D1_Nail_Pattern_2 - 1), 2)",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.98,
+      "evidence": "9 varyantta eşit aralık formülü tam uyuyor: aralık = (Assembly_Width - 18) / (Cupboard Assy.SLDASM › D1@Nail Pattern 2 - 1)."
+    },
+    {
+      "id": "dim_Cupboard_Assy_D4_Nail_Pattern_2",
+      "description": "Cupboard Assy.SLDASM › D4@Nail Pattern 2",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard Assy.SLDASM",
+        "name": "D4@Nail Pattern 2",
+        "key": "dimension:cupboard assy.sldasm:d4@nail pattern 2",
+        "expectedType": "number"
+      },
+      "expression": "ROUND((Assembly_Height - 68) / (Cupboard_Assy_D1_Nail_Pattern_1 - 1), 2)",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.98,
+      "evidence": "9 varyantta eşit aralık formülü tam uyuyor: aralık = (Assembly_Height - 68) / (Cupboard Assy.SLDASM › D1@Nail Pattern 1 - 1)."
+    }
+  ]
+}

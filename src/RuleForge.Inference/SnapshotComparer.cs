@@ -102,6 +102,30 @@ namespace RuleForge.Inference
 
             var observations = extractor.Extract(samples);
             var byKey = observations.ToDictionary(o => o.Key, StringComparer.OrdinalIgnoreCase);
+
+            // Bir tarafta bastırılmış, diğer tarafta silinmiş bileşenleri olan montaj belgeleri: DriveWorks bileşeni silince
+            // ona bağlı ilişkileri ve eğrileri de siler; bastırılmış tarafta bunlar durur ama etkisizdir.
+            var deletedIn = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase) // taraf → montaj belgeleri
+            {
+                [ActualName] = new HashSet<string>(StringComparer.OrdinalIgnoreCase),
+                [ExpectedName] = new HashSet<string>(StringComparer.OrdinalIgnoreCase),
+            };
+            foreach (var comp in observations.Where(o => o.Target.Kind == TargetKind.ComponentSuppression))
+            {
+                var path = comp.Target.Component ?? string.Empty;
+                var slash = path.LastIndexOf('/');
+                foreach (var side in new[] { ActualName, ExpectedName })
+                {
+                    var other = side == ActualName ? ExpectedName : ActualName;
+                    // Bu tarafta var ve bastırılmış, diğer tarafta hiç yok (dosya bilgisi yok) → silinmiş.
+                    bool here = byKey.TryGetValue("file:" + path, out var file) && file.Values.ContainsKey(side);
+                    bool there = file != null && file.Values.ContainsKey(other);
+                    if (!here || there || !comp.Values.TryGetValue(side, out var sup) || !sup.AsBool()) continue;
+                    var parentDoc = slash < 0 ? actual.RootDocument
+                        : byKey.TryGetValue("file:" + path.Substring(0, slash), out var parent) && parent.Values.TryGetValue(side, out var pd) ? pd.AsText() : null;
+                    if (parentDoc != null) deletedIn[side].Add(parentDoc);
+                }
+            }
             // Bir dosyanın hiçbir değeri karşı modelde yoksa dosya orada yok demektir (ör. değiştirilmiş parça): tek satır.
             var oneSided = observations.Where(o => o.Target.Document != null && o.Values.Count == 1)
                 .GroupBy(o => o.Target.Document!, StringComparer.OrdinalIgnoreCase)
@@ -118,6 +142,23 @@ namespace RuleForge.Inference
                 o.Values.TryGetValue(ExpectedName, out var e);
                 bool hasA = o.Values.ContainsKey(ActualName), hasE = o.Values.ContainsKey(ExpectedName);
                 if (hasA && hasE && Same(a, e))
+                {
+                    report.Same++;
+                    continue;
+                }
+                // Bir tarafta bastırılmış, diğer tarafta silinmiş bileşen: hangi dosyayı kullandığı önemli değil.
+                if (hasA != hasE && o.Target.Kind == TargetKind.ComponentReplace &&
+                    byKey.TryGetValue("comp:" + o.Target.Component, out var comp) &&
+                    comp.Values.TryGetValue(hasA ? ActualName : ExpectedName, out var suppressed) && suppressed.AsBool())
+                {
+                    report.Same++;
+                    continue;
+                }
+                // Silinmiş bileşenlerin montajında sadece bastırılmış tarafta kalan ilişki/eğri ve ölçüleri.
+                bool inA = hasA && !extractor.DeletedFeatureValues.Contains(o.Key + "\u0001" + ActualName);
+                bool inE = hasE && !extractor.DeletedFeatureValues.Contains(o.Key + "\u0001" + ExpectedName);
+                if (inA != inE && (o.Target.Kind == TargetKind.FeatureSuppression || o.Target.Kind == TargetKind.Dimension) &&
+                    o.Target.Document != null && deletedIn[inA ? ActualName : ExpectedName].Contains(o.Target.Document))
                 {
                     report.Same++;
                     continue;

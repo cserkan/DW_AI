@@ -150,6 +150,7 @@ namespace RuleForge.Inference
             // 8) Kurallar: önce varyant düzeyi (genel değerler + hat montajı), sonra kopya düzeyi (satır değerleri).
             RuleTarget InstanceTarget(Observation o) => MapToMaster(o.Target, split.InstanceReference, instExtractor);
             var usedIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var masterValues = master == null ? null : MasterValues(split.InstanceReference, options, options.MatchByStructure != false);
             var variantCtx = new RuleContext
             {
                 Observations = variantObs,
@@ -161,6 +162,7 @@ namespace RuleForge.Inference
                 ScopeOf = o => IsInstanceObs(o) ? table : null,
                 Tolerance = options.Tolerance,
                 UsedIds = usedIds,
+                MasterValues = masterValues,
             };
             var needs = FindRules(report, variantCtx);
 
@@ -176,6 +178,7 @@ namespace RuleForge.Inference
                 VariableScope = table,
                 Tolerance = options.Tolerance,
                 UsedIds = usedIds,
+                MasterValues = masterValues,
             };
             var rowNeeds = FindRules(report, instCtx);
 
@@ -246,6 +249,9 @@ namespace RuleForge.Inference
                 if (unmatched > 0) notes.Add($"Modül kopyalarında {unmatched} bileşen master'la eşlenemedi.");
             }
             var instObs = mo.InstanceExtractor.Extract(split.Instances);
+            if (mo.InstanceExtractor.UnstableFeatureFamilies.Count > 0)
+                notes.Add("Şu özelliklerin numaraları kopyalar arasında kayıyor; adlarına güvenilemediği için bastırma kuralı çıkarılmadı: " +
+                          string.Join(", ", mo.InstanceExtractor.UnstableFeatureFamilies) + ".");
 
             // Dış kısmın (hat montajı, kopyaların dışındaki parçalar) gözlemleri.
             mo.OuterExtractor = new ObservationExtractor(options);

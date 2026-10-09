@@ -369,7 +369,8 @@ namespace RuleForge.SolidWorks
                             : doc is AssemblyDoc asm ? asm.FeatureByName(t.Name) : null;
                         if (!(found is Feature feature)) throw new InvalidOperationException($"Özellik bulunamadı: {t.Name}");
                         var state = v.AsBool() ? swFeatureSuppressionAction_e.swSuppressFeature : swFeatureSuppressionAction_e.swUnSuppressFeature;
-                        if (!feature.SetSuppression2((int)state, (int)swInConfigurationOpts_e.swThisConfiguration, null))
+                        if (!feature.SetSuppression2((int)state, (int)swInConfigurationOpts_e.swThisConfiguration, null) &&
+                            IsSuppressed(feature) != v.AsBool())
                             throw new InvalidOperationException("Bastırma durumu değiştirilemedi.");
                         Touch(doc);
                         Log(action);
@@ -504,6 +505,12 @@ namespace RuleForge.SolidWorks
                     if (hit != null) return hit;
                 }
                 return null;
+            }
+
+            private static bool IsSuppressed(Feature feature)
+            {
+                var states = feature.IsSuppressed2((int)swInConfigurationOpts_e.swThisConfiguration, null) as bool[];
+                return states != null && states.Length > 0 && states[0];
             }
 
             private void Touch(ModelDoc2 doc) => _modified.Add(doc.GetPathName());

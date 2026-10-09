@@ -28,9 +28,14 @@ namespace RuleForge.Cli
                 foreach (var asm in inputs)
                 {
                     Console.Write($"Okunuyor: {asm} … ");
-                    var snap = extractor.Extract(asm);
+                    // Her varyant ayrı klasördeyse dosya adları aynı olabilir; klasör adını öne ekle ki üst üste yazılmasın.
+                    var stem = Path.GetFileNameWithoutExtension(asm);
+                    var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetFullPath(asm)) ?? string.Empty);
+                    var label = inputs.Count > 1 && !string.IsNullOrEmpty(folder) ? folder + "__" + stem : stem;
+                    foreach (var c in Path.GetInvalidFileNameChars()) label = label.Replace(c, '_');
+                    var snap = extractor.Extract(asm, label);
                     var target = outDir != null
-                        ? Path.Combine(outDir, Path.GetFileNameWithoutExtension(asm) + ".json")
+                        ? Path.Combine(outDir, label + ".json")
                         : single ?? Path.ChangeExtension(asm, ".snapshot.json");
                     JsonStore.Save(snap, target);
                     Console.WriteLine($"{snap.Documents.Count} belge, {snap.Components.Count} bileşen, " +

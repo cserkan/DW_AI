@@ -6,6 +6,8 @@
   .\scripts\extract-variants.ps1 -Folder C:\DriveWorks\Cikti -Pattern "Konveyor*.SLDASM" -Recurse
 
 .NOTES
+  Script çalışmazsa ("bu sistemde komut dosyalarının çalıştırılması devre dışı"): önce şunu yazın, sonra tekrar deneyin:
+      Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
   -Pattern sadece ANA montajları seçmeli; alt montajlar seçilirse onlar da ayrı varyant sanılır.
   SolidWorks açıksa ona bağlanır, değilse arka planda başlatır.
 #>

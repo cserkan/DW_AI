@@ -1,0 +1,21 @@
+Üretilen: uretim\hat0001-deneme1.json
+Beklenen: konveyor\varyantlar\Conveyor assembly 0001__CONVEYOR LİNE 0001.json
+
+KARŞILAŞTIRMA: 844/857 değer aynı, 13 fark.
+
+SADECE BİR MODELDE OLAN DOSYALAR
+  Conveyor Frame-1.SLDASM: sadece üretilen modelde
+  Conveyor Frame-2.SLDASM: sadece üretilen modelde
+  Conveyor Frame-3.SLDASM: sadece üretilen modelde
+  Roller-1.SLDPRT: sadece üretilen modelde
+  Roller-3.SLDPRT: sadece üretilen modelde
+  Conveyor Frame CONVEYOR FRAME-1-0001.SLDASM: sadece beklenen modelde
+  Conveyor Frame CONVEYOR FRAME-2-0001.SLDASM: sadece beklenen modelde
+  Conveyor Frame CONVEYOR FRAME-3-0001.SLDASM: sadece beklenen modelde
+
+KULLANILAN DOSYALAR (parça değişimi) (5)
+  Conveyor Assembly-1-5/Conveyor Bed-1-1/Roller Assembly-1-1/Roller-1-1 (kullanılan dosya): üretilen Roller-1.SLDPRT, beklenen Roller-2.SLDPRT
+  Conveyor Assembly-1-5/Conveyor Frame-1-1 (kullanılan dosya): üretilen Conveyor Frame-1.SLDASM, beklenen Conveyor Frame CONVEYOR FRAME-1-0001.SLDASM
+  Conveyor Assembly-2-8/Conveyor Frame-2-1 (kullanılan dosya): üretilen Conveyor Frame-2.SLDASM, beklenen Conveyor Frame CONVEYOR FRAME-2-0001.SLDASM
+  Conveyor Assembly-3-9/Conveyor Bed-3-1/Roller Assembly-3-1/Roller-3-1 (kullanılan dosya): üretilen Roller-3.SLDPRT, beklenen Roller-2.SLDPRT
+  Conveyor Assembly-3-9/Conveyor Frame-3-1 (kullanılan dosya): üretilen Conveyor Frame-3.SLDASM, beklenen Conveyor Frame CONVEYOR FRAME-3-0001.SLDASM

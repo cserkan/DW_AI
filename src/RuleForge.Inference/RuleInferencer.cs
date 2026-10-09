@@ -265,7 +265,48 @@ namespace RuleForge.Inference
 
             // Varyantlar master'ın birden çok kopyasını (ör. konveyör hattındaki bölümler) içeriyorsa iki katmanlı çıkarım.
             var split = options.DetectModules ? ModuleDetector.Detect(samples, master, options) : null;
-            return split != null ? InferModules(split, options, master) : InferFlat(samples, options, master);
+            var report = split != null ? InferModules(split, options, master) : InferFlat(samples, options, master);
+            ExtendSwitches(report);
+            return report;
+        }
+
+        private static readonly System.Text.RegularExpressions.Regex SwitchCall = new System.Text.RegularExpressions.Regex(
+            @"SWITCH\((?<in>[A-Za-z_][A-Za-z0-9_]*)(?<args>(?:\s*,\s*(?:-?\d+(?:\.\d+)?|""[^""]*""))+)\)");
+
+        private static readonly System.Text.RegularExpressions.Regex SwitchLiteral =
+            new System.Text.RegularExpressions.Regex(@"-?\d+(?:\.\d+)?|""[^""]*""");
+
+        /// <summary>
+        /// Aynı girdiye göre seçim yapan SWITCH'lerden biri diğerinin eksik hâliyse (ortak seçeneklerde aynı sonuç, ama bazı
+        /// girdi değerleri hiç görülmemiş) eksik olan tamamlanır. Örnek: destek parça numarası sadece 40/50 çaplı varyantlarda
+        /// görüldü ("Lİ", "ME"); makara parça numarası aynı kodlamayı 60 için de biliyor ("HE").
+        /// </summary>
+        public static void ExtendSwitches(InferenceReport report)
+        {
+            var calls = new List<(Rule rule, string text, string input, List<(string key, string value)> pairs)>();
+            foreach (var rule in report.Rules)
+                foreach (System.Text.RegularExpressions.Match m in SwitchCall.Matches(rule.Expression ?? string.Empty))
+                {
+                    var literals = SwitchLiteral.Matches(m.Groups["args"].Value).Cast<System.Text.RegularExpressions.Match>().Select(x => x.Value).ToList();
+                    if (literals.Count < 2 || literals.Count % 2 != 0) continue;
+                    var pairs = Enumerable.Range(0, literals.Count / 2).Select(i => (literals[2 * i], literals[2 * i + 1])).ToList();
+                    if (pairs.Select(p => p.Item1).Distinct().Count() != pairs.Count) continue;
+                    calls.Add((rule, m.Value, m.Groups["in"].Value, pairs));
+                }
+
+            foreach (var call in calls)
+            {
+                var keys = call.pairs.ToDictionary(p => p.key, p => p.value);
+                var better = calls
+                    .Where(o => o.input == call.input && o.pairs.Count > call.pairs.Count &&
+                                call.pairs.All(p => o.pairs.Any(q => q.key == p.key && q.value == p.value)))
+                    .OrderByDescending(o => o.pairs.Count).FirstOrDefault();
+                if (better.rule == null) continue;
+                var replacement = $"SWITCH({call.input}, {string.Join(", ", better.pairs.Select(p => p.key + ", " + p.value))})";
+                call.rule.Expression = call.rule.Expression.Replace(call.text, replacement);
+                var added = better.pairs.Where(p => !keys.ContainsKey(p.key)).Select(p => $"{p.key} → {p.value}");
+                call.rule.Evidence += $" Varyantlarda görülmeyen seçenekler '{better.rule.Id}' kuralındaki aynı kodlamadan tamamlandı: {string.Join(", ", added)}.";
+            }
         }
 
         private static InferenceReport InferFlat(IReadOnlyList<VariantSample> samples, InferenceOptions options, ModelSnapshot? master)

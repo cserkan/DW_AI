@@ -56,6 +56,9 @@ namespace RuleForge.Inference
 
         public List<string> Notes { get; set; } = new List<string>();
 
+        /// <summary>Modülün içinde olup her varyantta tüm kopyaların aynı dosyayı kullandığı referans dosyaları (ör. makara).</summary>
+        public List<string> SharedDocuments { get; set; } = new List<string>();
+
         public string VariantOf(string instanceName) =>
             InstanceInfo.First(i => string.Equals(i.Name, instanceName, StringComparison.OrdinalIgnoreCase)).Variant;
 
@@ -156,11 +159,42 @@ namespace RuleForge.Inference
                 split.DocumentMaps[s.Name] = map;
             }
 
+            split.SharedDocuments = SharedDocuments(split, module);
+
             var counts = samples.Select(s => split.InstanceInfo.Count(i => i.Variant == s.Name)).ToList();
             split.Notes.Add($"Tekrarlanan modül bulundu: '{module}'. Varyantlarda {counts.Min()}–{counts.Max()} kopya " +
                             $"(toplam {split.Instances.Count}); her kopya ayrı örnek olarak incelendi." +
                             (wrapper ? " Varyantların kökü kopyaları bir araya getiren ayrı bir montaj; master'da karşılığı yok." : string.Empty));
             return split;
+        }
+
+        /// <summary>
+        /// Kopyalar arasında ortak dosyalar: bir varyantta en az iki kopyada bulunup hepsinde aynı varyant dosyası olan, hiçbir
+        /// varyantta kopyadan kopyaya farklı dosya olmayan referans dosyaları. Kopyada hiç bulunmaması sorun değildir
+        /// (ör. kısa konveyörde DriveWorks desteği silmiş).
+        /// </summary>
+        private static List<string> SharedDocuments(ModuleSplit split, string module)
+        {
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var differs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var variant in split.InstanceInfo.Select(i => i.Variant).Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                // referans dosyası → kopyalarda kullanılan varyant dosyaları
+                var files = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+                foreach (var instance in split.InstancesOf(variant))
+                foreach (var g in split.DocumentMaps[instance.Name].GroupBy(kv => kv.Value, StringComparer.OrdinalIgnoreCase))
+                {
+                    if (!files.TryGetValue(g.Key, out var list)) files[g.Key] = list = new List<string>();
+                    list.AddRange(g.Select(kv => kv.Key));
+                    if (g.Count() > 1) differs.Add(g.Key); // bir kopyanın içinde bile iki farklı dosya
+                }
+                foreach (var kv in files.Where(kv => !string.Equals(kv.Key, module, StringComparison.OrdinalIgnoreCase)))
+                {
+                    if (kv.Value.Distinct(StringComparer.OrdinalIgnoreCase).Count() > 1) differs.Add(kv.Key);
+                    else if (kv.Value.Count >= 2) seen.Add(kv.Key);
+                }
+            }
+            return seen.Except(differs, StringComparer.OrdinalIgnoreCase).OrderBy(d => d, StringComparer.OrdinalIgnoreCase).ToList();
         }
 
         private static bool IsInside(ModelSnapshot reference, string doc, string module)

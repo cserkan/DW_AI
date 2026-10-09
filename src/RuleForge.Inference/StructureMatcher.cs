@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using RuleForge.Core.Model;
 
@@ -20,6 +21,9 @@ namespace RuleForge.Inference
     public static class StructureMatcher
     {
         private const double MinScore = 0.35;
+
+        private static readonly System.Text.RegularExpressions.Regex TrailingNumbers =
+            new System.Text.RegularExpressions.Regex(@"(\s*-\d+)+$", System.Text.RegularExpressions.RegexOptions.Compiled);
 
         /// <summary>İlk iki varyantın dosya adlarının çoğu farklıysa yapısal eşleme gerekir.</summary>
         public static bool IsNeeded(IReadOnlyList<ModelSnapshot> snapshots)
@@ -97,7 +101,9 @@ namespace RuleForge.Inference
             // Ağaçtaki sıra ve örnek numarası (Ayak-1, Ayak-2 ...).
             if (ri == vi) score += 0.3;
             else score += 0.3 * (1 - Math.Abs((double)ri / Math.Max(1, rn - 1) - (double)vi / Math.Max(1, vn - 1)));
-            if (InstanceNumber(rc.Name) == InstanceNumber(vc.Name)) score += 0.2;
+            // Örnek numarası ağaçtaki sıradan daha güvenilir: SolidWorks kopyalarda korur, ağaç sırası ise değişebilir
+            // (ör. hat montajında yer tutucu 5, 8, 9 → DriveWorks ağacında 9, 8, 5 sırasıyla).
+            if (InstanceNumber(rc.Name) == InstanceNumber(vc.Name)) score += 0.4;
 
             // Dosya adı (ya da DriveWorks adından çözülen master adı) aynıysa kesin eşleşme.
             if (string.Equals(MasterName(rc.DocumentKey), MasterName(vc.DocumentKey), StringComparison.OrdinalIgnoreCase)) score += 1.0;
@@ -109,12 +115,22 @@ namespace RuleForge.Inference
 
         private static bool SameBaseName(string reference, string variant)
         {
-            string Base(string name)
+            string Stem(string name)
             {
                 var decoded = DriveWorksNaming.DecodeComponentName(name) ?? name;
                 var dash = decoded.LastIndexOf('-');
-                return DocumentMatcher.Normalize(dash > 0 ? decoded.Substring(0, dash) : decoded).Trim();
+                return dash > 0 ? decoded.Substring(0, dash) : decoded;
             }
+            return SameBase(Stem(reference), Stem(variant));
+        }
+
+        /// <summary>
+        /// İki ad aynı master adını mı taşıyor? Sondaki kopya/sipariş numaraları atılır: "RH Rail Assembly-2" (RuleForge satır
+        /// soneki) ve "RH Rail Assembly RH RAİL ASSEMBLY-2-0001" (DriveWorks) ikisi de "rh rail assembly…" olur.
+        /// </summary>
+        private static bool SameBase(string reference, string variant)
+        {
+            string Base(string stem) => DocumentMatcher.Normalize(TrailingNumbers.Replace(stem, string.Empty)).Trim();
             var r = Base(reference);
             var v = Base(variant);
             if (r.Length == 0 || v.Length == 0) return false;
@@ -134,6 +150,9 @@ namespace RuleForge.Inference
             // (ör. kapak tipine göre başka kapak parçası). İkisi de çözülemiyorsa (rastgele kodlar) yapıya bak.
             if (DriveWorksNaming.DecodeFile(rc.DocumentKey) != null || DriveWorksNaming.DecodeFile(vc.DocumentKey) != null)
                 return true;
+            // Dosya adı (kopya/sipariş numaraları hariç) aynı master adıyla başlıyorsa aynı parçadır; içeriği farklı görünebilir
+            // (ör. DriveWorks bastırılan destekleri ve onların ilişkilerini silmiş): "Conveyor Frame-1" ↔ "Conveyor Frame CONVEYOR FRAME-1-0001".
+            if (SameBase(Path.GetFileNameWithoutExtension(rc.DocumentKey), Path.GetFileNameWithoutExtension(vc.DocumentKey))) return false;
             var rdoc = reference.FindDocument(rc.DocumentKey);
             var vdoc = variant.FindDocument(vc.DocumentKey);
             if (rdoc == null || vdoc == null) return false; // bastırılmış: bilinmiyor

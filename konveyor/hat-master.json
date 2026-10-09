@@ -1,0 +1,457 @@
+{
+  "schemaVersion": 1,
+  "name": "Conveyor Line",
+  "sourcePath": "C:\\Users\\pc\\Downloads\\ConveryoSoloTemplate\\SOLIDWORKS Files\\Conveyor Line.SLDASM",
+  "rootDocument": "Conveyor Line.SLDASM",
+  "solidWorksVersion": "SOLIDWORKS 2026 (34.4.1)",
+  "extractedAtUtc": "2026-10-09T20:39:09.5221219Z",
+  "documents": [
+    {
+      "key": "Conveyor Line.SLDASM",
+      "path": "C:\\Users\\pc\\Downloads\\ConveryoSoloTemplate\\SOLIDWORKS Files\\Conveyor Line.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [],
+      "features": [
+        {
+          "name": "Front Plane",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top Plane",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right Plane",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Mates",
+          "type": "MateGroup",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident1",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident2",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident3",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident4",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident5",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident6",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident7",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident8",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident9",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident11",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident12",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident10",
+          "type": "MateCoincident",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Weight": "0.00"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "Conveyor Dummy 1.SLDASM",
+      "path": "C:\\Users\\pc\\Downloads\\ConveryoSoloTemplate\\SOLIDWORKS Files\\Conveyor Dummy 1.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@RollerTop",
+          "feature": "RollerTop",
+          "fullName": "D1@RollerTop@Conveyor Dummy 1.Assembly",
+          "value": 70,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Front Left",
+          "feature": "Front Left",
+          "fullName": "D1@Front Left@Conveyor Dummy 1.Assembly",
+          "value": 10,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Right",
+          "feature": "Right",
+          "fullName": "D1@Right@Conveyor Dummy 1.Assembly",
+          "value": 10,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Front Right",
+          "feature": "Front Right",
+          "fullName": "D1@Front Right@Conveyor Dummy 1.Assembly",
+          "value": 10,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Left",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "RollerTop",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        },
+        {
+          "name": "Front Left",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Front Right",
+          "type": "RefPlane",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Project": " Project",
+        "Customer": "Customer",
+        "Material": "Material",
+        "Drawn By": "Drawn By",
+        "PartNumber": "PartNumber",
+        "Description": "Description",
+        "Description2": "Description2"
+      },
+      "configurationProperties": {}
+    }
+  ],
+  "components": [
+    {
+      "path": "Conveyor Dummy 1-8",
+      "name": "Conveyor Dummy 1-8",
+      "documentKey": "Conveyor Dummy 1.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Dummy 1-5",
+      "name": "Conveyor Dummy 1-5",
+      "documentKey": "Conveyor Dummy 1.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Dummy 1-9",
+      "name": "Conveyor Dummy 1-9",
+      "documentKey": "Conveyor Dummy 1.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Dummy 1-10",
+      "name": "Conveyor Dummy 1-10",
+      "documentKey": "Conveyor Dummy 1.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Dummy 1-11",
+      "name": "Conveyor Dummy 1-11",
+      "documentKey": "Conveyor Dummy 1.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    }
+  ],
+  "mates": [
+    {
+      "name": "Coincident1",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Dummy 1-5",
+        "Conveyor Dummy 1-8"
+      ]
+    },
+    {
+      "name": "Coincident2",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Dummy 1-5",
+        "Conveyor Dummy 1-8"
+      ]
+    },
+    {
+      "name": "Coincident3",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Dummy 1-5",
+        "Conveyor Dummy 1-8"
+      ]
+    },
+    {
+      "name": "Coincident4",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Dummy 1-8",
+        "Conveyor Dummy 1-9"
+      ]
+    },
+    {
+      "name": "Coincident5",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Dummy 1-8",
+        "Conveyor Dummy 1-9"
+      ]
+    },
+    {
+      "name": "Coincident6",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Dummy 1-8",
+        "Conveyor Dummy 1-9"
+      ]
+    },
+    {
+      "name": "Coincident7",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Dummy 1-9",
+        "Conveyor Dummy 1-10"
+      ]
+    },
+    {
+      "name": "Coincident8",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Dummy 1-9",
+        "Conveyor Dummy 1-10"
+      ]
+    },
+    {
+      "name": "Coincident9",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Dummy 1-9",
+        "Conveyor Dummy 1-10"
+      ]
+    },
+    {
+      "name": "Coincident11",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Dummy 1-10",
+        "Conveyor Dummy 1-11"
+      ]
+    },
+    {
+      "name": "Coincident12",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Dummy 1-10",
+        "Conveyor Dummy 1-11"
+      ]
+    },
+    {
+      "name": "Coincident10",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Dummy 1-10",
+        "Conveyor Dummy 1-11"
+      ]
+    }
+  ],
+  "root": {
+    "key": "Conveyor Line.SLDASM",
+    "path": "C:\\Users\\pc\\Downloads\\ConveryoSoloTemplate\\SOLIDWORKS Files\\Conveyor Line.SLDASM",
+    "kind": "assembly",
+    "activeConfiguration": "Default",
+    "configurations": [
+      "Default"
+    ],
+    "dimensions": [],
+    "features": [
+      {
+        "name": "Front Plane",
+        "type": "RefPlane",
+        "suppressed": false
+      },
+      {
+        "name": "Top Plane",
+        "type": "RefPlane",
+        "suppressed": false
+      },
+      {
+        "name": "Right Plane",
+        "type": "RefPlane",
+        "suppressed": false
+      },
+      {
+        "name": "Mates",
+        "type": "MateGroup",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident1",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident2",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident3",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident4",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident5",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident6",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident7",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident8",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident9",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident11",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident12",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident10",
+        "type": "MateCoincident",
+        "suppressed": false
+      }
+    ],
+    "equations": [],
+    "customProperties": {
+      "Weight": "0.00"
+    },
+    "configurationProperties": {}
+  }
+}

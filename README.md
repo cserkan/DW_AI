@@ -224,8 +224,24 @@ Satırlar komut satırında `Tablo.Sütun=değer1;değer2;...` biçiminde, çift
 & $rf eval --rules kurallar.json --include-proposed Frame_D1_Floor=750 "Conveyor_Assembly.Frame_D1_Overall_Length=2000;1200;600"
 ```
 
-Kopyalı modellerin SolidWorks'te üretimi (kopyaları çoğaltıp hat montajına yerleştirme) henüz yok; `generate`
-bu kural setleri için sadece `--dry-run` ile çalışır.
+Kopyalı modeller de üretilir. `--master` modülün kendisi, `--root` kopyaları toplayan montajdır (DriveWorks
+projesindeki hat montajı; içinde yer tutucu bileşenler vardır):
+
+```powershell
+$t = "C:\...\ConveryoSoloTemplate\SOLIDWORKS Files"
+& $rf generate --rules konveyor\kurallar.json --master "$t\Straight Conveyor\Conveyor Assembly.SLDASM" `
+  --root "$t\Conveyor Line.SLDASM" --out C:\Siparisler\H1 --include-proposed `
+  LH_Rail_D1_bottom=150 Roller_D1_length=761 Roller_D1_Base_Extrude=50 Frame_D1_Floor=556 `
+  "Conveyor_Assembly.Frame_D1_Overall_Length=801;1000;600"
+```
+
+1. Her satır için modül ayrı dosya adlarıyla üretilir (`Conveyor Assembly-1.SLDASM`, `Frame-1.SLDPRT`, `-2`, `-3`…).
+2. Tüm satırlarda aynı dosyayı kullanan parçalar (`infer` bunları `sharedDocuments` olarak yazar; konveyörde makara
+   ve destek) tek dosyaya indirilir: kuralların değer yazdığı ilk satırın kopyası kullanılır.
+3. Kök montaj kopyalanır; yer tutucular örnek numarası sırasıyla (ör. `Conveyor Dummy 1-5`, `-8`, `-9`, `-10`, `-11`)
+   satırların montajlarıyla değiştirilir, artanlar ve onlara bağlı ilişkiler silinir. Sıra farklıysa:
+   `--slots "Ad-5;Ad-8;..."`.
+4. Kök montajın kuralları (ör. kopyalar arası ilişkiler) uygulanır, kaydedilir.
 
 ## Kural dili
 

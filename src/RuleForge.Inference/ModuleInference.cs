@@ -125,7 +125,10 @@ namespace RuleForge.Inference
                 MinRows = counts.Min(),
                 MaxRows = counts.Max(),
                 Description = $"Her satır bir '{split.Document}' kopyası. Varyantlarda {counts.Min()}–{counts.Max()} satır görüldü.",
+                SharedDocuments = split.SharedDocuments,
             };
+            if (split.SharedDocuments.Count > 0)
+                report.Notes.Add($"Tüm {table} satırlarında aynı dosya kullanılıyor (üretimde tek dosya): {string.Join(", ", split.SharedDocuments)}.");
             var rowColumns = new List<InputColumn>();
             for (int i = 0; i < rowDrivers.Count; i++)
             {

@@ -93,6 +93,12 @@ namespace RuleForge.Core.Rules
         /// <summary>Her satırın girdileri (satırdan satıra değişebilen değerler).</summary>
         public List<InputDefinition> Columns { get; set; } = new List<InputDefinition>();
 
+        /// <summary>
+        /// Modülün içinde olup tüm satırlarda aynı dosyayı kullanan parçalar (ör. her konveyörde aynı makara). Üretimde
+        /// bunlar tek dosya olur; satırlar ayrı kopya almaz.
+        /// </summary>
+        public List<string> SharedDocuments { get; set; } = new List<string>();
+
         public int? MinRows { get; set; }
         public int? MaxRows { get; set; }
         public string? Description { get; set; }

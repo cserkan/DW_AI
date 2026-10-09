@@ -22,6 +22,49 @@ namespace RuleForge.SolidWorks
 
         /// <summary>Master kullanıcı tarafından açıksa kapatmaya izin ver (aynı adlı kopya açılamaz).</summary>
         public bool AllowClosingMaster { get; set; } = true;
+
+        /// <summary>
+        /// Kopyalanan tüm dosya adlarına eklenir (ör. "-2": "Frame.SLDPRT" → "Frame-2.SLDPRT"). Aynı modülün birden çok
+        /// kopyası aynı sipariş klasörüne üretilirken kullanılır; kurallar yine master adlarıyla yazılır.
+        /// </summary>
+        public string? FileSuffix { get; set; }
+
+        /// <summary>Çıktı klasöründe başka dosyalar olabilir (ör. hattın diğer kopyaları). Varsayılan: klasör boş olmalı.</summary>
+        public bool AllowNonEmptyOutput { get; set; }
+    }
+
+    /// <summary>
+    /// Tekrarlanan modül içeren ürün (ör. 2–5 konveyörlük hat): modül master'ı her satır için ayrı dosya adlarıyla üretilir,
+    /// sonra kopyaları toplayan montajın (hat master'ı) yer tutucu bileşenleri bu kopyalarla değiştirilir, artanlar silinir.
+    /// DriveWorks projesindeki "&lt;Replace&gt;" / "DELETE" yaklaşımının aynısı.
+    /// </summary>
+    public sealed class LineGenerationRequest
+    {
+        /// <summary>Kopyaları toplayan montaj, ör. "Conveyor Line.SLDASM".</summary>
+        public string RootAssemblyPath { get; set; } = string.Empty;
+
+        /// <summary>Tekrarlanan modülün master'ı, ör. "Conveyor Assembly.SLDASM".</summary>
+        public string ModuleAssemblyPath { get; set; } = string.Empty;
+
+        public string OutputFolder { get; set; } = string.Empty;
+
+        /// <summary>Satır başına eylemler (satır 1 ilk eleman).</summary>
+        public IList<IList<ModelAction>> Rows { get; set; } = new List<IList<ModelAction>>();
+
+        /// <summary>Satıra bağlı olmayan eylemler: hat montajının kendisine uygulanır (ör. kopyalar arası ilişkiler).</summary>
+        public IList<ModelAction> RootActions { get; set; } = new List<ModelAction>();
+
+        /// <summary>
+        /// Satırların yerleşeceği yer tutucu bileşenler sırayla (ör. "Conveyor Dummy 1-5"). Boşsa hat master'ının üst
+        /// seviye bileşenleri örnek numarasına göre sıralanır.
+        /// </summary>
+        public IList<string>? Slots { get; set; }
+
+        /// <summary>Tüm satırlarda aynı dosya olacak modül parçaları (ör. "Roller.SLDPRT"): satır 1'in kopyası kullanılır.</summary>
+        public IList<string> SharedDocuments { get; set; } = new List<string>();
+
+        public bool ExportPdf { get; set; }
+        public bool ExportStep { get; set; }
     }
 
     public sealed class GenerationResult
@@ -34,6 +77,9 @@ namespace RuleForge.SolidWorks
 
         /// <summary>Bu siparişte kullanılmayan dosyalara ait olduğu için uygulanmayan eylemler (hata değildir).</summary>
         public List<string> Skipped { get; } = new List<string>();
+
+        /// <summary>Kuralların değer yazdığı belgelerin yolları.</summary>
+        public HashSet<string> ModifiedDocuments { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         public bool Success => Errors.Count == 0;
     }
@@ -64,14 +110,14 @@ namespace RuleForge.SolidWorks
             var master = Path.GetFullPath(request.MasterAssemblyPath);
             var outDir = Path.GetFullPath(request.OutputFolder);
             Directory.CreateDirectory(outDir);
-            if (Directory.EnumerateFileSystemEntries(outDir).Any())
+            if (!request.AllowNonEmptyOutput && Directory.EnumerateFileSystemEntries(outDir).Any())
             {
                 result.Errors.Add($"Çıktı klasörü boş değil: {outDir}");
                 return result;
             }
 
             var outputName = request.Actions.FirstOrDefault(a => a.Target.Kind == TargetKind.OutputFileName)?.Value.AsText();
-            var copiedRoot = CopyMaster(master, outDir, outputName, request.AllowClosingMaster, result, out var masterStates);
+            var copiedRoot = CopyMaster(master, outDir, outputName, request.AllowClosingMaster, result, out var masterStates, request.FileSuffix);
             if (copiedRoot == null) return result;
             result.AssemblyPath = copiedRoot;
             // Kurallar gereği bastırılacak bileşenler (ve altındakiler); bunların dışında bastırılan bileşen beklenmedik demektir.
@@ -85,7 +131,8 @@ namespace RuleForge.SolidWorks
             try
             {
                 if (root is AssemblyDoc asm) asm.ResolveAllLightWeightComponents(false);
-                var context = new ApplyContext(_session, root, Path.GetFileName(master), outDir, Path.GetDirectoryName(master)!, result);
+                var context = new ApplyContext(_session, root, Path.GetFileName(master), outDir, Path.GetDirectoryName(master)!, result,
+                    request.FileSuffix);
 
                 // Açılış kontrolü: master'da açık olan bileşen kopyada bastırılmış geldiyse ya da çıktı klasörü dışındaki bir
                 // dosyayı kullanıyorsa (ör. aynı adlı dosya başka klasörden bellekte kalmış) üretim yanlış olur.
@@ -136,6 +183,215 @@ namespace RuleForge.SolidWorks
 
             if (request.ExportPdf) ExportDrawings(outDir, result);
             return result;
+        }
+
+        /// <summary>
+        /// Tekrarlanan modüllü ürün: önce her satırın modül kopyası ("-1", "-2"… ekli dosyalarla) üretilir, sonra hat master'ı
+        /// kopyalanır, yer tutucular sırayla bu kopyalarla değiştirilir, artan yer tutucular (ve ilişkileri) silinir.
+        /// </summary>
+        public GenerationResult GenerateLine(LineGenerationRequest request)
+        {
+            var result = new GenerationResult();
+            var rootMaster = Path.GetFullPath(request.RootAssemblyPath);
+            var outDir = Path.GetFullPath(request.OutputFolder);
+            Directory.CreateDirectory(outDir);
+            if (Directory.EnumerateFileSystemEntries(outDir).Any())
+            {
+                result.Errors.Add($"Çıktı klasörü boş değil: {outDir}");
+                return result;
+            }
+            if (request.Rows.Count == 0)
+            {
+                result.Errors.Add("Hiç satır yok: en az bir modül kopyası gerekir.");
+                return result;
+            }
+
+            // 1) Satırlar: her biri modül master'ının kendi sonekli kopyası.
+            var rowAssemblies = new List<string>();
+            var rowResults = new List<GenerationResult>();
+            for (int i = 0; i < request.Rows.Count; i++)
+            {
+                var row = Generate(new GenerationRequest
+                {
+                    MasterAssemblyPath = request.ModuleAssemblyPath,
+                    OutputFolder = outDir,
+                    Actions = request.Rows[i],
+                    FileSuffix = "-" + (i + 1),
+                    AllowNonEmptyOutput = true,
+                });
+                var tag = $"[satır {i + 1}] ";
+                result.Log.AddRange(row.Log.Select(l => tag + l));
+                result.Warnings.AddRange(row.Warnings.Select(l => tag + l));
+                result.Errors.AddRange(row.Errors.Select(l => tag + l));
+                result.Skipped.AddRange(row.Skipped.Select(l => tag + l));
+                if (!row.Success) return result;
+                rowAssemblies.Add(row.AssemblyPath);
+                rowResults.Add(row);
+            }
+            ShareDocuments(request.SharedDocuments, rowResults, outDir, result);
+
+            // 2) Hat master'ı.
+            var copiedRoot = CopyMaster(rootMaster, outDir, null, true, result, out var rootStates);
+            if (copiedRoot == null) return result;
+            result.AssemblyPath = copiedRoot;
+
+            var app = _session.App;
+            var root = _session.Open(copiedRoot);
+            app.CommandInProgress = true;
+            try
+            {
+                var asm = (AssemblyDoc)root;
+                asm.ResolveAllLightWeightComponents(false);
+                var slots = request.Slots?.ToList() ?? TopLevel(asm)
+                    .OrderBy(c => InstanceNumber(c.Name2)).Select(c => c.Name2).ToList();
+                if (slots.Count < request.Rows.Count)
+                {
+                    result.Errors.Add($"Hat master'ında {slots.Count} yer tutucu var ama {request.Rows.Count} satır istendi: " + string.Join(", ", slots));
+                    return result;
+                }
+                var featuresBefore = AllFeatureNames(root);
+
+                for (int i = 0; i < slots.Count; i++)
+                {
+                    var comp = TopLevel(asm).FirstOrDefault(c => string.Equals(c.Name2, slots[i], StringComparison.OrdinalIgnoreCase));
+                    if (comp == null)
+                    {
+                        result.Errors.Add($"Yer tutucu bulunamadı: {slots[i]}. Mevcut: " + string.Join(", ", TopLevel(asm).Select(c => c.Name2)));
+                        return result;
+                    }
+                    root.ClearSelection2(true);
+                    comp.Select4(false, null, false);
+                    if (i < rowAssemblies.Count)
+                    {
+                        if (!asm.ReplaceComponents(rowAssemblies[i], "", false, true))
+                        {
+                            result.Errors.Add($"{slots[i]} → {Path.GetFileName(rowAssemblies[i])} değiştirilemedi.");
+                            return result;
+                        }
+                        result.Log.Add($"{slots[i]} → {Path.GetFileName(rowAssemblies[i])}");
+                    }
+                    else
+                    {
+                        if (!root.Extension.DeleteSelection2((int)swDeleteSelectionOptions_e.swDelete_Absorbed) &&
+                            TopLevel(asm).Any(c => string.Equals(c.Name2, slots[i], StringComparison.OrdinalIgnoreCase)))
+                        {
+                            result.Errors.Add($"{slots[i]} silinemedi.");
+                            return result;
+                        }
+                        result.Log.Add($"{slots[i]} silindi (kullanılmayan yer tutucu)");
+                    }
+                }
+                root.ClearSelection2(true);
+
+                var context = new ApplyContext(_session, root, Path.GetFileName(rootMaster), outDir, Path.GetDirectoryName(rootMaster)!, result);
+                context.DeletedFeatures.UnionWith(featuresBefore.Except(AllFeatureNames(root), StringComparer.OrdinalIgnoreCase));
+                // Kurallar hat montajını DriveWorks'ün verdiği adla (ör. "CONVEYOR LİNE 0001.SLDASM") anabilir.
+                foreach (var a in request.RootActions)
+                    if (a.Target.Document != null && !File.Exists(Path.Combine(Path.GetDirectoryName(rootMaster)!, a.Target.Document)))
+                        context.RootAliases.Add(a.Target.Document);
+                foreach (var action in request.RootActions.OrderBy(a => Order(a.Target.Kind)))
+                {
+                    try
+                    {
+                        context.Apply(action);
+                    }
+                    catch (SkippedActionException ex)
+                    {
+                        result.Skipped.Add($"{action.Rule.Id}: {ex.Message}");
+                    }
+                    catch (Exception ex)
+                    {
+                        result.Errors.Add($"{action.Rule.Id} ({action.Target}): {ex.Message}");
+                    }
+                }
+
+                root.ForceRebuild3(false);
+                int whatsWrong = root.Extension.GetWhatsWrongCount();
+                if (whatsWrong > 0)
+                    result.Warnings.Add($"Hat montajında rebuild sonrası {whatsWrong} hata/uyarı var: {WhatsWrong(root)}");
+                int errors = 0, warnings = 0;
+                var saveOptions = (int)(swSaveAsOptions_e.swSaveAsOptions_Silent | swSaveAsOptions_e.swSaveAsOptions_SaveReferenced);
+                if (!root.Save3(saveOptions, ref errors, ref warnings))
+                    result.Errors.Add($"Hat montajı kaydedilemedi (swFileSaveError_e = {errors}).");
+                else
+                    result.Log.Add("Kaydedildi: " + copiedRoot);
+                if (request.ExportStep) Export(root, Path.ChangeExtension(copiedRoot, ".step"), null, result);
+            }
+            finally
+            {
+                app.CommandInProgress = false;
+                _session.Close(copiedRoot);
+            }
+
+            if (request.ExportPdf) ExportDrawings(outDir, result);
+            return result;
+        }
+
+        /// <summary>
+        /// Ortak parçalar: tüm satırların dosyaları, kuralların değer yazdığı ilk satırın kopyasını kullanacak şekilde (dosyalar
+        /// kapalıyken) yeniden bağlanır; artık kullanılmayan kopyalar ve teknik resimleri silinir. Hiçbir satırda değer
+        /// yazılmadıysa (ör. tüm desteklar bastırılmış) satır 1'in kopyası kullanılır.
+        /// </summary>
+        private void ShareDocuments(IList<string> shared, IList<GenerationResult> rows, string outDir, GenerationResult result)
+        {
+            foreach (var key in shared)
+            {
+                string Copy(int row) => Path.Combine(outDir, Path.GetFileNameWithoutExtension(key) + "-" + row + Path.GetExtension(key));
+                var canonicalRow = Enumerable.Range(1, rows.Count).FirstOrDefault(r => rows[r - 1].ModifiedDocuments.Contains(Copy(r)));
+                if (canonicalRow == 0) canonicalRow = 1;
+                var first = Copy(canonicalRow);
+                if (!File.Exists(first))
+                {
+                    result.Warnings.Add($"Ortak parça {key}: satır {canonicalRow} kopyası bulunamadı ({Path.GetFileName(first)}); satırlar ayrı kopya kullanıyor.");
+                    continue;
+                }
+                for (int row = 1; row <= rows.Count; row++)
+                {
+                    if (row == canonicalRow) continue;
+                    var own = Copy(row);
+                    if (!File.Exists(own)) continue;
+                    if (_session.App.GetOpenDocumentByName(own) != null) _session.ForceClose(own);
+                    int relinked = 0;
+                    var suffix = "-" + row;
+                    foreach (var file in Directory.GetFiles(outDir).Where(f =>
+                                 Path.GetFileNameWithoutExtension(f).EndsWith(suffix, StringComparison.OrdinalIgnoreCase) &&
+                                 !string.Equals(f, own, StringComparison.OrdinalIgnoreCase) &&
+                                 (f.EndsWith(".SLDASM", StringComparison.OrdinalIgnoreCase) || f.EndsWith(".SLDDRW", StringComparison.OrdinalIgnoreCase))))
+                        if (_session.App.ReplaceReferencedDocument(file, own, first)) relinked++;
+                    if (relinked == 0)
+                    {
+                        result.Warnings.Add($"Ortak parça {key}: satır {row} dosyalarında {Path.GetFileName(own)} referansı bulunamadı; ayrı kopya kaldı.");
+                        continue;
+                    }
+                    File.Delete(own);
+                    var drawing = Path.ChangeExtension(own, ".SLDDRW");
+                    if (File.Exists(drawing)) File.Delete(drawing);
+                    result.Log.Add($"Ortak parça: satır {row} {Path.GetFileName(own)} yerine {Path.GetFileName(first)} kullanıyor ({relinked} dosya).");
+                }
+            }
+        }
+
+        private static IEnumerable<Component2> TopLevel(AssemblyDoc asm) =>
+            (asm.GetComponents(true) as object[] ?? new object[0]).OfType<Component2>();
+
+        /// <summary>"Conveyor Dummy 1-8" → 8 (sıralama için; numara yoksa en sona).</summary>
+        internal static int InstanceNumber(string name)
+        {
+            var dash = name.LastIndexOf('-');
+            return dash >= 0 && int.TryParse(name.Substring(dash + 1), out var n) ? n : int.MaxValue;
+        }
+
+        /// <summary>Belgedeki tüm özellik adları, alt özellikler (ör. ilişkiler klasöründeki mate'ler) dahil.</summary>
+        private static HashSet<string> AllFeatureNames(ModelDoc2 doc)
+        {
+            var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            void Walk(Feature f)
+            {
+                names.Add(f.Name);
+                for (var sub = f.GetFirstSubFeature() as Feature; sub != null; sub = sub.GetNextSubFeature() as Feature) Walk(sub);
+            }
+            for (var f = doc.FirstFeature() as Feature; f != null; f = f.GetNextFeature() as Feature) Walk(f);
+            return names;
         }
 
         /// <summary>Bileşen adı ("Alt-1/Parca-2") → bastırılmış mı.</summary>
@@ -190,7 +446,7 @@ namespace RuleForge.SolidWorks
 
         /// <summary>Pack and Go: montaj + parçalar + aynı adlı teknik resimler tek klasöre kopyalanır.</summary>
         private string? CopyMaster(string master, string outDir, string? outputName, bool allowClose, GenerationResult result,
-            out Dictionary<string, bool> masterStates)
+            out Dictionary<string, bool> masterStates, string? suffix = null)
         {
             var app = _session.App;
             bool wasOpen = app.GetOpenDocumentByName(master) != null;
@@ -203,8 +459,9 @@ namespace RuleForge.SolidWorks
             pack.IncludeToolboxComponents = false;
             pack.FlattenToSingleFolder = true;
             pack.SetSaveToName(true, outDir);
+            if (!string.IsNullOrEmpty(suffix)) pack.AddSuffix = suffix;
 
-            string newRoot = Path.Combine(outDir, Path.GetFileName(master));
+            string newRoot = Path.Combine(outDir, Path.GetFileNameWithoutExtension(master) + suffix + Path.GetExtension(master));
             if (!string.IsNullOrWhiteSpace(outputName))
             {
                 pack.GetDocumentSaveToNames(out object namesObj, out object _);
@@ -333,9 +590,16 @@ namespace RuleForge.SolidWorks
             private readonly GenerationResult _result;
             private readonly HashSet<string> _modified = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             private Dictionary<string, Component2>? _components;
+            private readonly string _suffix;
+
+            /// <summary>Kökü gösteren diğer belge adları (ör. kurallarda DriveWorks'ün verdiği hat montajı adı).</summary>
+            public HashSet<string> RootAliases { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            /// <summary>Kopyayla birlikte silinen özellikler (ör. silinen konveyörün ilişkileri): bunlara ait eylemler atlanır.</summary>
+            public HashSet<string> DeletedFeatures { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             public ApplyContext(SwSession session, ModelDoc2 root, string masterRootKey, string outDir, string masterDir,
-                GenerationResult result)
+                GenerationResult result, string? suffix = null)
             {
                 _session = session;
                 _root = root;
@@ -343,6 +607,25 @@ namespace RuleForge.SolidWorks
                 _outDir = outDir;
                 _masterDir = masterDir;
                 _result = result;
+                _suffix = suffix ?? string.Empty;
+            }
+
+            /// <summary>
+            /// Kopyadaki bileşen adını master adına çevirir: dosya adına sonek eklenince SolidWorks bileşen adını da değiştirir
+            /// ("Conveyor Frame-2-1/Support-2-3" → "Conveyor Frame-1/Support-3").
+            /// </summary>
+            private string MasterName(string name)
+            {
+                if (_suffix.Length == 0) return name;
+                return string.Join("/", name.Split('/').Select(segment =>
+                {
+                    var dash = segment.LastIndexOf('-');
+                    if (dash <= 0) return segment;
+                    var stem = segment.Substring(0, dash);
+                    return stem.EndsWith(_suffix, StringComparison.OrdinalIgnoreCase)
+                        ? stem.Substring(0, stem.Length - _suffix.Length) + segment.Substring(dash)
+                        : segment;
+                }));
             }
 
             public void Apply(ModelAction action)
@@ -394,6 +677,12 @@ namespace RuleForge.SolidWorks
                         var doc = Document(t.Document);
                         object? found = doc is PartDoc part ? part.FeatureByName(t.Name)
                             : doc is AssemblyDoc asm ? asm.FeatureByName(t.Name) : null;
+                        if (!(found is Feature) && ReferenceEquals(doc, _root) && DeletedFeatures.Contains(t.Name!))
+                        {
+                            if (!v.AsBool())
+                                _result.Warnings.Add($"{t}: kural açık olmasını istiyor ama silinen kopyayla birlikte silindi.");
+                            throw new SkippedActionException($"{t.Name} silinen kopyayla birlikte silindi.");
+                        }
                         if (!(found is Feature feature)) throw new InvalidOperationException($"Özellik bulunamadı: {t.Name}");
                         var state = v.AsBool() ? swFeatureSuppressionAction_e.swSuppressFeature : swFeatureSuppressionAction_e.swUnSuppressFeature;
                         if (!feature.SetSuppression2((int)state, (int)swInConfigurationOpts_e.swThisConfiguration, null) &&
@@ -539,7 +828,7 @@ namespace RuleForge.SolidWorks
             {
                 foreach (var c in AllComponents())
                 {
-                    if (masterStates.TryGetValue(c.Name2, out var wasSuppressed) && !wasSuppressed && c.IsSuppressed())
+                    if (masterStates.TryGetValue(MasterName(c.Name2), out var wasSuppressed) && !wasSuppressed && c.IsSuppressed())
                     {
                         c.SetSuppression2((int)swComponentSuppressionState_e.swComponentFullyResolved);
                         if (c.IsSuppressed())
@@ -561,7 +850,7 @@ namespace RuleForge.SolidWorks
             {
                 foreach (var c in AllComponents())
                 {
-                    var name = c.Name2;
+                    var name = MasterName(c.Name2);
                     if (!masterStates.TryGetValue(name, out var wasSuppressed) || wasSuppressed || !c.IsSuppressed()) continue;
                     if (allowed.Any(a => string.Equals(a, name, StringComparison.OrdinalIgnoreCase) ||
                                          name.StartsWith(a + "/", StringComparison.OrdinalIgnoreCase)))
@@ -586,7 +875,11 @@ namespace RuleForge.SolidWorks
                 return states != null && states.Length > 0 && states[0];
             }
 
-            private void Touch(ModelDoc2 doc) => _modified.Add(doc.GetPathName());
+            private void Touch(ModelDoc2 doc)
+            {
+                _modified.Add(doc.GetPathName());
+                _result.ModifiedDocuments.Add(doc.GetPathName());
+            }
 
             private void Log(ModelAction action) => _result.Log.Add($"{action.Target} = {action.Value}");
 
@@ -596,9 +889,10 @@ namespace RuleForge.SolidWorks
             /// </summary>
             private ModelDoc2 Document(string? key)
             {
-                if (string.IsNullOrWhiteSpace(key) || string.Equals(key, _masterRootKey, StringComparison.OrdinalIgnoreCase))
+                if (string.IsNullOrWhiteSpace(key) || string.Equals(key, _masterRootKey, StringComparison.OrdinalIgnoreCase) ||
+                    RootAliases.Contains(key!))
                     return _root;
-                var path = Path.Combine(_outDir, key);
+                var path = Path.Combine(_outDir, Path.GetFileNameWithoutExtension(key) + _suffix + Path.GetExtension(key));
                 if (_session.App.GetOpenDocumentByName(path) is ModelDoc2 open) return open;
                 throw new SkippedActionException(File.Exists(path)
                     ? $"{key} bu siparişte sadece bastırılmış bileşenlerde ya da hiç kullanılmıyor."
@@ -634,7 +928,11 @@ namespace RuleForge.SolidWorks
                     _components = new Dictionary<string, Component2>(StringComparer.OrdinalIgnoreCase);
                     if (((AssemblyDoc)_root).GetComponents(false) is object[] all)
                         foreach (Component2 c in all)
+                        {
                             _components[c.Name2] = c;
+                            var masterName = MasterName(c.Name2);
+                            if (!_components.ContainsKey(masterName)) _components[masterName] = c;
+                        }
                 }
                 if (_components.TryGetValue(path, out var comp)) return comp;
                 throw new InvalidOperationException($"Bileşen bulunamadı: {path}");

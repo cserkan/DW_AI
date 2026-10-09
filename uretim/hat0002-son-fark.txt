@@ -1,0 +1,5 @@
+Üretilen: uretim\hat0002-son.json
+Beklenen: C:\Users\pc\Documents\DW_AI\konveyor\varyantlar\Conveyor assembly 0002__CONVEYOR LİNE 0002.json
+
+KARŞILAŞTIRMA: 952/952 değer aynı, 0 fark.
+Not: İki model karşılaştırılan tüm değerlerde aynı.

@@ -370,6 +370,21 @@ namespace RuleForge.Tests
         }
 
         [Fact]
+        public void IncompleteSwitchIsCompletedFromSameCoding()
+        {
+            // Konveyör: destek parça numarası sadece 40/50 çaplı varyantlarda görüldü; makaradaki aynı kodlama 60'ı da biliyor.
+            // Farklı sonuçlu SWITCH (Light/Medium) karışmamalı.
+            var report = new InferenceReport();
+            report.Rules.Add(new Rule { Id = "destek", Expression = "\"CS-\" & SWITCH(Cap, 40, \"Lİ\", 50, \"ME\")" });
+            report.Rules.Add(new Rule { Id = "makara", Expression = "\"R-\" & SWITCH(Cap, 40, \"Lİ\", 50, \"ME\", 60, \"HE\")" });
+            report.Rules.Add(new Rule { Id = "aciklama", Expression = "SWITCH(Cap, 40, \"Light\", 50, \"Medium\")" });
+            RuleInferencer.ExtendSwitches(report);
+            Assert.Equal("\"CS-\" & SWITCH(Cap, 40, \"Lİ\", 50, \"ME\", 60, \"HE\")", report.Rules[0].Expression);
+            Assert.Contains("makara", report.Rules[0].Evidence);
+            Assert.Equal("SWITCH(Cap, 40, \"Light\", 50, \"Medium\")", report.Rules[2].Expression);
+        }
+
+        [Fact]
         public void ValueSeenOnlyInSomeVariantsFollowsMatchingInput()
         {
             // Dolap testindeki Framed kapak: özellik sadece bazı varyantlarda var ve hepsinde aynı ("Sol"), ama değişen bir

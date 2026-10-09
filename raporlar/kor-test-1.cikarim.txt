@@ -320,9 +320,30 @@ AÇIKLANAMAYAN DEĞİŞİMLER
 SORULAR
   - "Cupboard Assy.SLDASM › özellik 'Material'" ile "Cupboard LeftDoor Assy-1/Bedroom Knob Oak-6 (kullanılan dosya)" varyantlarda hep birlikte değişti. İkisi aynı girdiden mi geliyor, yoksa ayrı girdiler mi (ör. ayrı bir seçim alanı)? Veriler bunu ayırt etmiyor; ayırt etmek için birini değiştirip diğerini sabit tutan bir varyant ekleyin.
   - Assembly_Height için 7 kural aynı eşiği kullanıyor (sup_Cupboard_Left_End_Assy_1_Shelf_Peg1_3, sup_Cupboard_Left_End_Assy_1_Shelf_Peg1_4, sup_Cupboard_Right_End_Assy_1_Shelf_Peg1_3, sup_Cupboard_Right_End_Assy_1_Shelf_Peg1_4 …). Veriler 569 ile 800 arasındaki her değeri destekliyor; şimdilik 750 seçildi. Gerçek eşik nedir? ('Assembly_Height_Esigi' değişkenini değiştirmek hepsini düzeltir.)
+  - 5 kuralın eşiğini hangi girdi belirliyor: Assembly_Height / Assembly_Depth? Mevcut varyantlarda ikisi de veriyi aynı şekilde ayırıyor.
   - dim_Cupboard_Assy_D3_Adj_Shelf_Pattern: Yuvarlama formülü kesin mi? Veriyle uyumlu diğerleri de var (ör. ROUND((Assembly_Height - 86) / 3)).
   - dim_Cupboard_LeftDoor_Shaker_Style_D1_Bottom_Plane, dim_Cupboard_RightDoor_Shaker_Style_D1_Bottom_Plane: Sadece 2 farklı Assembly_Height değeri var; iki noktadan her zaman bir doğru geçer, daha fazla varyantla doğrulanmalı.
   - dim_Cupboard_LeftDoor_Shaker_Style_D1_Left_Plane, dim_Cupboard_RightDoor_Shaker_Style_D1_Left_Plane: Sadece 2 farklı Assembly_Width değeri var; iki noktadan her zaman bir doğru geçer, daha fazla varyantla doğrulanmalı.
+
+ÖNERİLEN YENİ VARYANTLAR (bunları DriveWorks'te üretip aynı komutu tekrar çalıştırın)
+  ONERI01:  Assembly_Height = 625,  Assembly_Width = 810,  Assembly_Depth = 480,  Cupboard_LeftDoor_Shaker_Style_1_Dosyasi = Cupboard LeftDoor Framed.SLDPRT,  Material = Maple
+      · Assembly_Height = 625: Assembly_Height eşiği 569–800 arasında; bu değerler aralığı daraltır (7 kural: Assembly_Height_Esigi).
+      · Assembly_Width = 810: dim_Cupboard_LeftDoor_Shaker_Style_D1_Left_Plane sadece 2 farklı Assembly_Width değerine dayanıyor; ara değer formülün doğru çizgi olduğunu doğrular.
+      · Material = Maple: Material = Maple sadece 1 varyantta var; bu seçeneğe bağlı kurallar tek örneğe dayanıyor.
+      · Assembly_Depth = 480: Assembly_Depth değerlerinde 355 ile 600 arası boş; bu aralıkta davranış bilinmiyor.
+  ONERI02:  Assembly_Height = 685,  Assembly_Width = 1090,  Assembly_Depth = 770,  Cupboard_LeftDoor_Shaker_Style_1_Dosyasi = Cupboard LeftDoor Shaker Style.SLDPRT,  Material = Mahogany
+      · Assembly_Height = 685: Assembly_Height eşiği 569–800 arasında; bu değerler aralığı daraltır (7 kural: Assembly_Height_Esigi).
+      · Material = Mahogany: Material = Mahogany sadece 1 varyantta var; bu seçeneğe bağlı kurallar tek örneğe dayanıyor.
+      · Assembly_Width = 1090: Assembly_Width değerlerinde 878 ile 1300 arası boş; bu aralıkta davranış bilinmiyor.
+  ONERI03:  Assembly_Height = 740,  Assembly_Width = 1090,  Assembly_Depth = 320,  Cupboard_LeftDoor_Shaker_Style_1_Dosyasi = Cupboard LeftDoor.SLDPRT,  Material = Mahogany
+      · Assembly_Height = 740: Assembly_Height eşiği 569–800 arasında; bu değerler aralığı daraltır (7 kural: Assembly_Height_Esigi).
+  ONERI04:  Assembly_Height = 515,  Assembly_Width = 1340,  Assembly_Depth = 500,  Cupboard_LeftDoor_Shaker_Style_1_Dosyasi = Cupboard LeftDoor Framed.SLDPRT,  Material = Maple
+      · Assembly_Height = 515, Assembly_Depth = 500: eşiği belirleyen girdi hangisi: Assembly_Height / Assembly_Depth? Mevcut varyantlarda ikisi de sonucu aynı şekilde ayırıyor (5 kural); bu iki varyantta ikisi birbirine zıt sonuç verir.
+  ONERI05:  Assembly_Height = 875,  Assembly_Width = 920,  Assembly_Depth = 820,  Cupboard_LeftDoor_Shaker_Style_1_Dosyasi = Cupboard LeftDoor Shaker Style.SLDPRT,  Material = Oak
+      · Assembly_Height = 875, Assembly_Depth = 820: eşiği belirleyen girdi hangisi: Assembly_Height / Assembly_Depth? Mevcut varyantlarda ikisi de sonucu aynı şekilde ayırıyor (5 kural); bu iki varyantta ikisi birbirine zıt sonuç verir.
+  ONERI06:  Assembly_Height = 700,  Assembly_Width = 1170,  Assembly_Depth = 680,  Cupboard_LeftDoor_Shaker_Style_1_Dosyasi = Cupboard LeftDoor.SLDPRT,  Material = Mahogany
+      · Assembly_Height = 700: dim_Cupboard_LeftDoor_Shaker_Style_D1_Bottom_Plane sadece 2 farklı Assembly_Height değerine dayanıyor; ara değer formülün doğru çizgi olduğunu doğrular.
+  Elle: "Cupboard Assy.SLDASM › özellik 'Material'" ile "Cupboard LeftDoor Assy-1/Bedroom Knob Oak-6 (kullanılan dosya)" varyantlarda hep birlikte değişti. İkisi aynı girdiden mi geliyor, yoksa ayrı girdiler mi (ör. ayrı bir seçim alanı)? Veriler bunu ayırt etmiyor; ayırt etmek için birini değiştirip diğerini sabit tutan bir varyant ekleyin.
 
 DEĞİŞEN DEĞERLER (100)
   Cupboard LeftDoor Assy-1/Cupboard LeftDoor Shaker Style-1 (konfigürasyon): "Default" / "Base Single"

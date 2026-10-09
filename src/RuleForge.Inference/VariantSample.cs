@@ -52,5 +52,12 @@ namespace RuleForge.Inference
         public string CalculatedPropertyPattern { get; set; } =
             @"^(weight|mass|ağırlık|agirlik|kütle|kutle|volume|hacim|density|yoğunluk|yogunluk|surface ?area|yüzey ?alanı)$";
         public bool IncludeFeatureSuppression { get; set; } = true;
+
+        public InferenceOptions Clone()
+        {
+            var c = (InferenceOptions)MemberwiseClone();
+            c.InputObservations = new Dictionary<string, string>(InputObservations, StringComparer.OrdinalIgnoreCase);
+            return c;
+        }
     }
 }

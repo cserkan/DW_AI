@@ -136,10 +136,15 @@ namespace RuleForge.Inference
         private static bool Better(int count, Observation candidate, int bestCount, Observation best)
         {
             if (count != bestCount) return count > bestCount;
+            // Eşitlikte: önce girdiye yatkın tür (özellik/global değişken), sonra "yuvarlak" değerler.
+            // Böylece doğrusal eşdeğer adaylar (Yükseklik, Yükseklik − 50) arasında seçim varyant setine göre değişmez.
+            var p1 = Priority(candidate);
+            var p2 = Priority(best);
+            if (p1 != p2) return p1 < p2;
             var r1 = Roundness(candidate);
             var r2 = Roundness(best);
             if (Math.Abs(r1 - r2) > 1e-9) return r1 > r2;
-            return Priority(candidate) < Priority(best);
+            return string.CompareOrdinal(candidate.Key, best.Key) < 0;
         }
 
         private static double Roundness(Observation o)

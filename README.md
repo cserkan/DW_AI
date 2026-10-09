@@ -164,6 +164,33 @@ Kuralları onaylama yetkisi sadece kullanıcıdadır.
 4. Rebuild eder ve kaydeder.
 5. İstenirse PDF ve STEP olarak dışa aktarır.
 
+## Her montaj setinde çalışması için: güvenilirlik ve bir sonraki varyantlar
+
+Program varyantlardan sadece **veriyle desteklenenleri** öğrenebilir. Bu yüzden iki araç, bilmediğini bilir ve çözümünü söyler.
+
+**1. Yeni varyant önerisi (`infer` kendiliğinden yapar).** Belirsiz kalan her nokta için hangi girdi değerlerinin DriveWorks'te
+üretilmesi gerektiğini söyler ve bunları girdi tablosu olarak `kurallar.oneriler.csv` dosyasına yazar:
+
+| Belirsizlik | Önerilen varyant |
+|---|---|
+| Eşik iki değer arasında (569–800) | Aralığı daraltan değerler (625, 685, 740); aralık daralınca sınırın dahil olup olmadığını gösteren tam eşik ve +1 |
+| Eşiği iki girdiden hangisi belirliyor? | İkisi birbirine zıt sonuç verecek iki varyant (biri düşük, diğeri yüksek) |
+| Adet formülündeki sabit belirsiz (`Boy − 68` mi `− 66` mı) | Adedin değiştiği sınırdaki girdi değerleri |
+| Formül sadece 2 noktaya dayanıyor | Ara bir değer |
+| Bir seçenek sadece 1 varyantta var | O seçenekle bir varyant daha |
+| Girdi aralığında büyük boşluk | Boşluğun ortası |
+| İki girdi hep birlikte değişiyor | Önerilen varyantlarda girdiler birbirinden bağımsız seçilir (Halton dizisi) |
+
+Önerilen varyantları DriveWorks'te üretip aynı komutu tekrar çalıştırın; belirsizlikler her turda daralır.
+
+**2. Çapraz doğrulama (`crossval`).** Cevap anahtarı olmadan kuralların yeni girdilerde ne kadar işe yaradığını ölçer:
+her varyant sırayla çıkarılır, kurallar kalanlardan öğrenilir, çıkarılan varyantın değerleri tahmin edilip gerçekle karşılaştırılır.
+Çıktı: genel doğruluk, her tur için sonuç ve **riskli kurallar** (yanlış çıkan, kararsız kalan).
+
+```powershell
+& $rf crossval varyantlar --master master.json -o capraz-dogrulama.txt
+```
+
 ## Kural dili
 
 Excel'e benzer. Adlar büyük/küçük harf duyarsızdır. Açılar **derece**, uzunluklar **mm** cinsindendir.

@@ -24,6 +24,9 @@ Kullanım: ruleforge <komut> [seçenekler]
   infer     <snapshot.json... | klasör> [--inputs girdiler.csv] [--master master.json]
             [--name-pattern REGEX] [--input Ad=gözlem_anahtarı] [-o kurallar.json]
             Varyantlardan kural önerileri çıkarır (deterministik).
+  crossval  <snapshot.json... | klasör> [infer ile aynı seçenekler] [-o rapor.txt]
+            Her varyantı sırayla çıkarıp kuralları kalanlardan öğrenir, çıkarılanı tahmin eder.
+            Cevap anahtarı olmadan kuralların yeni girdilerde ne kadar güvenilir olduğunu ölçer.
   chat      --rules kurallar.json [--snapshot master.json] [--report cikarim.txt] [--effort high]
             Claude ile sohbet ederek kural yazar/düzeltir. ANTHROPIC_API_KEY gerekir.
   validate  --rules kurallar.json [--snapshot master.json]
@@ -63,6 +66,7 @@ Kullanım: ruleforge <komut> [seçenekler]
                     case "extract-variants": return SolidWorksCommands.ExtractVariants(new Args(rest, "visible", "list"));
                     case "generate": return SolidWorksCommands.Generate(new Args(rest, "pdf", "step", "include-proposed", "visible", "dry-run"));
                     case "infer": return InferCommand.Run(new Args(rest));
+                    case "crossval": return InferCommand.CrossValidate(new Args(rest));
                     case "chat": return await ChatCommand.RunAsync(new Args(rest)).ConfigureAwait(false);
                     case "validate": return Validate(new Args(rest));
                     case "approve": return Approve(new Args(rest, "all"));

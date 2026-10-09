@@ -1,0 +1,64 @@
+ÇAPRAZ DOĞRULAMA — her varyant sırayla çıkarıldı, kurallar kalan varyantlardan öğrenildi,
+sonra çıkarılan varyantın değerleri tahmin edildi ve gerçek değerlerle karşılaştırıldı.
+Cevap anahtarı gerekmez; her montaj setinde çalışır.
+
+Varyant                                       doğru  yanlış  kuralsız
+Cupboard Assy 0001__Cupboard Assy Cupboard …     73       0         2
+Cupboard Assy 0002__Cupboard Assy Cupboard …     73       0         2
+Cupboard Assy 0003__Cupboard Assy Cupboard …     72       3         0
+Cupboard Assy 0004__Cupboard Assy Cupboard …     75       0         2
+Cupboard Assy 0006__Cupboard Assy Cupboard …     75       0         2
+Cupboard Assy 0007__Cupboard Assy Cupboard …     63       6         2
+Cupboard Assy 0008__Cupboard Assy Cupboard …     68       5         2
+Cupboard Assy 0009__Cupboard Assy Cupboard …     60       5         4
+Cupboard Assy 0010__Cupboard Assy Cupboard …     71       0         6
+
+GENEL: 630/671 değer doğru tahmin edildi (%93.9); 19 yanlış, 22 değer için kural çıkarılamamıştı.
+Bu oran dışında: 14 değerin kuralı hiçbir turda çıkarılamadı (girdilerden hesaplanamıyor olabilir: Cupboard Assy.SLDASM › özellik 'OrderNo', Cupboard Base.SLDPRT › özellik 'OrderNo', Cupboard LeftEnd.SLDPRT › özellik 'OrderNo', Cupboard Plinth.SLDPRT › özellik 'OrderNo' …).
+Her turda doğru ve kararlı kural: 66/81
+
+RİSKLİ DEĞERLER (15) — bu kurallar yeni bir girdide yanlış çıkabilir:
+  Cupboard Assy.SLDASM › D1@Adj Shelf Pattern: 3 turda yanlış, 3 farklı formül
+      Cupboard Assy 0007__Cupboard Assy Cupboard Assy7: tahmin 1, gerçek 2  (formül: RANGELOOKUP(Assembly_Width, Assembly_Width_Esigi, 1, 2))
+      Cupboard Assy 0008__Cupboard Assy Cupboard Assy8: tahmin 2, gerçek 1  (formül: SWITCH(Material, "Mahogany", 2, "Maple", 1, "Oak", 2))
+  Cupboard Left End Assy-1/Shelf Peg1-3 (bastırılmış mı): 3 turda yanlış, 2 farklı formül
+      Cupboard Assy 0007__Cupboard Assy Cupboard Assy7: tahmin TRUE, gerçek FALSE  (formül: Assembly_Width <= Assembly_Width_Esigi)
+      Cupboard Assy 0008__Cupboard Assy Cupboard Assy8: tahmin FALSE, gerçek TRUE  (formül: Assembly_Width <= Assembly_Width_Esigi)
+  Cupboard Left End Assy-1/Shelf Peg1-4 (bastırılmış mı): 3 turda yanlış, 2 farklı formül
+      Cupboard Assy 0007__Cupboard Assy Cupboard Assy7: tahmin TRUE, gerçek FALSE  (formül: Assembly_Width <= Assembly_Width_Esigi)
+      Cupboard Assy 0008__Cupboard Assy Cupboard Assy8: tahmin FALSE, gerçek TRUE  (formül: Assembly_Width <= Assembly_Width_Esigi)
+  Cupboard Right End Assy-1/Shelf Peg1-3 (bastırılmış mı): 3 turda yanlış, 2 farklı formül
+      Cupboard Assy 0007__Cupboard Assy Cupboard Assy7: tahmin TRUE, gerçek FALSE  (formül: Assembly_Width <= Assembly_Width_Esigi)
+      Cupboard Assy 0008__Cupboard Assy Cupboard Assy8: tahmin FALSE, gerçek TRUE  (formül: Assembly_Width <= Assembly_Width_Esigi)
+  Cupboard Right End Assy-1/Shelf Peg1-4 (bastırılmış mı): 3 turda yanlış, 2 farklı formül
+      Cupboard Assy 0007__Cupboard Assy Cupboard Assy7: tahmin TRUE, gerçek FALSE  (formül: Assembly_Width <= Assembly_Width_Esigi)
+      Cupboard Assy 0008__Cupboard Assy Cupboard Assy8: tahmin FALSE, gerçek TRUE  (formül: Assembly_Width <= Assembly_Width_Esigi)
+  Cupboard LeftEnd.SLDPRT › D1@Sketch5: 1 turda yanlış, 6 turda kural yok
+      Cupboard Assy 0001__Cupboard Assy Cupboard Assy1: kural çıkarılamamıştı (gerçek değer 511)
+      Cupboard Assy 0002__Cupboard Assy Cupboard Assy2: kural çıkarılamamıştı (gerçek değer 611)
+  Cupboard RightEnd.SLDPRT › D1@Sketch5: 1 turda yanlış, 6 turda kural yok
+      Cupboard Assy 0001__Cupboard Assy Cupboard Assy1: kural çıkarılamamıştı (gerçek değer 511)
+      Cupboard Assy 0002__Cupboard Assy Cupboard Assy2: kural çıkarılamamıştı (gerçek değer 611)
+  Cupboard LeftEnd.SLDPRT › D1@Sketch3: 1 turda yanlış, 2 turda kural yok, 2 farklı formül
+      Cupboard Assy 0003__Cupboard Assy Cupboard Assy3: tahmin 294, gerçek 295  (formül: IF(Assembly_Height <= Assembly_Height_Esigi, Assembly_Height / 2 - 25, ROUND((Assembly_Height + 18) / 3)))
+      Cupboard Assy 0008__Cupboard Assy Cupboard Assy8: kural çıkarılamamıştı (gerçek değer 204)
+  Cupboard LeftDoor Assy-1/Cupboard LeftDoor Shaker Style-1 (konfigürasyon): 1 turda yanlış, 2 farklı formül
+      Cupboard Assy 0007__Cupboard Assy Cupboard Assy7: tahmin Default, gerçek Base Single  (formül: SWITCH(Material, "Mahogany", "Default", "Maple", "Base Single", "Oak", "Default"))
+  Cupboard Assy.SLDASM › D1@Adj Shelf Plane: 2 turda kural yok
+      Cupboard Assy 0008__Cupboard Assy Cupboard Assy8: kural çıkarılamamıştı (gerçek değer 186.5)
+      Cupboard Assy 0009__Cupboard Assy Cupboard Assy9: kural çıkarılamamıştı (gerçek değer 242)
+  Cupboard LeftDoor Assy-1/Bedroom Knob Oak-6 (kullanılan dosya): 2 turda kural yok
+      Cupboard Assy 0009__Cupboard Assy Cupboard Assy9: kural çıkarılamamıştı (gerçek değer D Handle Chrome Small.SLDPRT)
+      Cupboard Assy 0010__Cupboard Assy Cupboard Assy10: kural çıkarılamamıştı (gerçek değer Bedroom Knob Oak.SLDPRT)
+  Cupboard RightDoor Assy-1/Bedroom Knob Oak-1 (kullanılan dosya): 2 turda kural yok
+      Cupboard Assy 0009__Cupboard Assy Cupboard Assy9: kural çıkarılamamıştı (gerçek değer D Handle Chrome Small.SLDPRT)
+      Cupboard Assy 0010__Cupboard Assy Cupboard Assy10: kural çıkarılamamıştı (gerçek değer Bedroom Knob Oak.SLDPRT)
+  Cupboard LeftDoor.SLDPRT › özellik 'DWMaterial': 1 turda kural yok
+      Cupboard Assy 0010__Cupboard Assy Cupboard Assy10: kural çıkarılamamıştı (gerçek değer Mahogany)
+  Cupboard RightDoor.SLDPRT › özellik 'DWMaterial': 1 turda kural yok
+      Cupboard Assy 0010__Cupboard Assy Cupboard Assy10: kural çıkarılamamıştı (gerçek değer Mahogany)
+  Cupboard Assy.SLDASM › D3@Adj Shelf Pattern: 2 farklı formül
+Not (Cupboard Assy 0009__Cupboard Assy Cupboard Assy9): Kural rep_Cupboard_LeftDoor_Assy_1_Bedroom_Knob_Oak_6: SWITCH: "Maple" için eşleşme yok. (konum 1)
+Not (Cupboard Assy 0009__Cupboard Assy Cupboard Assy9): Kural rep_Cupboard_RightDoor_Assy_1_Bedroom_Knob_Oak_1: SWITCH: "Maple" için eşleşme yok. (konum 1)
+Not (Cupboard Assy 0010__Cupboard Assy Cupboard Assy10): Kural rep_Cupboard_LeftDoor_Assy_1_Bedroom_Knob_Oak_6: SWITCH: "Mahogany" için eşleşme yok. (konum 1)
+Not (Cupboard Assy 0010__Cupboard Assy Cupboard Assy10): Kural rep_Cupboard_RightDoor_Assy_1_Bedroom_Knob_Oak_1: SWITCH: "Mahogany" için eşleşme yok. (konum 1)

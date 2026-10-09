@@ -11,7 +11,8 @@ namespace RuleForge.Cli
 {
     internal static class InferCommand
     {
-        public static int Run(Args args)
+        /// <summary>infer ve crossval için ortak: snapshot'ları, girdi tablosunu ve seçenekleri yükler.</summary>
+        private static (List<VariantSample> samples, InferenceOptions options, ModelSnapshot? master) Load(Args args)
         {
             var files = new List<string>();
             foreach (var p in args.NonAssignments)
@@ -55,6 +56,12 @@ namespace RuleForge.Cli
                 options.Tolerance = double.Parse(tol, System.Globalization.CultureInfo.InvariantCulture);
 
             var master = masterPath != null ? JsonStore.Load<ModelSnapshot>(masterPath) : null;
+            return (samples, options, master);
+        }
+
+        public static int Run(Args args)
+        {
+            var (samples, options, master) = Load(args);
             var report = RuleInferencer.Infer(samples, options, master);
             var text = report.ToText();
             Console.WriteLine(text);
@@ -67,6 +74,28 @@ namespace RuleForge.Cli
             File.WriteAllText(reportPath, text);
             Console.WriteLine($"Kurallar: {output}  (hepsi 'önerilen' durumda)");
             Console.WriteLine($"Rapor:    {reportPath}  (chat komutuna --report ile verin)");
+            if (report.SuggestedVariants.Count > 0)
+            {
+                var csvPath = Path.ChangeExtension(output, ".oneriler.csv");
+                File.WriteAllText(csvPath, report.ToSuggestionCsv(), new System.Text.UTF8Encoding(true));
+                Console.WriteLine($"Öneri:    {csvPath}  ({report.SuggestedVariants.Count} yeni varyant; DriveWorks'te üretip tekrar çalıştırın)");
+            }
+            return 0;
+        }
+
+        /// <summary>Leave-one-out çapraz doğrulama: cevap anahtarı olmadan kuralların güvenilirliğini ölçer.</summary>
+        public static int CrossValidate(Args args)
+        {
+            var (samples, options, master) = Load(args);
+            Console.WriteLine($"{samples.Count} varyant; her biri sırayla çıkarılıp kurallar kalanlardan öğreniliyor…");
+            var report = CrossValidator.Run(samples, options, master,
+                (done, total) => Console.Write($"\r  tur {done}/{total}   "));
+            Console.WriteLine();
+            var text = report.ToText();
+            Console.WriteLine(text);
+            var output = args.Get("o", "output") ?? "capraz-dogrulama.txt";
+            File.WriteAllText(output, text);
+            Console.WriteLine($"Rapor: {output}");
             return 0;
         }
 

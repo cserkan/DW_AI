@@ -668,22 +668,6 @@
       "evidence": "Assembly_Height 569 ile 800 arasındaki bir eşikte formül değişiyor (altında 2, üstünde 7 varyant)."
     },
     {
-      "id": "dim_Cupboard_LeftEnd_D1_Sketch5",
-      "description": "Cupboard LeftEnd.SLDPRT › D1@Sketch5",
-      "target": {
-        "kind": "dimension",
-        "document": "Cupboard LeftEnd.SLDPRT",
-        "name": "D1@Sketch5",
-        "key": "dimension:cupboard leftend.sldprt:d1@sketch5",
-        "expectedType": "number"
-      },
-      "expression": "2 * Cupboard_LeftEnd_D1_Sketch3 - 35",
-      "status": "proposed",
-      "source": "inference",
-      "confidence": 0.97,
-      "evidence": "7 varyantta Cupboard LeftEnd.SLDPRT › D1@Sketch3 değeriyle doğrusal ilişki tam uyuyor."
-    },
-    {
       "id": "dim_Cupboard_Plinth_D1_Extrude2",
       "description": "Cupboard Plinth.SLDPRT › D1@Extrude2",
       "target": {
@@ -1002,22 +986,6 @@
       "source": "inference",
       "confidence": 0.99,
       "evidence": "9 varyantta tam uyum (9 farklı Assembly_Height değeri)."
-    },
-    {
-      "id": "dim_Cupboard_RightEnd_D1_Sketch5",
-      "description": "Cupboard RightEnd.SLDPRT › D1@Sketch5",
-      "target": {
-        "kind": "dimension",
-        "document": "Cupboard RightEnd.SLDPRT",
-        "name": "D1@Sketch5",
-        "key": "dimension:cupboard rightend.sldprt:d1@sketch5",
-        "expectedType": "number"
-      },
-      "expression": "2 * Cupboard_LeftEnd_D1_Sketch3 - 35",
-      "status": "proposed",
-      "source": "inference",
-      "confidence": 0.97,
-      "evidence": "7 varyantta Cupboard LeftEnd.SLDPRT › D1@Sketch3 değeriyle doğrusal ilişki tam uyuyor."
     },
     {
       "id": "dim_Cupboard_Shelf_D1_Back_Plane",
@@ -1473,6 +1441,38 @@
       "source": "inference",
       "confidence": 0.99,
       "evidence": "Bu değer girdinin kendisi."
+    },
+    {
+      "id": "dim_Cupboard_LeftEnd_D1_Sketch5",
+      "description": "Cupboard LeftEnd.SLDPRT › D1@Sketch5",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard LeftEnd.SLDPRT",
+        "name": "D1@Sketch5",
+        "key": "dimension:cupboard leftend.sldprt:d1@sketch5",
+        "expectedType": "number"
+      },
+      "expression": "2 * Cupboard_LeftEnd_D1_Sketch3 - 35",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.97,
+      "evidence": "7 varyantta Cupboard LeftEnd.SLDPRT › D1@Sketch3 değeriyle doğrusal ilişki tam uyuyor."
+    },
+    {
+      "id": "dim_Cupboard_RightEnd_D1_Sketch5",
+      "description": "Cupboard RightEnd.SLDPRT › D1@Sketch5",
+      "target": {
+        "kind": "dimension",
+        "document": "Cupboard RightEnd.SLDPRT",
+        "name": "D1@Sketch5",
+        "key": "dimension:cupboard rightend.sldprt:d1@sketch5",
+        "expectedType": "number"
+      },
+      "expression": "2 * Cupboard_LeftEnd_D1_Sketch3 - 35",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.97,
+      "evidence": "7 varyantta Cupboard LeftEnd.SLDPRT › D1@Sketch3 değeriyle doğrusal ilişki tam uyuyor."
     },
     {
       "id": "dim_Cupboard_Assy_D3_Nail_Pattern_1",

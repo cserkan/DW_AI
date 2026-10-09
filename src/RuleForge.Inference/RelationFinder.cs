@@ -51,6 +51,9 @@ namespace RuleForge.Inference
         /// <summary>Eşik yerine "{T}" yazılmış ifade; ortak eşik değişkeni oluşturulurken kullanılır.</summary>
         public string? Template { get; set; }
 
+        /// <summary>Aynı sonucu veriyi mükemmel ayıran başka girdiler (eşik hangi girdiye bağlı belirsiz).</summary>
+        public List<RelationCandidate> Competitors { get; set; } = new List<RelationCandidate>();
+
         /// <summary>Adet formüllerinde: parantez içindeki sabit veriyle tam belirlenemediyse uyumlu aralık.</summary>
         public string? OffsetInput { get; set; }
 
@@ -59,6 +62,14 @@ namespace RuleForge.Inference
 
         /// <summary>Verilen sabitle aynı formülü yeniden yazar (başka bir kuraldan kanıt gelince).</summary>
         public Func<double, string>? WithOffset { get; set; }
+
+        /// <summary>Adet formülündeki adım (ör. 50): sabit belirsizse sınırdaki değerleri hesaplamak için.</summary>
+        public double OffsetStep { get; set; }
+
+        /// <summary>Sadece 2 farklı girdi değerine dayanan doğrusal formüllerde o girdi ve gördüğü değerler.</summary>
+        public string? SupportInput { get; set; }
+
+        public List<double> SupportValues { get; set; } = new List<double>();
     }
 
     /// <summary>
@@ -165,6 +176,8 @@ namespace RuleForge.Inference
                     Complexity = Math.Abs(sa - 1) < 1e-12 ? 1 : 2,
                     Evidence = $"{samples.Count} varyantta tam uyum ({distinct} farklı {x.Name} değeri).",
                     Question = distinct == 2 ? $"Sadece 2 farklı {x.Name} değeri var; iki noktadan her zaman bir doğru geçer, daha fazla varyantla doğrulanmalı." : null,
+                    SupportInput = distinct == 2 ? x.Name : null,
+                    SupportValues = distinct == 2 ? xs.Distinct().ToList() : new List<double>(),
                 };
             }
         }
@@ -458,6 +471,7 @@ namespace RuleForge.Inference
                 {
                     Expression = expr,
                     OffsetInput = best.hi - best.lo > 1e-9 ? x.Name : null,
+                    OffsetStep = best.step,
                     OffsetLo = best.lo,
                     OffsetHi = best.hi,
                     WithOffset = format,
@@ -536,6 +550,8 @@ namespace RuleForge.Inference
                     else runs.Add((p.x, p.x, p.y, 1));
                 }
                 if (runs.Count < 2 || runs.Count > 8) continue;
+                // Veri sayısı kadar girişli tablo bir kural değil ezberdir: 3'ten fazla aralık için her aralıkta ortalama 2 örnek ister.
+                if (runs.Count > 3 && pts.Count < 2 * runs.Count) continue;
                 // Aynı değer iki ayrı aralıkta tekrar ediyorsa tablo büyür; yine de izin ver ama güveni düşür.
                 var parts = new List<string>();
                 var questions = new List<string>();

@@ -48,6 +48,12 @@ namespace RuleForge.Inference
 
         public List<string> Notes { get; set; } = new List<string>();
 
+        /// <summary>Çıkarımın belirsiz kaldığı noktalar (hangi girdi değeri denenirse çözülür).</summary>
+        public List<ProbeNeed> Needs { get; set; } = new List<ProbeNeed>();
+
+        /// <summary>DriveWorks'te üretilmesi önerilen yeni varyantlar (girdi tablosu olarak).</summary>
+        public List<SuggestedVariant> SuggestedVariants { get; set; } = new List<SuggestedVariant>();
+
         /// <summary>Kör testte (girdi tablosu yokken) modelden tahmin edilen girdiler.</summary>
         public List<DetectedDriver> Drivers { get; set; } = new List<DetectedDriver>();
 
@@ -66,6 +72,9 @@ namespace RuleForge.Inference
                 Rules = Rules,
             };
         }
+
+        /// <summary>Önerilen varyantları DriveWorks'e aktarılabilecek girdi tablosu (CSV, ayraç ';') olarak verir.</summary>
+        public string ToSuggestionCsv() => VariantPlanner.ToCsv(Inputs, SuggestedVariants);
 
         public string ToText()
         {
@@ -121,6 +130,19 @@ namespace RuleForge.Inference
                 sb.AppendLine();
                 sb.AppendLine("SORULAR");
                 foreach (var q in Questions) sb.AppendLine("  - " + q);
+            }
+            if (SuggestedVariants.Count > 0 || Needs.Any(n => n.IsManual))
+            {
+                sb.AppendLine();
+                sb.AppendLine("ÖNERİLEN YENİ VARYANTLAR (bunları DriveWorks'te üretip aynı komutu tekrar çalıştırın)");
+                foreach (var v in SuggestedVariants)
+                {
+                    sb.AppendLine($"  {v.Name}:  " + string.Join(",  ", Inputs.Where(i => v.Inputs.ContainsKey(i.Name))
+                        .Select(i => $"{i.Name} = {v.Inputs[i.Name].AsText()}")));
+                    foreach (var r in v.Reasons) sb.AppendLine($"      · {r}");
+                }
+                foreach (var m in Needs.Where(n => n.IsManual))
+                    sb.AppendLine($"  Elle: {m.Reason}");
             }
             if (Changes.Count > 0)
             {
@@ -235,6 +257,10 @@ namespace RuleForge.Inference
                     continue;
                 }
 
+                if (best.ThresholdInput != null)
+                    best.Competitors = candidates.Skip(1)
+                        .Where(c => c.ThresholdInput != null && c.ThresholdInput != best.ThresholdInput && c.Confidence >= 0.7)
+                        .GroupBy(c => c.ThresholdInput).Select(g => g.First()).ToList();
                 var alternatives = candidates.Skip(1).Where(c => c.Confidence >= 0.5).Take(2).Select(c => c.Expression).ToList();
                 var target = MapToMaster(obs.Target, master, extractor);
                 var rule = new Rule
@@ -277,9 +303,13 @@ namespace RuleForge.Inference
                 report.Questions.Add(d.Question!);
 
             var questionRules = new Dictionary<string, List<string>>(StringComparer.Ordinal);
-            var handled = ShareThresholds(chosen, report, usedIds);
+            var needs = new List<ProbeNeed>();
+            var handled = ShareThresholds(chosen, report, usedIds, needs, columns);
             DeriveFromOtherValues(observations, chosen, report, samples, options.Tolerance, master, extractor, usedIds, handled);
             DerivePitches(observations, chosen, report, columns, master, extractor, usedIds, handled);
+            CollectNeeds(chosen, columns, report, needs, handled);
+            report.Needs = needs;
+            report.SuggestedVariants = VariantPlanner.Plan(report.Inputs, columns, needs, report.Notes);
 
             foreach (var (_, rule, candidate) in chosen)
             {
@@ -303,7 +333,7 @@ namespace RuleForge.Inference
         /// Dönüş: sorusu ortak soruya taşınan kural kimlikleri.
         /// </summary>
         private static HashSet<string> ShareThresholds(List<(Observation obs, Rule rule, RelationCandidate candidate)> chosen,
-            InferenceReport report, HashSet<string> usedIds)
+            InferenceReport report, HashSet<string> usedIds, List<ProbeNeed> needs, List<InputColumn> columns)
         {
             var handled = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var withThreshold = chosen.Where(c => c.candidate.ThresholdInput != null && c.candidate.Template != null).ToList();
@@ -340,6 +370,8 @@ namespace RuleForge.Inference
                         item.rule.Expression = item.candidate.Template!.Replace("{T}", name);
                         handled.Add(item.rule.Id);
                     }
+                    var training = columns.First(c => c.Name == byInput.Key).Values.Values.Select(v => v.AsNumber()).ToList();
+                    needs.Add(VariantPlanner.ThresholdNeed(byInput.Key, cluster.lo, cluster.hi, training, $"{cluster.items.Count} kural: {name}"));
                     report.Questions.Add(
                         $"{byInput.Key} için {cluster.items.Count} kural aynı eşiği kullanıyor ({string.Join(", ", cluster.items.Take(4).Select(i => i.rule.Id))}" +
                         $"{(cluster.items.Count > 4 ? " …" : "")}). Veriler {NumberUtil.Fmt(cluster.lo)} ile {NumberUtil.Fmt(cluster.hi)} arasındaki her değeri " +
@@ -347,6 +379,52 @@ namespace RuleForge.Inference
                 }
             }
             return handled;
+        }
+
+        /// <summary>Kesinleşmemiş kuralların (tek başına eşik, belirsiz sabit, az veri) çözülmesi için gereken değerleri toplar.</summary>
+        private static void CollectNeeds(List<(Observation obs, Rule rule, RelationCandidate candidate)> chosen,
+            List<InputColumn> columns, InferenceReport report, List<ProbeNeed> needs, HashSet<string> handled)
+        {
+            List<double> Training(string input) =>
+                columns.First(c => c.Name == input).Values.Values.Select(v => v.AsNumber()).ToList();
+
+            // Eşik hangi girdiye bağlı belirsizse (birden çok girdi veriyi ayırıyorsa) onları ayıracak varyantlar.
+            var competing = new Dictionary<string, (string a, RelationCandidate ca, string b, RelationCandidate cb, List<string> rules)>();
+            foreach (var (_, rule, c) in chosen.Where(x => x.candidate.ThresholdInput != null && x.candidate.Competitors.Count > 0))
+            foreach (var other in c.Competitors)
+            {
+                var pair = new[] { c.ThresholdInput!, other.ThresholdInput! }.OrderBy(x => x, StringComparer.Ordinal).ToArray();
+                var key = pair[0] + "|" + pair[1];
+                if (!competing.TryGetValue(key, out var entry))
+                    competing[key] = entry = (c.ThresholdInput!, c, other.ThresholdInput!, other, new List<string>());
+                entry.rules.Add(rule.Id);
+            }
+            foreach (var e in competing.Values)
+            {
+                var colA = columns.First(x => x.Name == e.a);
+                var colB = columns.First(x => x.Name == e.b);
+                needs.Add(VariantPlanner.CompetingThresholdNeed(colA, e.ca.ThresholdLo, e.ca.ThresholdHi, colB, e.cb.ThresholdLo, e.cb.ThresholdHi,
+                    e.rules.Count <= 2 ? string.Join(", ", e.rules) : $"{e.rules.Count} kural"));
+                report.Questions.Add($"{e.rules.Count} kuralın eşiğini hangi girdi belirliyor: {e.a} / {e.b}? Mevcut varyantlarda ikisi de veriyi aynı şekilde ayırıyor.");
+            }
+
+            foreach (var (_, rule, c) in chosen.Where(x => !handled.Contains(x.rule.Id)))
+            {
+                if (c.ThresholdInput != null && c.ThresholdHi - c.ThresholdLo > 1e-9)
+                    needs.Add(VariantPlanner.ThresholdNeed(c.ThresholdInput, c.ThresholdLo, c.ThresholdHi, Training(c.ThresholdInput), rule.Id));
+                else if (c.OffsetInput != null && c.OffsetStep > 0)
+                    needs.Add(VariantPlanner.OffsetNeed(c.OffsetInput, c.OffsetStep, c.OffsetLo, c.OffsetHi, Training(c.OffsetInput), rule.Id));
+                else if (c.SupportInput != null && c.SupportValues.Count == 2)
+                    needs.Add(VariantPlanner.SupportNeed(c.SupportInput, c.SupportValues, rule.Id));
+            }
+
+            foreach (var d in report.Drivers.Where(d => d.Question != null))
+                needs.Add(new ProbeNeed { Priority = 2, Input = d.Name, Reason = d.Question! });
+
+            // Aynı girdi + aynı değer için tekrar eden ihtiyaçları birleştir (ilk gerekçe kalır).
+            var seen = new HashSet<string>();
+            needs.RemoveAll(n => !n.IsManual && !seen.Add(n.Input + "|" + string.Join(",", n.Values.Select(v => v.AsText())) + "|" +
+                string.Join(";", n.Combos.Select(c => string.Join(",", c.OrderBy(kv => kv.Key).Select(kv => kv.Key + "=" + kv.Value.AsText()))))));
         }
 
         /// <summary>
@@ -609,7 +687,7 @@ namespace RuleForge.Inference
             return columns;
         }
 
-        private static RuleTarget MapToMaster(RuleTarget target, ModelSnapshot? master, ObservationExtractor extractor)
+        internal static RuleTarget MapToMaster(RuleTarget target, ModelSnapshot? master, ObservationExtractor extractor)
         {
             if (master == null) return target;
             var t = new RuleTarget { Kind = target.Kind, Document = target.Document, Name = target.Name, Component = target.Component };

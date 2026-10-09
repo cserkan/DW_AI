@@ -18,6 +18,9 @@ Kullanım: ruleforge <komut> [seçenekler]
 
   extract   <montaj.SLDASM...> [-o snapshot.json | --out-dir klasör] [--visible]
             Montajı okuyup model snapshot'ı (JSON) üretir.                          [Windows + SolidWorks]
+  extract-variants <klasör> [--out-dir varyantlar] [--list]
+            Klasördeki varyantların ÜST montajlarını otomatik bulur (alt montajları atlar) ve okur.
+            --list: sadece bulunan üst montajları listeler, okumaz.                [Windows + SolidWorks]
   infer     <snapshot.json... | klasör> [--inputs girdiler.csv] [--master master.json]
             [--name-pattern REGEX] [--input Ad=gözlem_anahtarı] [-o kurallar.json]
             Varyantlardan kural önerileri çıkarır (deterministik).
@@ -57,6 +60,7 @@ Kullanım: ruleforge <komut> [seçenekler]
                 switch (command)
                 {
                     case "extract": return SolidWorksCommands.Extract(new Args(rest, "visible"));
+                    case "extract-variants": return SolidWorksCommands.ExtractVariants(new Args(rest, "visible", "list"));
                     case "generate": return SolidWorksCommands.Generate(new Args(rest, "pdf", "step", "include-proposed", "visible", "dry-run"));
                     case "infer": return InferCommand.Run(new Args(rest));
                     case "chat": return await ChatCommand.RunAsync(new Args(rest)).ConfigureAwait(false);

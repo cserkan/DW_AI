@@ -66,6 +66,7 @@ namespace RuleForge.SolidWorks
         {
             path = Path.GetFullPath(path);
             if (App.GetOpenDocumentByName(path) is ModelDoc2 existing) return existing;
+            if (!File.Exists(path)) throw new FileNotFoundException("Dosya bulunamadı: " + path, path);
 
             int errors = 0, warnings = 0;
             var options = (int)swOpenDocOptions_e.swOpenDocOptions_Silent;

@@ -70,9 +70,14 @@ $rf = ".\src\RuleForge.Cli\bin\Release\net48\ruleforge.exe"
 ### 1. Master montajı ve varyantları oku
 
 ```powershell
-& $rf extract C:\Master\Konveyor\Konveyor.SLDASM -o master.json
-& $rf extract C:\DriveWorks\Cikti\SP001\Konveyor_SP001.SLDASM C:\DriveWorks\Cikti\SP002\... --out-dir varyantlar
+& $rf extract "C:\Master\Konveyor\Konveyor.SLDASM" -o master.json
+& $rf extract-variants "C:\DriveWorks\Sonuclar" --list     # önce sadece listele
+& $rf extract-variants "C:\DriveWorks\Sonuclar"            # varyantlar\ klasörüne okur
 ```
+
+`extract-variants` verilen klasörü (alt klasörler dahil) tarar. Her varyant klasöründe **üst montajı otomatik
+bulur**: aynı klasördeki başka hiçbir montajın kullanmadığı montaj. Alt montajlar atlanır. Referanslar SolidWorks'ün
+"Referansları Bul" API'siyle dosyalar açılmadan okunur.
 
 Snapshot; tüm belgelerin ölçülerini (mm/derece/adet), özelliklerini ve bastırma durumlarını, denklemleri ve global
 değişkenleri, özel özellikleri, bileşen ağacını ve mate'leri içeren bir JSON dosyasıdır. SolidWorks'ten bağımsızdır,

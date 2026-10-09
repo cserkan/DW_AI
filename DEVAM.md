@@ -91,3 +91,20 @@ $t = "C:\Users\pc\Downloads\ConveryoSoloTemplate\SOLIDWORKS Files"
 2. Konveyör girdileri modelden tahmin edilmiş adlar taşıyor (`Frame_D1_Floor` vb.); DriveWorks'teki gerçek girdi
    adlarıyla (Duty, Height, Width…) bir girdi tablosu verilirse kurallar daha okunur olur.
 3. Teknik resim/PDF ve PDM için benzersiz dosya adı stratejisi (README "Bilinen sınırlamalar").
+
+## Sıradaki özellikler (kullanıcı onaylı; henüz başlanmadı)
+
+### Şirket bilgisi (müşteriye özel öğrenme)
+Amaç: mühendislerle yapılan konuşmalardan öğrenilen, kural olmayan bilgiler şirkete özel kalıcı olarak birikir ve
+yapay zekâ her konuşmanın başında bunu okur. Kural setleri zamanla büyür.
+
+- İki ayrı kayıt: **kurallar** (JSON; çalıştırılır, onaylı/önerilmiş/reddedilmiş) ve **şirket bilgisi** (açıklamalar,
+  istisnalar, alışkanlıklar, cevaplanmamış sorular, reddedilen öneriler ve nedenleri).
+- Kullanıcıya markdown olarak gösterilmez. Arayüzde "Şirket kuralları" adlı bir bölüm olur; her kayıt başlık, metin,
+  kimin ne zaman söylediği ve durumu olan bir kart ya da form. Arka planda yapay zekâ için markdown'a dönüştürülür.
+- Depolama: şirket (tenant) başına sunucuda, kullanıcının bilgisayarında değil. Şirketler birbirinden ayrı;
+  Claude API anahtarı sunucuda tutulur, tarayıcıya gitmez.
+- Yapay zekâ kuralı ya da notu kendi başına değiştirmez; öneri yazar, onay mühendisten gelir. Geçmiş (kim, ne zaman)
+  tutulur; çelişen bilgi üzerine yazılmaz, birlikte gösterilir.
+- Reddedilen kural sonraki çıkarımda yeniden önerilmemeli (çıkarım şu an `Rejected` durumuna bakmıyor).
+- Notlar büyüyünce konu başlıklarıyla özetlenir.

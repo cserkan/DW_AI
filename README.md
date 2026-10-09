@@ -191,6 +191,27 @@ her varyant sırayla çıkarılır, kurallar kalanlardan öğrenilir, çıkarıl
 & $rf crossval varyantlar --master master.json -o capraz-dogrulama.txt
 ```
 
+## Tekrarlanan modüller (tablo girdileri)
+
+Bazı ürünlerde master'ın ya da bir alt montajının birden çok kopyası bulunur. Örnek: 2–5 bölümlük bir konveyör hattı,
+her bölüm farklı uzunlukta. `infer` bunu kendiliğinden tanır: aynı master dosyasının bir varyantta birden çok farklı
+kopyası varsa her kopya ayrı bir örnek sayılır.
+
+- Kopyadan kopyaya değişen değerler (bölüm uzunluğu…) bir **tablonun sütunları** olur. Bu değerlere bağlı kurallar
+  her satır için ayrı çalışır (`"scope": "<tablo>"`).
+- Tüm kopyalarda aynı olan değerler (yükseklik, genişlik…) genel girdilerdir.
+- Her formülde kullanılabilen tablo özetleri: `<Tablo>_Adet` (satır sayısı), `<sütun>_Ilk`, `_Son`, `_Toplam`,
+  `_EnBuyuk`, `_EnKucuk`. Satır kurallarında ayrıca `<Tablo>_Sira` (satır numarası) kullanılabilir.
+
+Satırlar komut satırında `Tablo.Sütun=değer1;değer2;...` biçiminde, çift tırnak içinde verilir:
+
+```powershell
+& $rf eval --rules kurallar.json --include-proposed Frame_D1_Floor=750 "Conveyor_Assembly.Frame_D1_Overall_Length=2000;1200;600"
+```
+
+Kopyalı modellerin SolidWorks'te üretimi (kopyaları çoğaltıp hat montajına yerleştirme) henüz yok; `generate`
+bu kural setleri için sadece `--dry-run` ile çalışır.
+
 ## Kural dili
 
 Excel'e benzer. Adlar büyük/küçük harf duyarsızdır. Açılar **derece**, uzunluklar **mm** cinsindendir.

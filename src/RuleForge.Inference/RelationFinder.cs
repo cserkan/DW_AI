@@ -63,6 +63,15 @@ namespace RuleForge.Inference
         /// <summary>Verilen sabitle aynı formülü yeniden yazar (başka bir kuraldan kanıt gelince).</summary>
         public Func<double, string>? WithOffset { get; set; }
 
+        /// <summary>Adet formüllerinde bölünen girdi (ör. Genislik).</summary>
+        public string? StepInput { get; set; }
+
+        /// <summary>
+        /// Parantez içindeki sabit başka bir kuraldan biliniyorsa (ör. aralık formülü "Genislik - 18" diyor), o sabitle veriye
+        /// uyan en sade adet formülü (biçim/adım da değişebilir); uyan yoksa null.
+        /// </summary>
+        public Func<double, string?>? ReformWithOffset { get; set; }
+
         /// <summary>Adet formülündeki adım (ör. 50): sabit belirsizse sınırdaki değerleri hesaplamak için.</summary>
         public double OffsetStep { get; set; }
 
@@ -168,16 +177,18 @@ namespace RuleForge.Inference
                 }
                 var (sa, sb) = snapped.Value;
 
-                var conf = NumberUtil.Confidence(distinct, 2);
+                // Birebir aynı değer (y = x) hiç parametre tahmin etmez; iki farklı değer bile güçlü kanıttır.
+                bool identity = Math.Abs(sa - 1) < 1e-12 && Math.Abs(sb) < 1e-12;
+                var conf = NumberUtil.Confidence(distinct, identity ? 0 : 2);
                 yield return new RelationCandidate
                 {
                     Expression = NumberUtil.Linear(new[] { (sa, x.Name) }, sb),
                     Confidence = conf,
                     Complexity = Math.Abs(sa - 1) < 1e-12 ? 1 : 2,
                     Evidence = $"{samples.Count} varyantta tam uyum ({distinct} farklı {x.Name} değeri).",
-                    Question = distinct == 2 ? $"Sadece 2 farklı {x.Name} değeri var; iki noktadan her zaman bir doğru geçer, daha fazla varyantla doğrulanmalı." : null,
-                    SupportInput = distinct == 2 ? x.Name : null,
-                    SupportValues = distinct == 2 ? xs.Distinct().ToList() : new List<double>(),
+                    Question = distinct == 2 && !identity ? $"Sadece 2 farklı {x.Name} değeri var; iki noktadan her zaman bir doğru geçer, daha fazla varyantla doğrulanmalı." : null,
+                    SupportInput = distinct == 2 && !identity ? x.Name : null,
+                    SupportValues = distinct == 2 && !identity ? xs.Distinct().ToList() : new List<double>(),
                 };
             }
         }
@@ -403,7 +414,7 @@ namespace RuleForge.Inference
 
                 // (biçim, adım, sabit) → veriyle uyumlu ofsetler
                 var groups = new Dictionary<(string form, double step, double c), List<double>>();
-                foreach (var step in StepCandidates)
+                foreach (var step in StepsFor(xs, ys))
                 {
                     // Küçük adımlarda (çivi aralığı gibi) tam sayı ofsetler, ±2 adım; büyüklerde kaba ızgara.
                     var offsets = step <= 200
@@ -426,19 +437,17 @@ namespace RuleForge.Inference
                 }
                 if (groups.Count == 0) continue;
 
-                // Her grup için veriyle uyumlu ofset aralığının ortasını seç (gerçek değere beklenen en yakın tahmin).
+                // Her grup için veriyle uyumlu ofsetlerden insanın yazacağı en yuvarlak olanı seç (0 > 100'ün katı > 50 > 10 ...).
                 var scored = groups.Select(g =>
                 {
                     var lo = g.Value.Min();
                     var hi = g.Value.Max();
-                    // Ofsetsiz formül uyuyorsa en basiti odur; uymuyorsa uyumlu aralığın ortası en iyi tahmindir.
-                    var off = g.Value.Contains(0) ? 0 : Math.Round((lo + hi) / 2, MidpointRounding.AwayFromZero);
-                    if (!g.Value.Contains(off)) off = g.Value.OrderBy(o => Math.Abs(o - (lo + hi) / 2)).First();
+                    var off = g.Value.OrderBy(o => Math.Abs(o) < 1e-9 ? 0 : 1).ThenBy(Roughness).ThenBy(o => Math.Abs(o - (lo + hi) / 2)).First();
                     bool fencepost = g.Key.form == "FLOOR" && Math.Abs(g.Key.c - 1) < 1e-9; // ROUNDDOWN(L / adım) + 1
-                    int score = (Math.Abs(off) < 1e-9 ? 0 : 2)
-                                + (Math.Abs(g.Key.c) < 1e-9 || fencepost ? 0 : 1)
-                                + (g.Key.step % 50 == 0 ? 0 : 1)
-                                + (g.Key.form == "ROUND" ? 1 : 0);
+                    double score = (Math.Abs(off) < 1e-9 ? 0 : 2 + Roughness(off))
+                                   + (Math.Abs(g.Key.c) < 1e-9 || fencepost ? 0 : 1)
+                                   + Roughness(g.Key.step)
+                                   + (g.Key.form == "ROUND" ? 1 : 0);
                     return (g.Key.form, g.Key.step, g.Key.c, off, lo, hi, score, fencepost);
                 })
                 .OrderBy(g => g.score).ThenByDescending(g => g.fencepost).ThenBy(g => Math.Abs(g.off))
@@ -446,16 +455,38 @@ namespace RuleForge.Inference
 
                 var best = scored[0];
                 var inputName = x.Name;
-                Func<double, string> format = off =>
+                string Format(string form, double step, double c, double off)
                 {
                     var inner = Math.Abs(off) < 1e-9
-                        ? $"{inputName} / {NumberUtil.Fmt(best.step)}"
-                        : $"({NumberUtil.Linear(new[] { (1.0, inputName) }, off)}) / {NumberUtil.Fmt(best.step)}";
-                    var e = $"{best.form}({inner})";
-                    if (Math.Abs(best.c) > 1e-9) e += best.c > 0 ? $" + {NumberUtil.Fmt(best.c)}" : $" - {NumberUtil.Fmt(-best.c)}";
+                        ? $"{inputName} / {NumberUtil.Fmt(step)}"
+                        : $"({NumberUtil.Linear(new[] { (1.0, inputName) }, off)}) / {NumberUtil.Fmt(step)}";
+                    var e = $"{form}({inner})";
+                    if (Math.Abs(c) > 1e-9) e += c > 0 ? $" + {NumberUtil.Fmt(c)}" : $" - {NumberUtil.Fmt(-c)}";
                     return e;
-                };
+                }
+                Func<double, string> format = off => Format(best.form, best.step, best.c, off);
                 var expr = format(best.off);
+
+                // Sabit dışarıdan bilinirse: o sabitle veriye uyan biçim/adım/ekleme içinden en sadesi.
+                var fns = forms.ToDictionary(f => f.name, f => f.f);
+                Func<double, string?> reform = off =>
+                {
+                    var fits = groups.Keys.Where(k =>
+                    {
+                        var f = fns[k.form];
+                        for (int i = 0; i < xs.Length; i++)
+                            if (Math.Abs(f(Math.Round((xs[i] + off) / k.step, 9)) + k.c - ys[i]) > 1e-6) return false;
+                        return true;
+                    })
+                    .Select(k =>
+                    {
+                        bool fp = k.form == "FLOOR" && Math.Abs(k.c - 1) < 1e-9;
+                        double score = (Math.Abs(k.c) < 1e-9 || fp ? 0 : 1) + Roughness(k.step) + (k.form == "ROUND" ? 1 : 0);
+                        return (k, score, fp);
+                    })
+                    .OrderBy(t => t.score).ThenByDescending(t => t.fp).ThenBy(t => t.k.step).ToList();
+                    return fits.Count == 0 ? null : Format(fits[0].k.form, fits[0].k.step, fits[0].k.c, off);
+                };
 
                 int alternatives = scored.Count;
                 int distinct = xs.Distinct().Count();
@@ -475,12 +506,43 @@ namespace RuleForge.Inference
                     OffsetLo = best.lo,
                     OffsetHi = best.hi,
                     WithOffset = format,
+                    StepInput = x.Name,
+                    ReformWithOffset = reform,
                     Confidence = NumberUtil.Confidence(distinct, 2, Math.Min(alternatives, 25)),
                     Complexity = 4,
                     Evidence = $"{samples.Count} varyantta basamak (adet) fonksiyonu uyuyor; {alternatives} farklı biçim de veriyle uyumlu.",
                     Question = question,
                 };
             }
+        }
+
+        /// <summary>
+        /// Denenecek adımlar: sık kullanılan yuvarlak adımlar + verinin önerdiği adım civarındaki tam sayılar
+        /// (ör. rulo aralığı 90: (en büyük x − en küçük x) / (en büyük y − en küçük y) ≈ 89).
+        /// </summary>
+        private static IEnumerable<double> StepsFor(double[] xs, double[] ys)
+        {
+            var steps = new SortedSet<double>(StepCandidates);
+            double dy = ys.Max() - ys.Min();
+            if (dy >= 3)
+            {
+                double estimate = (xs.Max() - xs.Min()) / dy;
+                int lo = (int)Math.Floor(estimate * 0.85), hi = (int)Math.Ceiling(estimate * 1.15);
+                if (estimate >= 2 && hi - lo <= 400)
+                    for (int s = Math.Max(1, lo); s <= hi; s++) steps.Add(s);
+            }
+            return steps;
+        }
+
+        /// <summary>Bir sabitin "elle yazılmışlık" cezası: 0 ve 100'ün katları 0, 50'nin katı 0.25, 10'un 0.5, 5'in 0.75, diğerleri 1.</summary>
+        private static double Roughness(double v)
+        {
+            v = Math.Abs(v);
+            if (v < 1e-9 || Math.Abs(v % 100) < 1e-9) return 0;
+            if (Math.Abs(v % 50) < 1e-9) return 0.25;
+            if (Math.Abs(v % 10) < 1e-9) return 0.5;
+            if (Math.Abs(v % 5) < 1e-9) return 0.75;
+            return 1;
         }
 
         // ---------- kategoriye göre farklı doğrular: SWITCH(Malzeme, "A", x+10, "B", x+12) ----------
@@ -552,6 +614,10 @@ namespace RuleForge.Inference
                 if (runs.Count < 2 || runs.Count > 8) continue;
                 // Veri sayısı kadar girişli tablo bir kural değil ezberdir: 3'ten fazla aralık için her aralıkta ortalama 2 örnek ister.
                 if (runs.Count > 3 && pts.Count < 2 * runs.Count) continue;
+                // Tek örnekli ara aralıklar ve aynı değerin ayrı aralıklarda tekrar etmesi (iniş-çıkış) ezberin işaretidir.
+                if (runs.Count >= 3 && runs.Any(r => r.count < 2)) continue;
+                bool repeats = runs.GroupBy(r => r.v.AsText()).Any(g => g.Count() > 1);
+                if (repeats && pts.Count < 3 * runs.Count) continue;
                 // Aynı değer iki ayrı aralıkta tekrar ediyorsa tablo büyür; yine de izin ver ama güveni düşür.
                 var parts = new List<string>();
                 var questions = new List<string>();
@@ -570,7 +636,8 @@ namespace RuleForge.Inference
                     ThresholdInput = runs.Count == 2 ? x.Name : null,
                     ThresholdLo = runs[0].hi,
                     ThresholdHi = runs[runs.Count - 1].lo,
-                    Confidence = NumberUtil.Confidence(pts.Count, 2 * runs.Count - 1),
+                    // Tek örnekli aralık (ör. en uçtaki tek varyant) zayıf kanıttır.
+                    Confidence = Math.Min(NumberUtil.Confidence(pts.Count, 2 * runs.Count - 1), NumberUtil.Confidence(runs.Min(r => r.count) + 1, 1)),
                     Complexity = 6,
                     Evidence = $"{x.Name} aralıklarına göre {runs.Count} farklı değer.",
                     Question = $"{x.Name} için geçiş sınırları şu aralıklarda bir yerde: {string.Join(", ", questions)}. Kesin sınırlar nedir?",
@@ -607,14 +674,16 @@ namespace RuleForge.Inference
                 var falses = samples.Where(s => !y[s].AsBool()).Select(s => x.Values[s].AsNumber()).ToList();
                 if (trues.Count == 0 || falses.Count == 0) continue;
 
+                int minority = Math.Min(trues.Count, falses.Count);
                 if (trues.Min() > falses.Max())
-                    yield return ThresholdCandidate($"{x.Name} > {{T}}", x.Name, falses.Max(), trues.Min(), samples.Count);
+                    yield return ThresholdCandidate($"{x.Name} > {{T}}", x.Name, falses.Max(), trues.Min(), samples.Count, minority);
                 else if (trues.Max() < falses.Min())
-                    yield return ThresholdCandidate($"{x.Name} <= {{T}}", x.Name, trues.Max(), falses.Min(), samples.Count);
+                    yield return ThresholdCandidate($"{x.Name} <= {{T}}", x.Name, trues.Max(), falses.Min(), samples.Count, minority);
             }
         }
 
-        private static RelationCandidate ThresholdCandidate(string template, string name, double lo, double hi, int n)
+        /// <param name="minority">Eşiğin az örnekli tarafındaki örnek sayısı: tek örnek (ör. en uçtaki varyant) zayıf kanıttır.</param>
+        private static RelationCandidate ThresholdCandidate(string template, string name, double lo, double hi, int n, int minority)
         {
             var t = NumberUtil.RoundestBetween(lo, hi);
             return new RelationCandidate
@@ -625,7 +694,7 @@ namespace RuleForge.Inference
                 ThresholdLo = lo,
                 ThresholdHi = hi,
                 Complexity = 2,
-                Confidence = NumberUtil.Confidence(n, 2),
+                Confidence = Math.Min(NumberUtil.Confidence(n, 2), NumberUtil.Confidence(minority + 1, 1)),
                 Evidence = $"{name} {NumberUtil.Fmt(lo)} ile {NumberUtil.Fmt(hi)} arasında bir eşikte değişiyor.",
                 Question = $"{name} için eşik {NumberUtil.Fmt(lo)} ile {NumberUtil.Fmt(hi)} arasında. Kesin değer ve sınır dahil mi?",
             };
@@ -676,26 +745,44 @@ namespace RuleForge.Inference
         private static readonly System.Text.RegularExpressions.Regex NumberToken =
             new System.Text.RegularExpressions.Regex(@"\d+(?:[.,]\d+)?", System.Text.RegularExpressions.RegexOptions.Compiled);
 
+        /// <summary>
+        /// Sayılı metin şablonu. Sayılar girdilerle doğrusal ilişkili olmalı; sayıların arasındaki metin ya her varyantta
+        /// aynıdır ya da az seçenekli bir girdiye göre değişen bir kelimedir (ör. "Medium Duty Roller, 50 diameter 761 long",
+        /// "R-50-ME-761": Medium/ME çap 50'ye, Light/Lİ çap 40'a karşılık gelir).
+        /// </summary>
         private RelationCandidate? NumericTextTemplate(List<string> samples, Dictionary<string, Value> y)
         {
             var texts = samples.Select(s => y[s].AsText()).ToList();
             if (texts.Distinct(StringComparer.OrdinalIgnoreCase).Count() < 2) return null;
 
-            // Tüm varyantlarda sayılar dışındaki iskelet aynı olmalı.
-            var skeletons = texts.Select(t => NumberToken.Replace(t, "\u0001")).Distinct(StringComparer.Ordinal).ToList();
-            if (skeletons.Count != 1) return null;
-            var literals = skeletons[0].Split('\u0001');
-            int slots = literals.Length - 1;
-            if (slots == 0 || slots > 6) return null;
+            // Tüm varyantlarda aynı sayıda sayı olmalı; aralarındaki metin parçaları konumlarına göre karşılaştırılır.
+            var literals = texts.Select(t => NumberToken.Split(t)).ToList();
+            int slots = literals[0].Length - 1;
+            if (slots == 0 || slots > 6 || literals.Any(l => l.Length != slots + 1)) return null;
 
             var numbers = texts.Select(t => NumberToken.Matches(t).Cast<System.Text.RegularExpressions.Match>()
                 .Select(m => double.Parse(m.Value.Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture)).ToArray()).ToList();
 
             var parts = new List<string>();
             bool anyInput = false;
-            for (int k = 0; k < slots; k++)
+            int parameters = 0;
+            for (int k = 0; k <= slots; k++)
             {
-                if (literals[k].Length > 0) parts.Add(NumberUtil.Literal(Value.Text(literals[k])));
+                var pieces = literals.Select(l => l[k]).ToList();
+                if (pieces.Distinct(StringComparer.Ordinal).Count() == 1)
+                {
+                    if (pieces[0].Length > 0) parts.Add(NumberUtil.Literal(Value.Text(pieces[0])));
+                }
+                else
+                {
+                    var word = WordSlot(samples, pieces);
+                    if (word == null) return null;
+                    parts.AddRange(word.Value.parts);
+                    parameters += word.Value.parameters;
+                    anyInput = true;
+                }
+                if (k == slots) break;
+
                 var ys = numbers.Select(n => n[k]).ToArray();
                 if (ys.All(v => Math.Abs(v - ys[0]) < 1e-9))
                 {
@@ -715,18 +802,77 @@ namespace RuleForge.Inference
                 }
                 if (expr == null) return null;
                 anyInput = true;
+                parameters += 2;
                 parts.Add(expr);
             }
             if (!anyInput) return null;
-            if (literals[slots].Length > 0) parts.Add(NumberUtil.Literal(Value.Text(literals[slots])));
 
             return new RelationCandidate
             {
                 Expression = string.Join(" & ", parts),
                 Complexity = 4,
-                Confidence = NumberUtil.Confidence(samples.Count, 2 * slots),
-                Evidence = $"{samples.Count} varyantta metin iskeleti aynı, içindeki sayılar girdilerle doğrusal ilişkili.",
+                Confidence = NumberUtil.Confidence(samples.Count, parameters),
+                Evidence = $"{samples.Count} varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor.",
             };
+        }
+
+        /// <summary>
+        /// Varyanttan varyanta değişen metin parçası: ortak baş/son kısım sabit, ortadaki kelime bir girdinin değerine göre
+        /// seçiliyor (girdinin kendisi ya da az seçenekli eşleme). Bulunamazsa null.
+        /// </summary>
+        private (List<string> parts, int parameters)? WordSlot(List<string> samples, List<string> pieces)
+        {
+            int prefix = 0;
+            while (pieces.All(p => p.Length > prefix && p[prefix] == pieces[0][prefix])) prefix++;
+            int suffix = 0;
+            while (pieces.All(p => p.Length - prefix > suffix && p[p.Length - 1 - suffix] == pieces[0][pieces[0].Length - 1 - suffix])) suffix++;
+            // Kelimeyi ortasından bölme ("ME"/"HE" → "M"/"H" + "E" değil): ortak kısımlar kelime sınırında bitmeli.
+            while (prefix > 0 && char.IsLetterOrDigit(pieces[0][prefix - 1]) && pieces.Any(p => p.Length > prefix && char.IsLetterOrDigit(p[prefix]))) prefix--;
+            while (suffix > 0 && char.IsLetterOrDigit(pieces[0][pieces[0].Length - suffix]) &&
+                   pieces.Any(p => p.Length - suffix - 1 >= prefix && char.IsLetterOrDigit(p[p.Length - suffix - 1]))) suffix--;
+            var cores = pieces.Select(p => p.Substring(prefix, p.Length - prefix - suffix)).ToList();
+            int options = cores.Distinct(StringComparer.Ordinal).Count();
+            // Her varyantta farklı kelime bir seçim değil (ör. sipariş adı); az seçenekli olmalı.
+            if (options > Math.Min(12, Math.Max(2, samples.Count / 2))) return null;
+
+            string? expr = null;
+            int parameters = 0;
+            // Önce girdinin kendisi (ör. Malzeme = "Oak" → "Oak"), sonra az seçenekli girdiden eşleme.
+            foreach (var x in _inputs.Where(i => i.Kind == ColumnKind.Category))
+                if (samples.Select((s, i) => string.Equals(x.Values[s].AsText(), cores[i], StringComparison.Ordinal)).All(b => b))
+                {
+                    expr = x.Name;
+                    break;
+                }
+            if (expr == null)
+            {
+                foreach (var x in _inputs.OrderBy(i => i.Kind == ColumnKind.Number ? 1 : 0).ThenBy(i => samples.Select(s => i.Values[s]).Distinct().Count()))
+                {
+                    var keys = samples.Select(s => x.Values[s]).ToList();
+                    int distinctKeys = keys.Distinct().Count();
+                    if (distinctKeys < 2 || distinctKeys > Math.Max(2, samples.Count / 2)) continue;
+                    var map = new Dictionary<string, (Value key, string core)>(StringComparer.OrdinalIgnoreCase);
+                    bool ok = true;
+                    for (int i = 0; i < samples.Count && ok; i++)
+                    {
+                        var k = keys[i].AsText();
+                        if (map.TryGetValue(k, out var existing)) ok = string.Equals(existing.core, cores[i], StringComparison.Ordinal);
+                        else map[k] = (keys[i], cores[i]);
+                    }
+                    if (!ok) continue;
+                    var entries = map.Values.OrderBy(m => m.key.Kind == ValueKind.Number ? m.key.AsNumber() : 0).ThenBy(m => m.key.AsText(), StringComparer.Ordinal);
+                    expr = $"SWITCH({x.Name}, {string.Join(", ", entries.Select(m => $"{NumberUtil.Literal(m.key)}, {NumberUtil.Literal(Value.Text(m.core))}"))})";
+                    parameters = map.Count;
+                    break;
+                }
+            }
+            if (expr == null) return null;
+
+            var parts = new List<string>();
+            if (prefix > 0) parts.Add(NumberUtil.Literal(Value.Text(pieces[0].Substring(0, prefix))));
+            parts.Add(expr);
+            if (suffix > 0) parts.Add(NumberUtil.Literal(Value.Text(pieces[0].Substring(pieces[0].Length - suffix))));
+            return (parts, parameters);
         }
 
         // ---------- metin = girdi ----------

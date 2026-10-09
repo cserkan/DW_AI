@@ -16,6 +16,7 @@ namespace RuleForge.AI
 - inputs: Sipariş formunda doldurulan değerler (Boy, Genislik, MotorYonu...). Türler: number, text, bool, choice (choice için options zorunlu).
 - variables: Ara hesaplar. Birden çok kuralın kullandığı hesapları burada tanımla (ör. AyakAdedi).
 - rules: Her kural, expression sonucunu bir model hedefine yazar. condition verilirse ve yanlışsa kural atlanır (model değeri olduğu gibi kalır). Aynı hedefe birden fazla kural yazılacaksa hepsinin condition'ı olmalı ve aynı anda sadece biri doğru olabilir; çoğu durumda tek kural + IF daha iyidir.
+- tables: Tekrarlanan modüller (ör. konveyör hattının bölümleri). Her satır modülün bir kopyasıdır; sütunlar satırdan satıra değişen girdilerdir (ör. bölüm uzunluğu). scope'u bir tablo adı olan kural/değişken her satır için ayrı çalışır ve hedefin document/component adları modülün içindeki adlardır. Sütun adları sadece kapsamlı formüllerde kullanılabilir. Her formülde kullanılabilen tablo özetleri: <Tablo>_Adet (satır sayısı), <sütun>_Ilk, _Son, _Toplam, _EnBuyuk, _EnKucuk; kapsamlı formüllerde ayrıca <Tablo>_Sira (satır no, 1'den başlar). Tablo ekleyip silemezsin; mevcut tablolar çıkarımdan gelir.
 - Kurallar üretimde deterministik bir motor tarafından çalıştırılır. Sen üretimde yoksun; yazdığın formül tam olarak ne yapıyorsa o olur.
 
 # Hedef türleri (target.kind) ve gereken alanlar

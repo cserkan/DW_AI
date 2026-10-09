@@ -41,6 +41,12 @@ namespace RuleForge.Inference
 
         /// <summary>Bu varyantın neden önerildiği (bir değer birden çok sorunu aynı anda çözebilir).</summary>
         public List<string> Reasons { get; set; } = new List<string>();
+
+        /// <summary>Tekrarlanan modül varsa tablonun satırları (her satır bir kopya).</summary>
+        public List<Dictionary<string, Value>> Rows { get; set; } = new List<Dictionary<string, Value>>();
+
+        /// <summary>İstenen satır sayısı (bir ihtiyaç satır sayısını belirliyorsa).</summary>
+        public int? RowCount { get; set; }
     }
 
     /// <summary>
@@ -97,10 +103,10 @@ namespace RuleForge.Inference
             return variants;
         }
 
-        private static Value Fill(InputColumn column, int columnIndex, int variantIndex)
+        internal static Value Fill(InputColumn column, int columnIndex, int variantIndex)
         {
             var values = column.Values.Values.ToList();
-            if (column.Kind == ColumnKind.Number)
+            if (column.Kind == ColumnKind.Number && !IsOptionLike(column))
             {
                 var nums = values.Select(v => v.AsNumber()).ToList();
                 double min = nums.Min(), max = nums.Max();
@@ -112,6 +118,14 @@ namespace RuleForge.Inference
                 .OrderBy(o => o, StringComparer.OrdinalIgnoreCase).ToList();
             var pick = options[(variantIndex + columnIndex) % options.Count];
             return values.First(v => string.Equals(v.AsText(), pick, StringComparison.OrdinalIgnoreCase));
+        }
+
+        /// <summary>Az sayıda, tekrar eden değer alan sayısal girdi (ör. 40/50/60 çap): seçenek gibi ele alınır.</summary>
+        internal static bool IsOptionLike(InputColumn column)
+        {
+            if (column.Kind != ColumnKind.Number) return false;
+            int distinct = column.Values.Values.Select(v => v.AsNumber()).Distinct().Count();
+            return distinct <= 3 && column.Values.Count >= 2 * distinct;
         }
 
         private static double Halton(int index, int radix)
@@ -136,11 +150,14 @@ namespace RuleForge.Inference
         }
 
         // ---------- kapsam ihtiyaçları (belirli bir kuraldan bağımsız, her girdi için) ----------
-        private static void AddCoverageNeeds(List<InputColumn> columns, List<ProbeNeed> needs)
+        internal static void AddCoverageNeeds(List<InputColumn> columns, List<ProbeNeed> needs)
         {
             foreach (var column in columns)
             {
-                if (column.Kind == ColumnKind.Number)
+                // Az sayıda tekrar eden değer (ör. 40/50/60 çap, 100/150 ray yüksekliği) sayı değil seçenektir:
+                // ara değer önermek yerine az görülen seçenekleri tekrar etmek gerekir.
+                bool optionLike = IsOptionLike(column);
+                if (column.Kind == ColumnKind.Number && !optionLike)
                 {
                     var xs = column.Values.Values.Select(v => v.AsNumber()).Distinct().OrderBy(d => d).ToList();
                     if (xs.Count < 2) continue;
@@ -168,7 +185,8 @@ namespace RuleForge.Inference
                         needs.Add(new ProbeNeed
                         {
                             Priority = 4, Input = column.Name, Values = { g.First().Value },
-                            Reason = $"{column.Name} = {g.Key} sadece 1 varyantta var; bu seçeneğe bağlı kurallar tek örneğe dayanıyor.",
+                            Reason = $"{column.Name} = {g.Key} sadece 1 varyantta var; bu seçeneğe bağlı kurallar tek örneğe dayanıyor" +
+                                     (optionLike ? " (az sayıda farklı değer aldığı için seçenek gibi ele alındı)." : "."),
                         });
                 }
             }
@@ -302,22 +320,40 @@ namespace RuleForge.Inference
         }
 
         // ---------- çıktı ----------
-        public static string ToCsv(IReadOnlyList<InputDefinition> inputs, IReadOnlyList<SuggestedVariant> variants)
+        public static string ToCsv(IReadOnlyList<InputDefinition> inputs, IReadOnlyList<SuggestedVariant> variants, TableDefinition? table = null)
         {
+            string Cell(Value value) => value.Kind == ValueKind.Number
+                ? value.AsNumber().ToString("0.####", CultureInfo.InvariantCulture).Replace('.', ',')
+                : value.AsText();
+
             var sb = new StringBuilder();
-            sb.AppendLine("Varyant;" + string.Join(";", inputs.Select(i => i.Name)));
+            var columns = table?.Columns ?? new List<InputDefinition>();
+            sb.Append("Varyant;" + string.Join(";", inputs.Select(i => i.Name)));
+            if (table != null) sb.Append($";{table.Name} satır;" + string.Join(";", columns.Select(c => c.Name)));
+            sb.AppendLine();
             foreach (var v in variants)
             {
-                sb.Append(v.Name);
-                foreach (var i in inputs)
+                int rows = table == null ? 1 : Math.Max(1, v.Rows.Count);
+                for (int r = 0; r < rows; r++)
                 {
-                    sb.Append(';');
-                    if (v.Inputs.TryGetValue(i.Name, out var value))
-                        sb.Append(value.Kind == ValueKind.Number
-                            ? value.AsNumber().ToString("0.####", CultureInfo.InvariantCulture).Replace('.', ',')
-                            : value.AsText());
+                    // Genel girdiler sadece varyantın ilk satırında; sonraki satırlar aynı varyantın tablo satırlarıdır.
+                    sb.Append(r == 0 ? v.Name : string.Empty);
+                    foreach (var i in inputs)
+                    {
+                        sb.Append(';');
+                        if (r == 0 && v.Inputs.TryGetValue(i.Name, out var value)) sb.Append(Cell(value));
+                    }
+                    if (table != null)
+                    {
+                        sb.Append(';').Append(r + 1);
+                        foreach (var c in columns)
+                        {
+                            sb.Append(';');
+                            if (r < v.Rows.Count && v.Rows[r].TryGetValue(c.Name, out var cell)) sb.Append(Cell(cell));
+                        }
+                    }
+                    sb.AppendLine();
                 }
-                sb.AppendLine();
             }
             return sb.ToString();
         }

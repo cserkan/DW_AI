@@ -79,8 +79,8 @@ namespace RuleForge.Inference
                 foreach (var t in risky)
                 {
                     var parts = new List<string>();
-                    if (t.Wrong > 0) parts.Add($"{t.Wrong} turda yanlış");
-                    if (t.Missing > 0) parts.Add($"{t.Missing} turda kural yok");
+                    if (t.Wrong > 0) parts.Add($"{t.Wrong} tahminde yanlış");
+                    if (t.Missing > 0) parts.Add($"{t.Missing} tahminde kural yok");
                     if (t.Expressions.Count > 1) parts.Add($"{t.Expressions.Count} farklı formül");
                     sb.AppendLine($"  {t.Label}: {string.Join(", ", parts)}");
                     foreach (var fail in t.Failures.Take(2)) sb.AppendLine($"      {fail}");
@@ -111,6 +111,10 @@ namespace RuleForge.Inference
                 report.Notes.Add("Çapraz doğrulama için en az 4 varyant gerekir.");
                 return report;
             }
+
+            // Varyantlar tekrarlanan bir modülün kopyalarını içeriyorsa: her varyant (tüm kopyalarıyla) sırayla çıkarılır.
+            var split = options.DetectModules ? ModuleDetector.Detect(samples, master, options) : null;
+            if (split != null) return RunModules(samples, split, options, master, progress, report);
 
             var snapshots = samples.Select(s => s.Snapshot).ToList();
             bool structure = options.MatchByStructure ?? (options.NamePattern == null && StructureMatcher.IsNeeded(snapshots));
@@ -214,6 +218,148 @@ namespace RuleForge.Inference
             report.Unexplainable = stats.Values.Where(t => unexplainable.Contains(t.Key)).Select(t => t.Label).ToList();
             report.Targets = stats.Values.Where(t => !unexplainable.Contains(t.Key)).OrderBy(t => t.Label, StringComparer.OrdinalIgnoreCase).ToList();
             return report;
+        }
+
+        private static CrossValidationReport RunModules(IReadOnlyList<VariantSample> samples, ModuleSplit split, InferenceOptions options,
+            ModelSnapshot? master, Action<int, int>? progress, CrossValidationReport report)
+        {
+            var mo = RuleInferencer.ExtractModuleObservations(split, options, new List<string>());
+            var instTarget = mo.Instance.ToDictionary(o => o.Key,
+                o => RuleInferencer.MapToMaster(o.Target, split.InstanceReference, mo.InstanceExtractor).Key, StringComparer.OrdinalIgnoreCase);
+            var outerTarget = mo.Outer.ToDictionary(o => o.Key,
+                o => RuleInferencer.OuterTarget(o, split, mo.OuterExtractor).Key, StringComparer.OrdinalIgnoreCase);
+            var instByKey = mo.Instance.ToDictionary(o => o.Key, StringComparer.OrdinalIgnoreCase);
+            var outerByKey = mo.Outer.ToDictionary(o => o.Key, StringComparer.OrdinalIgnoreCase);
+            var varyingInst = mo.Instance.Where(o => o.Values.Values.Distinct().Count() > 1).ToList();
+            var varyingOuter = mo.Outer.Where(o => o.Values.Values.Distinct().Count() > 1).ToList();
+
+            var originalInputs = samples.ToDictionary(s => s.Name, s => new Dictionary<string, Value>(s.Inputs, StringComparer.OrdinalIgnoreCase));
+            var log = new List<(FoldResult fold, string key, int status)>(); // 0 doğru, 1 yanlış, 2 kuralsız
+            var stats = new Dictionary<string, TargetStat>(StringComparer.OrdinalIgnoreCase);
+            var foldOptions = options.Clone();
+
+            for (int i = 0; i < samples.Count; i++)
+            {
+                progress?.Invoke(i + 1, samples.Count);
+                var held = samples[i];
+                var train = samples.Where((_, k) => k != i)
+                    .Select(s => new VariantSample(s.Name, s.Snapshot, originalInputs[s.Name])).ToList();
+                var rep = RuleInferencer.Infer(train, foldOptions.Clone(), master);
+                var fold = new FoldResult { Variant = held.Name };
+                report.Folds.Add(fold);
+                var rows = split.InstancesOf(held.Name);
+
+                // Çıkarılan varyantın girdileri: genel girdiler varyant düzeyindeki değerlerden, tablo sütunları her kopyadan.
+                Value? VariantValue(string key)
+                {
+                    if (key.StartsWith(RuleInferencer.OuterPrefix, StringComparison.Ordinal))
+                        return outerByKey.TryGetValue(key.Substring(RuleInferencer.OuterPrefix.Length), out var oo) &&
+                               oo.Values.TryGetValue(held.Name, out var ov) ? ov : (Value?)null;
+                    if (!instByKey.TryGetValue(key, out var io)) return null;
+                    foreach (var r in rows)
+                        if (io.Values.TryGetValue(r.Name, out var iv)) return iv;
+                    return null;
+                }
+
+                var ruleSet = rep.ToRuleSet("cv", string.Empty);
+                var columns = new HashSet<string>(ruleSet.Tables.SelectMany(t => t.Columns.Select(c => c.Name)), StringComparer.OrdinalIgnoreCase);
+                var heldInputs = new Dictionary<string, Value>(StringComparer.OrdinalIgnoreCase);
+                foreach (var d in rep.Drivers.Where(d => !columns.Contains(d.Name)))
+                    if (VariantValue(d.ObservationKey) is Value dv) heldInputs[d.Name] = dv;
+                foreach (var kv in originalInputs[held.Name]) heldInputs[RuleInferencer.SanitizeName(kv.Key)] = kv.Value;
+
+                var tables = new Dictionary<string, List<Dictionary<string, Value>>>(StringComparer.OrdinalIgnoreCase);
+                foreach (var t in ruleSet.Tables)
+                {
+                    var tableRows = rows.Select(_ => new Dictionary<string, Value>(StringComparer.OrdinalIgnoreCase)).ToList();
+                    foreach (var c in t.Columns)
+                    {
+                        var d = rep.Drivers.FirstOrDefault(x => string.Equals(x.Name, c.Name, StringComparison.OrdinalIgnoreCase));
+                        if (d == null || !instByKey.TryGetValue(d.ObservationKey, out var co)) continue;
+                        for (int r = 0; r < rows.Count; r++)
+                            if (co.Values.TryGetValue(rows[r].Name, out var cv)) tableRows[r][c.Name] = cv;
+                    }
+                    tables[t.Name] = tableRows;
+                    // Çıkarılan varyant eğitim aralığının dışında olabilir: sınırları kaldır.
+                    t.MinRows = null;
+                    t.MaxRows = null;
+                    foreach (var c in t.Columns) Relax(c, tableRows.Where(r => r.ContainsKey(c.Name)).Select(r => r[c.Name]));
+                }
+                foreach (var input in ruleSet.Inputs)
+                    Relax(input, heldInputs.TryGetValue(input.Name, out var hv) ? new[] { hv } : new Value[0]);
+
+                var result = RuleEngine.Evaluate(ruleSet, heldInputs, new EvaluationOptions { IncludeProposed = true }, tables);
+                foreach (var e in result.Errors) fold.Errors.Add(e);
+                var predicted = new Dictionary<string, ModelAction>(StringComparer.OrdinalIgnoreCase);
+                foreach (var a in result.Actions)
+                    if (!predicted.ContainsKey(a.Key)) predicted[a.Key] = a;
+
+                var driverKeys = new HashSet<string>(rep.Drivers.Select(d => d.ObservationKey), StringComparer.OrdinalIgnoreCase);
+
+                void Compare(Observation obs, string baseKey, string actionKey, Value actual, string where)
+                {
+                    if (!stats.TryGetValue(baseKey, out var stat))
+                        stats[baseKey] = stat = new TargetStat { Key = baseKey, Label = obs.Label };
+                    if (!predicted.TryGetValue(actionKey, out var action))
+                    {
+                        log.Add((fold, baseKey, 2));
+                        stat.Missing++;
+                        stat.Failures.Add($"{where}: kural çıkarılamamıştı (gerçek değer {actual.AsText()})");
+                        return;
+                    }
+                    stat.Expressions.Add(action.Rule.Expression);
+                    if (Same(action.Value, actual))
+                    {
+                        log.Add((fold, baseKey, 0));
+                        stat.Correct++;
+                    }
+                    else
+                    {
+                        log.Add((fold, baseKey, 1));
+                        stat.Wrong++;
+                        stat.Failures.Add($"{where}: tahmin {action.Value.AsText()}, gerçek {actual.AsText()}  (formül: {action.Rule.Expression})");
+                    }
+                }
+
+                foreach (var obs in varyingInst)
+                {
+                    if (driverKeys.Contains(obs.Key)) continue;
+                    var baseKey = instTarget[obs.Key];
+                    for (int r = 0; r < rows.Count; r++)
+                        if (obs.Values.TryGetValue(rows[r].Name, out var actual))
+                            Compare(obs, baseKey, baseKey + "#" + (r + 1), actual, $"{held.Name} satır {r + 1}");
+                }
+                foreach (var obs in varyingOuter)
+                {
+                    if (driverKeys.Contains(RuleInferencer.OuterPrefix + obs.Key) || !obs.Values.TryGetValue(held.Name, out var actual)) continue;
+                    var baseKey = outerTarget[obs.Key];
+                    Compare(obs, baseKey, baseKey, actual, held.Name);
+                }
+            }
+
+            var unexplainable = new HashSet<string>(stats.Values.Where(t => t.Correct + t.Wrong == 0).Select(t => t.Key), StringComparer.OrdinalIgnoreCase);
+            foreach (var (fold, key, status) in log.Where(l => !unexplainable.Contains(l.key)))
+            {
+                if (status == 0) fold.Correct++;
+                else if (status == 1) fold.Wrong++;
+                else fold.Missing++;
+            }
+            report.Unexplainable = stats.Values.Where(t => unexplainable.Contains(t.Key)).Select(t => t.Label).ToList();
+            report.Targets = stats.Values.Where(t => !unexplainable.Contains(t.Key)).OrderBy(t => t.Label, StringComparer.OrdinalIgnoreCase).ToList();
+            report.Notes.Add($"Tekrarlanan modül ('{split.Document}'): her varyant tüm kopyalarıyla birlikte çıkarıldı; " +
+                             "değerler kopya (satır) bazında karşılaştırıldı.");
+            return report;
+        }
+
+        /// <summary>Çapraz doğrulamada girdinin aralık/seçenek sınırlarını kaldırır (çıkarılan varyant eğitim aralığının dışında olabilir).</summary>
+        private static void Relax(InputDefinition input, IEnumerable<Value> seen)
+        {
+            input.Min = null;
+            input.Max = null;
+            if (input.Type != InputType.Choice) return;
+            foreach (var v in seen)
+                if (!input.Options.Contains(v.AsText(), StringComparer.OrdinalIgnoreCase))
+                    input.Options.Add(v.AsText());
         }
 
         private static bool Same(Value predicted, Value actual)

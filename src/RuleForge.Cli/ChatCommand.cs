@@ -126,8 +126,8 @@ Diğer her şey yapay zekâya gider. Ör: ""Boy 3000'i geçince orta destek ekle
 
                 case "/dene":
                 {
-                    var result = RuleEngine.Evaluate(set, RuleEngine.ParseAssignments(parts.Skip(1)),
-                        new EvaluationOptions { IncludeProposed = true });
+                    var inputs = RuleEngine.ParseAssignments(parts.Skip(1), out var tables);
+                    var result = RuleEngine.Evaluate(set, inputs, new EvaluationOptions { IncludeProposed = true }, tables);
                     Program.Print(result);
                     return true;
                 }

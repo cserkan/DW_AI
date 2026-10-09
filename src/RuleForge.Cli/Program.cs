@@ -31,8 +31,9 @@ Kullanım: ruleforge <komut> [seçenekler]
             Claude ile sohbet ederek kural yazar/düzeltir. ANTHROPIC_API_KEY gerekir.
   validate  --rules kurallar.json [--snapshot master.json]
   approve   --rules kurallar.json (<kural_id>... | --all [--min-confidence 0.9])
-  eval      --rules kurallar.json [--include-proposed] [Ad=Değer ...]
+  eval      --rules kurallar.json [--include-proposed] [Ad=Değer ...] [""Tablo.Sütun=v1;v2;v3"" ...]
             Girdilerle kuralları çalıştırır ve modele uygulanacak eylemleri listeler.
+            Tekrarlanan modül (tablo) satırları: ""Tablo.Sütun=1200;800"" iki satır (çift tırnak içinde).
   generate  --rules kurallar.json --master master.SLDASM --out klasör [Ad=Değer ...]
             [--pdf] [--step] [--include-proposed] [--visible] [--dry-run]
             Yeni sipariş modelini üretir.                                           [Windows + SolidWorks]
@@ -128,8 +129,8 @@ Kullanım: ruleforge <komut> [seçenekler]
         private static int Eval(Args args)
         {
             var rules = JsonStore.Load<RuleSet>(args.Require("rules"));
-            var result = RuleEngine.Evaluate(rules, RuleEngine.ParseAssignments(args.Assignments),
-                new EvaluationOptions { IncludeProposed = args.Flag("include-proposed") });
+            var inputs = RuleEngine.ParseAssignments(args.Assignments, out var tables);
+            var result = RuleEngine.Evaluate(rules, inputs, new EvaluationOptions { IncludeProposed = args.Flag("include-proposed") }, tables);
             Print(result);
             return result.Success ? 0 : 1;
         }
@@ -141,11 +142,14 @@ Kullanım: ruleforge <komut> [seçenekler]
                 Console.WriteLine("Değerler:");
                 foreach (var kv in result.Values) Console.WriteLine($"  {kv.Key} = {kv.Value}");
             }
+            foreach (var table in result.Rows)
+                for (int i = 0; i < table.Value.Count; i++)
+                    Console.WriteLine($"  {table.Key} satır {i + 1}: " + string.Join(", ", table.Value[i].Select(kv => $"{kv.Key} = {kv.Value}")));
             if (result.Actions.Count > 0)
             {
                 Console.WriteLine("Modele uygulanacak:");
                 foreach (var a in result.Actions)
-                    Console.WriteLine($"  {a.Target} = {a.Value}{(a.Rule.Status == RuleStatus.Proposed ? "   (önerilen)" : "")}");
+                    Console.WriteLine($"  {a}{(a.Rule.Status == RuleStatus.Proposed ? "   (önerilen)" : "")}");
             }
             foreach (var r in result.SkippedRules) Console.WriteLine($"  (koşul sağlanmadı: {r.Id})");
             foreach (var w in result.Warnings) Console.WriteLine("Uyarı: " + w);

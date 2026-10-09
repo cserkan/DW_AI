@@ -53,6 +53,12 @@ namespace RuleForge.Inference
             @"^(weight|mass|ağırlık|agirlik|kütle|kutle|volume|hacim|density|yoğunluk|yogunluk|surface ?area|yüzey ?alanı)$";
         public bool IncludeFeatureSuppression { get; set; } = true;
 
+        /// <summary>
+        /// Varyantlarda master'ın (ya da bir alt montajının) birden çok kopyası varsa (ör. konveyör hattındaki bölümler)
+        /// her kopyayı ayrı örnek say ve kopya kurallarını tablo kapsamında çıkar.
+        /// </summary>
+        public bool DetectModules { get; set; } = true;
+
         public InferenceOptions Clone()
         {
             var c = (InferenceOptions)MemberwiseClone();

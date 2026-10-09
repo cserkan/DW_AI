@@ -62,8 +62,10 @@ namespace RuleForge.AI
 
             foreach (var c in UpsertVariables)
             {
-                var def = new VariableDefinition { Name = c.Name, Expression = c.Expression, Description = c.Description };
                 var idx = set.Variables.FindIndex(v => Same(v.Name, c.Name));
+                // scope null = mevcut kapsam korunur (yeni değişkende kapsamsız); "" = kapsamı kaldır.
+                var scope = c.Scope == null ? (idx >= 0 ? set.Variables[idx].Scope : null) : Blank(c.Scope);
+                var def = new VariableDefinition { Name = c.Name, Expression = c.Expression, Description = c.Description, Scope = scope };
                 if (idx >= 0) { set.Variables[idx] = def; log.Add($"~ değişken güncellendi: {c.Name} = {c.Expression}"); }
                 else { set.Variables.Add(def); log.Add($"+ değişken eklendi: {c.Name} = {c.Expression}"); }
             }
@@ -84,6 +86,7 @@ namespace RuleForge.AI
                     },
                     Expression = c.Expression,
                     Condition = Blank(c.Condition),
+                    Scope = c.Scope == null ? existing?.Scope : Blank(c.Scope),
                     Status = RuleStatus.Proposed,
                     Source = existing?.Source == RuleSource.Inference ? RuleSource.Inference : RuleSource.Chat,
                     Confidence = existing?.Confidence,
@@ -163,19 +166,20 @@ namespace RuleForge.AI
             {
                 type = "object",
                 additionalProperties = false,
-                required = new[] { "name", "expression", "description" },
+                required = new[] { "name", "expression", "description", "scope" },
                 properties = new Dictionary<string, object>
                 {
                     ["name"] = new { type = "string" },
                     ["expression"] = new { type = "string" },
                     ["description"] = NullableString(),
+                    ["scope"] = new { type = new[] { "string", "null" }, description = "Tablo adı: her satır için ayrı hesaplanır. null = mevcut kapsam korunur." },
                 },
             };
             var rule = new
             {
                 type = "object",
                 additionalProperties = false,
-                required = new[] { "id", "description", "target", "expression", "condition", "evidence" },
+                required = new[] { "id", "description", "target", "expression", "condition", "scope", "evidence" },
                 properties = new Dictionary<string, object>
                 {
                     ["id"] = new { type = "string", description = "Kararlı kimlik; mevcut kuralı güncellemek için aynı id." },
@@ -195,6 +199,7 @@ namespace RuleForge.AI
                     },
                     ["expression"] = new { type = "string" },
                     ["condition"] = NullableString(),
+                    ["scope"] = new { type = new[] { "string", "null" }, description = "Tablo adı: kural tekrarlanan modülün her kopyası (satır) için çalışır. null = mevcut kapsam korunur; \"\" = kapsamsız." },
                     ["evidence"] = new { type = new[] { "string", "null" }, description = "Kuralın dayanağı: kullanıcının sözü, model verisi vb." },
                 },
             };
@@ -248,6 +253,7 @@ namespace RuleForge.AI
         [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
         [JsonPropertyName("expression")] public string Expression { get; set; } = string.Empty;
         [JsonPropertyName("description")] public string? Description { get; set; }
+        [JsonPropertyName("scope")] public string? Scope { get; set; }
     }
 
     public sealed class RuleChange
@@ -257,6 +263,7 @@ namespace RuleForge.AI
         [JsonPropertyName("target")] public TargetChange Target { get; set; } = new TargetChange();
         [JsonPropertyName("expression")] public string Expression { get; set; } = string.Empty;
         [JsonPropertyName("condition")] public string? Condition { get; set; }
+        [JsonPropertyName("scope")] public string? Scope { get; set; }
         [JsonPropertyName("evidence")] public string? Evidence { get; set; }
     }
 

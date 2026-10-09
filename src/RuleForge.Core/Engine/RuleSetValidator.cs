@@ -49,28 +49,58 @@ namespace RuleForge.Core.Engine
             foreach (var input in ruleSet.Inputs)
             {
                 CheckName(input.Name, "Girdi", symbols, issues);
-                if (input.Type == InputType.Choice && input.Options.Count == 0)
-                    issues.Add(Error(input.Name, "Seçim tipindeki girdinin seçenekleri (options) boş."));
-                if (input.Min.HasValue && input.Max.HasValue && input.Min > input.Max)
-                    issues.Add(Error(input.Name, "Min, Max'tan büyük."));
-                if (input.Default != null)
-                {
-                    var err = RuleEngine.CoerceInput(input, Value.Parse(input.Default), out _);
-                    if (err != null) issues.Add(Error(input.Name, "Varsayılan değer geçersiz: " + err));
-                }
-                else
-                {
-                    issues.Add(Warning(input.Name, "Varsayılan değer yok."));
-                }
+                CheckInput(input, input.Name, issues);
             }
+
+            // Tablolar: sütunlar sadece kapsamlı formüllerde, özetler (adet, ilk, toplam...) her yerde görünür.
+            var tableNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var scoped = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+            foreach (var table in ruleSet.Tables)
+            {
+                CheckName(table.Name, "Tablo", tableNames, issues);
+                if (table.MinRows.HasValue && table.MaxRows.HasValue && table.MinRows > table.MaxRows)
+                    issues.Add(Error(table.Name, "En az satır sayısı en fazladan büyük."));
+                if (table.Columns.Count == 0)
+                    issues.Add(Warning(table.Name, "Tablonun sütunu yok; sadece satır sayısı girilebilir."));
+                var own = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var col in table.Columns)
+                {
+                    CheckName(col.Name, "Sütun", symbols, issues);
+                    CheckInput(col, $"{table.Name}.{col.Name}", issues);
+                    own.Add(col.Name);
+                }
+                own.Add(TableSymbols.Index(table));
+                scoped[table.Name] = own;
+            }
+            foreach (var table in ruleSet.Tables)
+                foreach (var name in TableSymbols.Aggregates(table).Concat(new[] { TableSymbols.Index(table) }))
+                    if (!symbols.Add(name))
+                        issues.Add(Error(name, $"'{name}' adı {table.Name} tablosunun özet adıyla çakışıyor; başka bir ad seçin."));
+            // Satır no sadece kapsamlı formüllerde görünür; genel sembollerden çıkar.
+            foreach (var table in ruleSet.Tables) symbols.Remove(TableSymbols.Index(table));
 
             foreach (var v in ruleSet.Variables)
             {
+                if (!string.IsNullOrEmpty(v.Scope) && !scoped.ContainsKey(v.Scope!))
+                    issues.Add(Error(v.Name, $"Kapsam '{v.Scope}' adında bir tablo yok."));
                 CheckName(v.Name, "Değişken", symbols, issues);
+            }
+            foreach (var v in ruleSet.Variables.Where(v => !string.IsNullOrEmpty(v.Scope)))
+                if (scoped.TryGetValue(v.Scope!, out var own)) own.Add(v.Name);
+            // Tablo sütunları ve kapsamlı değişkenler sadece kendi tablolarının (satır) formüllerinde görünür.
+            var global = new HashSet<string>(symbols, StringComparer.OrdinalIgnoreCase);
+            foreach (var own in scoped.Values) global.ExceptWith(own);
+
+            HashSet<string> Visible(string? scope)
+            {
+                if (string.IsNullOrEmpty(scope) || !scoped.TryGetValue(scope!, out var own)) return global;
+                var set = new HashSet<string>(global, StringComparer.OrdinalIgnoreCase);
+                set.UnionWith(own);
+                return set;
             }
 
             foreach (var v in ruleSet.Variables)
-                CheckExpression(v.Name, v.Expression, symbols, issues, "formül");
+                CheckExpression(v.Name, v.Expression, Visible(v.Scope), issues, "formül");
 
             var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var rule in ruleSet.Rules)
@@ -79,13 +109,18 @@ namespace RuleForge.Core.Engine
                 if (string.IsNullOrWhiteSpace(rule.Id)) issues.Add(Error(id, "Kural kimliği (id) boş."));
                 else if (!ids.Add(rule.Id)) issues.Add(Error(id, "Aynı kimlikli birden fazla kural var."));
 
-                CheckExpression(id, rule.Expression, symbols, issues, "formül");
+                var table = ruleSet.FindTable(rule.Scope);
+                if (!string.IsNullOrEmpty(rule.Scope) && table == null)
+                    issues.Add(Error(id, $"Kapsam '{rule.Scope}' adında bir tablo yok."));
+                var visible = Visible(rule.Scope);
+                CheckExpression(id, rule.Expression, visible, issues, "formül");
                 if (!string.IsNullOrWhiteSpace(rule.Condition))
-                    CheckExpression(id, rule.Condition!, symbols, issues, "koşul");
-                CheckTarget(id, rule.Target, snapshot, issues);
+                    CheckExpression(id, rule.Condition!, visible, issues, "koşul");
+                CheckTarget(id, rule.Target, snapshot, table, issues);
             }
 
-            foreach (var group in ruleSet.Rules.Where(r => r.Status != RuleStatus.Rejected).GroupBy(r => r.Target.Key))
+            foreach (var group in ruleSet.Rules.Where(r => r.Status != RuleStatus.Rejected)
+                         .GroupBy(r => (r.Scope ?? string.Empty).ToLowerInvariant() + "|" + r.Target.Key))
             {
                 var list = group.ToList();
                 if (list.Count > 1 && list.Count(r => string.IsNullOrWhiteSpace(r.Condition)) > 0)
@@ -99,43 +134,95 @@ namespace RuleForge.Core.Engine
             return issues;
         }
 
-        /// <summary>Varsayılanlarla ve her sayısal girdinin min/max uçlarıyla deneme çalıştırması.</summary>
+        private static void CheckInput(InputDefinition input, string item, List<ValidationIssue> issues)
+        {
+            if (input.Type == InputType.Choice && input.Options.Count == 0)
+                issues.Add(Error(item, "Seçim tipindeki girdinin seçenekleri (options) boş."));
+            if (input.Min.HasValue && input.Max.HasValue && input.Min > input.Max)
+                issues.Add(Error(item, "Min, Max'tan büyük."));
+            if (input.Default != null)
+            {
+                var err = RuleEngine.CoerceInput(input, Value.Parse(input.Default), out _);
+                if (err != null) issues.Add(Error(item, "Varsayılan değer geçersiz: " + err));
+            }
+            else
+            {
+                issues.Add(Warning(item, "Varsayılan değer yok."));
+            }
+        }
+
+        /// <summary>Varsayılanlarla ve her sayısal girdinin (ve tablo sütununun) min/max uçlarıyla deneme çalıştırması.</summary>
         private static void DryRun(RuleSet ruleSet, List<ValidationIssue> issues)
         {
             var options = new EvaluationOptions { IncludeProposed = true };
-            var cases = new List<(string label, Dictionary<string, Value> inputs)>
+            var cases = new List<(string label, Dictionary<string, Value> inputs, Dictionary<string, List<Dictionary<string, Value>>> tables)>
             {
-                ("varsayılanlar", new Dictionary<string, Value>(StringComparer.OrdinalIgnoreCase)),
+                ("varsayılanlar", new Dictionary<string, Value>(StringComparer.OrdinalIgnoreCase), Rows(ruleSet, null, Value.Null)),
             };
+            void Add(string label, string name, Value v) =>
+                cases.Add((label, One(name, v), Rows(ruleSet, null, Value.Null)));
+            void AddColumn(string label, string column, Value v) =>
+                cases.Add((label, new Dictionary<string, Value>(StringComparer.OrdinalIgnoreCase), Rows(ruleSet, column, v)));
+
             foreach (var input in ruleSet.Inputs)
             {
                 if (input.Type == InputType.Number)
                 {
-                    if (input.Min.HasValue)
-                        cases.Add(($"{input.Name}={Value.FormatNumber(input.Min.Value)}", One(input.Name, Value.Number(input.Min.Value))));
-                    if (input.Max.HasValue)
-                        cases.Add(($"{input.Name}={Value.FormatNumber(input.Max.Value)}", One(input.Name, Value.Number(input.Max.Value))));
+                    if (input.Min.HasValue) Add($"{input.Name}={Value.FormatNumber(input.Min.Value)}", input.Name, Value.Number(input.Min.Value));
+                    if (input.Max.HasValue) Add($"{input.Name}={Value.FormatNumber(input.Max.Value)}", input.Name, Value.Number(input.Max.Value));
                 }
                 else if (input.Type == InputType.Choice)
                 {
-                    foreach (var o in input.Options)
-                        cases.Add(($"{input.Name}={o}", One(input.Name, Value.Text(o))));
+                    foreach (var o in input.Options) Add($"{input.Name}={o}", input.Name, Value.Text(o));
                 }
                 else if (input.Type == InputType.Bool)
                 {
-                    cases.Add(($"{input.Name}=true", One(input.Name, Value.Bool(true))));
-                    cases.Add(($"{input.Name}=false", One(input.Name, Value.Bool(false))));
+                    Add($"{input.Name}=true", input.Name, Value.Bool(true));
+                    Add($"{input.Name}=false", input.Name, Value.Bool(false));
+                }
+            }
+            foreach (var table in ruleSet.Tables)
+            foreach (var col in table.Columns)
+            {
+                var label = table.Name + "." + col.Name;
+                if (col.Type == InputType.Number)
+                {
+                    if (col.Min.HasValue) AddColumn($"{label}={Value.FormatNumber(col.Min.Value)}", col.Name, Value.Number(col.Min.Value));
+                    if (col.Max.HasValue) AddColumn($"{label}={Value.FormatNumber(col.Max.Value)}", col.Name, Value.Number(col.Max.Value));
+                }
+                else if (col.Type == InputType.Choice)
+                {
+                    foreach (var o in col.Options) AddColumn($"{label}={o}", col.Name, Value.Text(o));
                 }
             }
 
             var seen = new HashSet<string>(StringComparer.Ordinal);
-            foreach (var (label, inputs) in cases)
+            foreach (var (label, inputs, tables) in cases)
             {
-                var r = RuleEngine.Evaluate(ruleSet, inputs, options);
+                var r = RuleEngine.Evaluate(ruleSet, inputs, options, tables);
                 foreach (var e in r.Errors)
                     if (seen.Add(e))
                         issues.Add(Warning("deneme", $"[{label}] {e}"));
             }
+        }
+
+        /// <summary>Deneme için tablo satırları: en az satır sayısı kadar (en az 1), sütunlar varsayılan; biri verilen değerde.</summary>
+        private static Dictionary<string, List<Dictionary<string, Value>>> Rows(RuleSet ruleSet, string? column, Value value)
+        {
+            var tables = new Dictionary<string, List<Dictionary<string, Value>>>(StringComparer.OrdinalIgnoreCase);
+            foreach (var table in ruleSet.Tables)
+            {
+                var count = Math.Max(1, table.MinRows ?? 1);
+                var rows = new List<Dictionary<string, Value>>();
+                for (int i = 0; i < count; i++)
+                {
+                    var row = new Dictionary<string, Value>(StringComparer.OrdinalIgnoreCase);
+                    if (column != null && table.FindColumn(column) != null) row[column] = value;
+                    rows.Add(row);
+                }
+                tables[table.Name] = rows;
+            }
+            return tables;
         }
 
         private static Dictionary<string, Value> One(string name, Value v) =>
@@ -165,7 +252,8 @@ namespace RuleForge.Core.Engine
                     issues.Add(Error(item, $"{what} tanımsız ad kullanıyor: '{id}'. Önce girdi veya değişken olarak tanımlanmalı."));
         }
 
-        private static void CheckTarget(string id, RuleTarget target, ModelSnapshot? snapshot, List<ValidationIssue> issues)
+        private static void CheckTarget(string id, RuleTarget target, ModelSnapshot? snapshot, TableDefinition? table,
+            List<ValidationIssue> issues)
         {
             switch (target.Kind)
             {
@@ -195,7 +283,9 @@ namespace RuleForge.Core.Engine
             if (target.Kind != TargetKind.ComponentSuppression && target.Kind != TargetKind.ComponentReplace &&
                 target.Kind != TargetKind.OutputFileName && !(target.Kind == TargetKind.Configuration && target.Component != null))
             {
-                var key = string.IsNullOrWhiteSpace(target.Document) ? snapshot.RootDocument : target.Document!;
+                // Kapsamlı kuralda boş dosya = modülün kendisi.
+                var key = !string.IsNullOrWhiteSpace(target.Document) ? target.Document!
+                    : table != null && !string.IsNullOrEmpty(table.Module) ? table.Module : snapshot.RootDocument;
                 doc = snapshot.FindDocument(key);
                 if (doc == null)
                 {
@@ -225,15 +315,19 @@ namespace RuleForge.Core.Engine
                     break;
                 case TargetKind.ComponentSuppression:
                 case TargetKind.ComponentReplace:
-                    if (snapshot.FindComponent(target.Component!) == null)
+                    if (snapshot.FindComponent(InModule(table, target.Component!)) == null)
                         issues.Add(Error(id, $"Montajda '{target.Component}' bileşeni yok."));
                     break;
                 case TargetKind.Configuration:
-                    if (target.Component != null && snapshot.FindComponent(target.Component) == null)
+                    if (target.Component != null && snapshot.FindComponent(InModule(table, target.Component)) == null)
                         issues.Add(Error(id, $"Montajda '{target.Component}' bileşeni yok."));
                     break;
             }
         }
+
+        /// <summary>Kapsamlı kuralın bileşen yolu modülün içindedir; master'daki tam yol modül bileşeninin altındadır.</summary>
+        private static string InModule(TableDefinition? table, string path) =>
+            table == null || string.IsNullOrEmpty(table.ModuleComponent) ? path : table.ModuleComponent + "/" + path;
 
         private static ValidationIssue Error(string item, string msg) => new ValidationIssue(IssueSeverity.Error, item, msg);
 

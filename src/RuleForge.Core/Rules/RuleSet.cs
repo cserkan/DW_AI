@@ -18,11 +18,21 @@ namespace RuleForge.Core.Rules
         public string MasterAssembly { get; set; } = string.Empty;
 
         public List<InputDefinition> Inputs { get; set; } = new List<InputDefinition>();
+
+        /// <summary>
+        /// Tekrarlanan modüller (ör. konveyör hattındaki bölümler): her satır modülün bir kopyasıdır ve
+        /// kapsamı (<see cref="Rule.Scope"/>) bu tablo olan kurallar her satır için ayrı çalışır.
+        /// </summary>
+        public List<TableDefinition> Tables { get; set; } = new List<TableDefinition>();
+
         public List<VariableDefinition> Variables { get; set; } = new List<VariableDefinition>();
         public List<Rule> Rules { get; set; } = new List<Rule>();
 
         public InputDefinition? FindInput(string name) =>
             Inputs.FirstOrDefault(i => string.Equals(i.Name, name, StringComparison.OrdinalIgnoreCase));
+
+        public TableDefinition? FindTable(string? name) =>
+            name == null ? null : Tables.FirstOrDefault(t => string.Equals(t.Name, name, StringComparison.OrdinalIgnoreCase));
 
         public VariableDefinition? FindVariable(string name) =>
             Variables.FirstOrDefault(v => string.Equals(v.Name, name, StringComparison.OrdinalIgnoreCase));
@@ -60,12 +70,80 @@ namespace RuleForge.Core.Rules
         public string? Description { get; set; }
     }
 
+    /// <summary>
+    /// Tablo girdisi: modelde birden çok kez bulunan bir modülün (alt montaj/parça) her kopyası bir satırdır.
+    /// Satır sayısı da girdidir (ör. kaç bölümlük konveyör hattı).
+    /// </summary>
+    public sealed class TableDefinition
+    {
+        /// <summary>Formüllerde kullanılan ad, ör. "Bolumler". Satır sayısı "Bolumler_Adet", satır no "Bolumler_Sira".</summary>
+        public string Name { get; set; } = string.Empty;
+
+        public string Label { get; set; } = string.Empty;
+
+        /// <summary>Tekrarlanan modülün master dosyası, ör. "Conveyor Assembly.SLDASM".</summary>
+        public string Module { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Modülün master montajdaki bileşen yolu. Boşsa modül master'ın kendisidir ve üretilen modelin kökü,
+        /// kopyaları bir araya getiren ayrı bir montajdır (ör. "CONVEYOR LINE").
+        /// </summary>
+        public string? ModuleComponent { get; set; }
+
+        /// <summary>Her satırın girdileri (satırdan satıra değişebilen değerler).</summary>
+        public List<InputDefinition> Columns { get; set; } = new List<InputDefinition>();
+
+        public int? MinRows { get; set; }
+        public int? MaxRows { get; set; }
+        public string? Description { get; set; }
+
+        public InputDefinition? FindColumn(string name) =>
+            Columns.FirstOrDefault(c => string.Equals(c.Name, name, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>
+    /// Tablolar için motorun kendiliğinden tanımladığı adlar. Kapsamsız formüller tabloyu bu özetlerle görür;
+    /// kapsamlı (satır) formüller ayrıca satırın sütunlarını ve satır numarasını görür.
+    /// </summary>
+    public static class TableSymbols
+    {
+        /// <summary>Satır sayısı.</summary>
+        public static string Count(TableDefinition t) => t.Name + "_Adet";
+
+        /// <summary>Satır numarası (1'den başlar); sadece kapsamlı formüllerde.</summary>
+        public static string Index(TableDefinition t) => t.Name + "_Sira";
+
+        public static string First(string column) => column + "_Ilk";
+        public static string Last(string column) => column + "_Son";
+        public static string Sum(string column) => column + "_Toplam";
+        public static string Max(string column) => column + "_EnBuyuk";
+        public static string Min(string column) => column + "_EnKucuk";
+
+        /// <summary>Tablonun tüm formüllerde görünen özet adları (satır sayısı, sütunların ilk/son/toplam/en büyük/en küçük değeri).</summary>
+        public static IEnumerable<string> Aggregates(TableDefinition t)
+        {
+            yield return Count(t);
+            foreach (var c in t.Columns)
+            {
+                yield return First(c.Name);
+                yield return Last(c.Name);
+                if (c.Type != InputType.Number) continue;
+                yield return Sum(c.Name);
+                yield return Max(c.Name);
+                yield return Min(c.Name);
+            }
+        }
+    }
+
     /// <summary>Ara hesap. Diğer formüller adıyla kullanabilir.</summary>
     public sealed class VariableDefinition
     {
         public string Name { get; set; } = string.Empty;
         public string Expression { get; set; } = string.Empty;
         public string? Description { get; set; }
+
+        /// <summary>Tablo adı verilirse değişken her satır için ayrı hesaplanır ve satırın sütunlarını kullanabilir.</summary>
+        public string? Scope { get; set; }
     }
 
     public enum RuleStatus
@@ -95,6 +173,12 @@ namespace RuleForge.Core.Rules
 
         /// <summary>İsteğe bağlı: yanlışsa kural uygulanmaz (model değeri olduğu gibi kalır).</summary>
         public string? Condition { get; set; }
+
+        /// <summary>
+        /// Tablo adı verilirse kural tekrarlanan modülün her kopyası (her satır) için ayrı çalışır; hedefin dosya
+        /// ve bileşen yolları modülün kendi içindeki adlardır.
+        /// </summary>
+        public string? Scope { get; set; }
 
         public RuleStatus Status { get; set; } = RuleStatus.Proposed;
         public RuleSource Source { get; set; } = RuleSource.Manual;

@@ -1,0 +1,209 @@
+Varyant: 10, gözlem: 381, sabit: 270, kural önerisi: 39, açıklanamayan: 0
+
+TAHMİNİ GİRDİLER (kör test: girdi tablosu verilmedi, modelden bulundu)
+  LH_Rail_D1_bottom  ←  LH Rail.SLDPRT › D1@bottom   (0 değeri açıklıyor)
+      birebir aynı değişenler: RH Rail.SLDPRT › D1@bottom
+  Roller_D1_length  ←  Roller.SLDPRT › D1@length   (1 değeri açıklıyor)
+  Roller_D1_Base_Extrude  ←  Roller.SLDPRT › D1@Base-Extrude   (0 değeri açıklıyor)
+      birebir aynı değişenler: Roller.SLDPRT › D1@Sketch1
+  Frame_D1_Floor  ←  Frame.SLDPRT › D1@Floor   (0 değeri açıklıyor)
+      birebir aynı değişenler: Frame.SLDPRT › D1@Frame Fixing Holes, Frame.SLDPRT › D1@Sketch14
+  Frame_D1_Overall_Length  ←  Frame.SLDPRT › D1@Overall Length   (1 değeri açıklıyor)   [satır girdisi: Conveyor_Assembly tablosunun sütunu]
+      birebir aynı değişenler: LH Rail.SLDPRT › D1@length, RH Rail.SLDPRT › D1@length
+
+GİRDİLER
+  LH_Rail_D1_bottom (Number) [100 … 150]
+  Roller_D1_length (Number) [342 … 910]
+  Roller_D1_Base_Extrude (Number) [40 … 60]
+  Frame_D1_Floor (Number) [500 … 1105]
+
+TABLO Conveyor_Assembly  (Conveyor Assembly kopyaları; 2–5 satır, her satır modülün bir kopyası)
+  modül: Conveyor Assembly.SLDASM  (master'ın kendisi; üretilen modelin kökü kopyaları toplayan ayrı bir montaj)
+  sütun Frame_D1_Overall_Length (Number) [600 … 2999]
+
+DEĞİŞKENLER
+  Frame_D1_Overall_Length_Esigi = 1500   (her Conveyor_Assembly satırı için)
+         (Frame_D1_Overall_Length eşiği. Veriler 1500 ile 1600 arasındaki her değeri destekliyor; 2 kural bu değişkeni kullanıyor.)
+  Conveyor_Bed_D1_Roller_Pattern = CEILING((Frame_D1_Overall_Length - 100) / 90)   (her Conveyor_Assembly satırı için)
+         (Adet: Conveyor Bed.SLDASM › D1@Roller Pattern (aralık formülleri buna bağlı).)
+
+ÖNERİLEN KURALLAR
+  [99 %] Dimension [Frame.SLDPRT :: D1@Frame Fixing Holes]   (her Conveyor_Assembly satırı için)
+         = Frame_D1_Floor
+         (10 varyantta tam uyum (10 farklı Frame_D1_Floor değeri).)
+  [99 %] Dimension [Frame.SLDPRT :: D1@Half Width]   (her Conveyor_Assembly satırı için)
+         = Roller_D1_length / 2 + 45
+         (10 varyantta tam uyum (10 farklı Roller_D1_length değeri).)
+  [99 %] Dimension [Frame.SLDPRT :: D1@Sketch14]   (her Conveyor_Assembly satırı için)
+         = Frame_D1_Floor
+         (10 varyantta tam uyum (10 farklı Frame_D1_Floor değeri).)
+  [99 %] CustomProperty [LH Rail Assembly.SLDASM :: Description]   (her Conveyor_Assembly satırı için)
+         = "Left Hand Rail, " & Frame_D1_Overall_Length_Ilk & " long " & LH_Rail_D1_bottom & " high"
+         (10 varyantta aynı metin şablonu. Diğer aday: "Left Hand Rail, " & Frame_D1_Overall_Length_Ilk & " long " & LH_Rail_D1_bottom & " high")
+  [99 %] CustomProperty [LH Rail.SLDPRT :: Description]   (her Conveyor_Assembly satırı için)
+         = "Left Hand Rail, " & Frame_D1_Overall_Length_Ilk & " long " & LH_Rail_D1_bottom & " high"
+         (10 varyantta aynı metin şablonu. Diğer aday: "Left Hand Rail, " & Frame_D1_Overall_Length_Ilk & " long " & LH_Rail_D1_bottom & " high")
+  [99 %] CustomProperty [LH Rail.SLDPRT :: PartNumber]   (her Conveyor_Assembly satırı için)
+         = "LH-" & Frame_D1_Overall_Length_Ilk & "-" & LH_Rail_D1_bottom & "-R"
+         (10 varyantta aynı metin şablonu. Diğer aday: "LH-" & Frame_D1_Overall_Length_Ilk & "-" & LH_Rail_D1_bottom & "-R")
+  [99 %] CustomProperty [RH Rail Assembly.SLDASM :: Description]   (her Conveyor_Assembly satırı için)
+         = "Right Hand Rail, " & Frame_D1_Overall_Length_Ilk & " long " & LH_Rail_D1_bottom & " high"
+         (10 varyantta aynı metin şablonu. Diğer aday: "Right Hand Rail, " & Frame_D1_Overall_Length_Ilk & " long " & LH_Rail_D1_bottom & " high")
+  [99 %] CustomProperty [RH Rail.SLDPRT :: Description]   (her Conveyor_Assembly satırı için)
+         = "Right Hand Rail, " & Frame_D1_Overall_Length_Ilk & " long " & LH_Rail_D1_bottom & " high"
+         (10 varyantta aynı metin şablonu. Diğer aday: "Right Hand Rail, " & Frame_D1_Overall_Length_Ilk & " long " & LH_Rail_D1_bottom & " high")
+  [99 %] CustomProperty [RH Rail.SLDPRT :: PartNumber]   (her Conveyor_Assembly satırı için)
+         = "RH-" & Frame_D1_Overall_Length_Ilk & "-" & LH_Rail_D1_bottom & "-R"
+         (10 varyantta aynı metin şablonu. Diğer aday: "RH-" & Frame_D1_Overall_Length_Ilk & "-" & LH_Rail_D1_bottom & "-R")
+  [99 %] Dimension [LH Rail.SLDPRT :: D1@bottom]   (her Conveyor_Assembly satırı için)
+         = LH_Rail_D1_bottom
+         (Bu değer girdinin kendisi.)
+  [99 %] Dimension [Roller.SLDPRT :: D1@length]   (her Conveyor_Assembly satırı için)
+         = Roller_D1_length
+         (Bu değer girdinin kendisi.)
+  [99 %] Dimension [Roller.SLDPRT :: D1@Base-Extrude]   (her Conveyor_Assembly satırı için)
+         = Roller_D1_Base_Extrude
+         (Bu değer girdinin kendisi.)
+  [99 %] Dimension [Frame.SLDPRT :: D1@Floor]   (her Conveyor_Assembly satırı için)
+         = Frame_D1_Floor
+         (Bu değer girdinin kendisi.)
+  [99 %] ComponentSuppression [Conveyor Frame-1/Support-3]   (her Conveyor_Assembly satırı için)
+         = Frame_D1_Overall_Length <= Frame_D1_Overall_Length_Esigi
+         (Frame_D1_Overall_Length 1500 ile 1600 arasında bir eşikte değişiyor.)
+  [99 %] ComponentSuppression [Conveyor Frame-1/Support-4]   (her Conveyor_Assembly satırı için)
+         = Frame_D1_Overall_Length <= Frame_D1_Overall_Length_Esigi
+         (Frame_D1_Overall_Length 1500 ile 1600 arasında bir eşikte değişiyor.)
+  [99 %] Dimension [Conveyor Frame.SLDASM :: D1@SupportCentreLine]   (her Conveyor_Assembly satırı için)
+         = Frame_D1_Overall_Length / 2 - 38.1
+         (14 varyantta tam uyum (9 farklı Frame_D1_Overall_Length değeri).)
+  [99 %] Dimension [LH Rail.SLDPRT :: D1@length]   (her Conveyor_Assembly satırı için)
+         = Frame_D1_Overall_Length
+         (32 varyantta tam uyum (21 farklı Frame_D1_Overall_Length değeri).)
+  [99 %] Dimension [RH Rail.SLDPRT :: D1@length]   (her Conveyor_Assembly satırı için)
+         = Frame_D1_Overall_Length
+         (32 varyantta tam uyum (21 farklı Frame_D1_Overall_Length değeri).)
+  [99 %] Dimension [Frame.SLDPRT :: D1@Overall Length]   (her Conveyor_Assembly satırı için)
+         = Frame_D1_Overall_Length
+         (Bu değer girdinin kendisi.)
+  [99 %] Dimension [Conveyor Bed.SLDASM :: D3@Roller Pattern]   (her Conveyor_Assembly satırı için)
+         = ROUNDUP((Frame_D1_Overall_Length - 100) / (Conveyor_Bed_D1_Roller_Pattern - 1), 2)
+         (32 varyantta eşit aralık formülü tam uyuyor: aralık = (Frame_D1_Overall_Length - 100) / (Conveyor Bed.SLDASM › D1@Roller Pattern - 1).)
+  [99 %] Dimension [LH Rail.SLDPRT :: D3@Roller Hole Pattern]   (her Conveyor_Assembly satırı için)
+         = ROUNDUP((Frame_D1_Overall_Length - 100) / (Conveyor_Bed_D1_Roller_Pattern - 1), 2)
+         (32 varyantta eşit aralık formülü tam uyuyor: aralık = (Frame_D1_Overall_Length - 100) / (Conveyor Bed.SLDASM › D1@Roller Pattern - 1).)
+  [99 %] Dimension [RH Rail.SLDPRT :: D3@Roller Hole Pattern]   (her Conveyor_Assembly satırı için)
+         = ROUNDUP((Frame_D1_Overall_Length - 100) / (Conveyor_Bed_D1_Roller_Pattern - 1), 2)
+         (32 varyantta eşit aralık formülü tam uyuyor: aralık = (Frame_D1_Overall_Length - 100) / (Conveyor Bed.SLDASM › D1@Roller Pattern - 1).)
+  [97 %] Dimension [Support.SLDPRT :: D1@Boss-Extrude4]   (her Conveyor_Assembly satırı için)
+         = Frame_D1_Floor - 76.2
+         (7 varyantta tam uyum (7 farklı Frame_D1_Floor değeri).)
+  [97 %] Dimension [Support.SLDPRT :: D1@Bottom]   (her Conveyor_Assembly satırı için)
+         = Frame_D1_Floor - 76.2
+         (7 varyantta tam uyum (7 farklı Frame_D1_Floor değeri).)
+  [97 %] Dimension [Support.SLDPRT :: D1@Sketch5]   (her Conveyor_Assembly satırı için)
+         = Frame_D1_Floor - 76.2
+         (7 varyantta tam uyum (7 farklı Frame_D1_Floor değeri).)
+  [97 %] CustomProperty [Support.SLDPRT :: Description]   (her Conveyor_Assembly satırı için)
+         = "Support, " & (Frame_D1_Floor - 76.2) & " high"
+         (7 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor.)
+  [94 %] CustomProperty [Conveyor Bed.SLDASM :: Description]   (her Conveyor_Assembly satırı için)
+         = "Conveyor Bed, " & Frame_D1_Floor & " high, " & (Roller_D1_length + 90) & " wide, " & Frame_D1_Overall_Length_Ilk & " long"
+         (10 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor.)
+  [94 %] CustomProperty [Frame.SLDPRT :: Description]   (her Conveyor_Assembly satırı için)
+         = "Frame, " & Frame_D1_Floor & " high, " & (Roller_D1_length + 90) & " wide, " & Frame_D1_Overall_Length_Ilk & " long"
+         (10 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor.)
+  [90 %] Dimension [Conveyor Bed.SLDASM :: D1@Roller Pattern]   (her Conveyor_Assembly satırı için)
+         = CEILING((Frame_D1_Overall_Length - 100) / 90)
+         (32 varyantta basamak (adet) fonksiyonu uyuyor; 36 farklı biçim de veriyle uyumlu. Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100).)
+  [90 %] Dimension [LH Rail.SLDPRT :: D1@Roller Hole Pattern]   (her Conveyor_Assembly satırı için)
+         = CEILING((Frame_D1_Overall_Length - 100) / 90)
+         (32 varyantta basamak (adet) fonksiyonu uyuyor; 36 farklı biçim de veriyle uyumlu. Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100).)
+  [90 %] Dimension [RH Rail.SLDPRT :: D1@Roller Hole Pattern]   (her Conveyor_Assembly satırı için)
+         = CEILING((Frame_D1_Overall_Length - 100) / 90)
+         (32 varyantta basamak (adet) fonksiyonu uyuyor; 36 farklı biçim de veriyle uyumlu. Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100).)
+  [88 %] Dimension [Roller.SLDPRT :: D1@Sketch1]   (her Conveyor_Assembly satırı için)
+         = Roller_D1_Base_Extrude
+         (10 varyantta tam uyum (3 farklı Roller_D1_Base_Extrude değeri).)
+  [88 %] CustomProperty [Roller Assembly.SLDASM :: Description]   (her Conveyor_Assembly satırı için)
+         = SWITCH(Roller_D1_Base_Extrude, 40, "Light", 50, "Medium", 60, "Heavy") & " Duty Roller, " & Roller_D1_Base_Extrude & " diameter " & Roller_D1_length & " long"
+         (10 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor.)
+  [88 %] CustomProperty [Roller.SLDPRT :: Description]   (her Conveyor_Assembly satırı için)
+         = SWITCH(Roller_D1_Base_Extrude, 40, "Light", 50, "Medium", 60, "Heavy") & " Duty Roller, " & Roller_D1_Base_Extrude & " diameter " & Roller_D1_length & " long"
+         (10 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor.)
+  [88 %] CustomProperty [Roller.SLDPRT :: PartNumber]   (her Conveyor_Assembly satırı için)
+         = "R-" & Roller_D1_Base_Extrude & "-" & SWITCH(Roller_D1_Base_Extrude, 40, "Lİ", 50, "ME", 60, "HE") & "-" & Roller_D1_length
+         (10 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor.)
+  [88 %] CustomProperty [Support.SLDPRT :: PartNumber]   (her Conveyor_Assembly satırı için)
+         = "CS-" & (Frame_D1_Floor - 76.2) & "-" & SWITCH(Roller_D1_Base_Extrude, 40, "Lİ", 50, "ME")
+         (7 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor.)
+  [75 %] Dimension [RH Rail.SLDPRT :: D1@bottom]   (her Conveyor_Assembly satırı için)
+         = LH_Rail_D1_bottom
+         (10 varyantta tam uyum (2 farklı LH_Rail_D1_bottom değeri). Diğer aday: RANGELOOKUP(LH_Rail_D1_bottom, 100, 100, 150))
+  [50 %] Dimension [Conveyor Assembly.SLDASM :: D1@RollerTop]   (her Conveyor_Assembly satırı için)
+         = Roller_D1_Base_Extrude / 2 + 70
+         (10 varyantta tam uyum (3 farklı Roller_D1_Base_Extrude değeri).)
+  [50 %] CustomProperty [Frame.SLDPRT :: PartNumber]   (her Conveyor_Assembly satırı için)
+         = "CF-" & Frame_D1_Floor & "-" & SWITCH(Roller_D1_Base_Extrude, 40, "Lİ", 50, "ME", 60, "HE") & "-" & (Roller_D1_length + 90) & "-" & Frame_D1_Overall_Length_Ilk
+         (10 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor.)
+
+SORULAR
+  - Frame_D1_Overall_Length için 2 kural aynı eşiği kullanıyor (sup_Conveyor_Frame_1_Support_3, sup_Conveyor_Frame_1_Support_4). Veriler 1500 ile 1600 arasındaki her değeri destekliyor; şimdilik 1500 seçildi. Gerçek eşik nedir? ('Frame_D1_Overall_Length_Esigi' değişkenini değiştirmek hepsini düzeltir.)
+
+ÖNERİLEN YENİ VARYANTLAR (bunları DriveWorks'te üretip aynı komutu tekrar çalıştırın)
+  ONERI01:  LH_Rail_D1_bottom = 100,  Roller_D1_length = 720,  Roller_D1_Base_Extrude = 40,  Frame_D1_Floor = 850
+      Conveyor_Assembly satır 1: Frame_D1_Overall_Length = 1530
+      Conveyor_Assembly satır 2: Frame_D1_Overall_Length = 1550
+      Conveyor_Assembly satır 3: Frame_D1_Overall_Length = 1580
+      · Roller_D1_Base_Extrude = 40: Roller_D1_Base_Extrude = 40 sadece 1 varyantta var; bu seçeneğe bağlı kurallar tek örneğe dayanıyor (az sayıda farklı değer aldığı için seçenek gibi ele alındı).
+      · Frame_D1_Overall_Length = 1530 (bir satırda): Frame_D1_Overall_Length eşiği 1500–1600 arasında; bu değerler aralığı daraltır (2 kural: Frame_D1_Overall_Length_Esigi).
+      · Frame_D1_Overall_Length = 1550 (bir satırda): Frame_D1_Overall_Length eşiği 1500–1600 arasında; bu değerler aralığı daraltır (2 kural: Frame_D1_Overall_Length_Esigi).
+      · Frame_D1_Overall_Length = 1580 (bir satırda): Frame_D1_Overall_Length eşiği 1500–1600 arasında; bu değerler aralığı daraltır (2 kural: Frame_D1_Overall_Length_Esigi).
+  ONERI02:  LH_Rail_D1_bottom = 150,  Roller_D1_length = 410,  Roller_D1_Base_Extrude = 60,  Frame_D1_Floor = 930
+      Conveyor_Assembly satır 1: Frame_D1_Overall_Length = 1500
+      Conveyor_Assembly satır 2: Frame_D1_Overall_Length = 2700
+      · Roller_D1_Base_Extrude = 60: Roller_D1_Base_Extrude = 60 sadece 1 varyantta var; bu seçeneğe bağlı kurallar tek örneğe dayanıyor (az sayıda farklı değer aldığı için seçenek gibi ele alındı).
+
+DEĞİŞEN DEĞERLER (39)
+  Conveyor Frame-1/Support-3 (bastırılmış mı): 18 varyantta evet, 14 varyantta hayır
+  Conveyor Frame-1/Support-4 (bastırılmış mı): 18 varyantta evet, 14 varyantta hayır
+  Conveyor Bed.SLDASM › D1@Roller Pattern: 6 … 33 (15 farklı değer)
+  Conveyor Bed.SLDASM › D3@Roller Pattern: 90.33 … 104.4 (20 farklı değer)
+  Conveyor Frame.SLDASM › D1@SupportCentreLine: 761.9 … 1461.4 (9 farklı değer) (18 varyantta yok)
+  Frame.SLDPRT › D1@Overall Length: 600 … 2999 (21 farklı değer)
+  LH Rail.SLDPRT › D1@length: 600 … 2999 (21 farklı değer)
+  LH Rail.SLDPRT › D1@Roller Hole Pattern: 6 … 33 (15 farklı değer)
+  LH Rail.SLDPRT › D3@Roller Hole Pattern: 90.33 … 104.4 (20 farklı değer)
+  RH Rail.SLDPRT › D1@length: 600 … 2999 (21 farklı değer)
+  RH Rail.SLDPRT › D1@Roller Hole Pattern: 6 … 33 (15 farklı değer)
+  RH Rail.SLDPRT › D3@Roller Hole Pattern: 90.33 … 104.4 (20 farklı değer)
+  Conveyor Assembly.SLDASM › D1@RollerTop: 90 … 100 (3 farklı değer)
+  Frame.SLDPRT › D1@Floor: 500 … 1105 (10 farklı değer)
+  Frame.SLDPRT › D1@Frame Fixing Holes: 500 … 1105 (10 farklı değer)
+  Frame.SLDPRT › D1@Half Width: 216 … 500 (10 farklı değer)
+  Frame.SLDPRT › D1@Sketch14: 500 … 1105 (10 farklı değer)
+  LH Rail.SLDPRT › D1@bottom: 100 … 150 (2 farklı değer)
+  RH Rail.SLDPRT › D1@bottom: 100 … 150 (2 farklı değer)
+  Roller.SLDPRT › D1@Base-Extrude: 40 … 60 (3 farklı değer)
+  Roller.SLDPRT › D1@length: 342 … 910 (10 farklı değer)
+  Roller.SLDPRT › D1@Sketch1: 40 … 60 (3 farklı değer)
+  Support.SLDPRT › D1@Boss-Extrude4: 525.8 … 1028.8 (7 farklı değer) (3 varyantta yok)
+  Support.SLDPRT › D1@Bottom: 525.8 … 1028.8 (7 farklı değer) (3 varyantta yok)
+  Support.SLDPRT › D1@Sketch5: 525.8 … 1028.8 (7 farklı değer) (3 varyantta yok)
+  Conveyor Bed.SLDASM › özellik 'Description': 10 farklı metin, ör. "Conveyor Bed, 556 high, 851 wide, 801 long"
+  Frame.SLDPRT › özellik 'Description': 10 farklı metin, ör. "Frame, 556 high, 851 wide, 801 long"
+  Frame.SLDPRT › özellik 'PartNumber': 10 farklı metin, ör. "CF-556-ME-851-801"
+  LH Rail Assembly.SLDASM › özellik 'Description': 10 farklı metin, ör. "Left Hand Rail, 801 long 150 high"
+  LH Rail.SLDPRT › özellik 'Description': 10 farklı metin, ör. "Left Hand Rail, 801 long 150 high"
+  LH Rail.SLDPRT › özellik 'PartNumber': 10 farklı metin, ör. "LH-801-150-R"
+  RH Rail Assembly.SLDASM › özellik 'Description': 10 farklı metin, ör. "Right Hand Rail, 801 long 150 high"
+  RH Rail.SLDPRT › özellik 'Description': 10 farklı metin, ör. "Right Hand Rail, 801 long 150 high"
+  RH Rail.SLDPRT › özellik 'PartNumber': 10 farklı metin, ör. "RH-801-150-R"
+  Roller Assembly.SLDASM › özellik 'Description': 10 farklı metin, ör. "Medium Duty Roller, 50 diameter 761 long"
+  Roller.SLDPRT › özellik 'Description': 10 farklı metin, ör. "Medium Duty Roller, 50 diameter 761 long"
+  Roller.SLDPRT › özellik 'PartNumber': 10 farklı metin, ör. "R-50-ME-761"
+  Support.SLDPRT › özellik 'Description': 7 farklı metin, ör. "Support, 525.8 high" (3 varyantta yok)
+  Support.SLDPRT › özellik 'PartNumber': 7 farklı metin, ör. "CS-525.8-Lİ" (3 varyantta yok)
+Not: Tekrarlanan modül bulundu: 'Conveyor Assembly.SLDASM'. Varyantlarda 2–5 kopya (toplam 32); her kopya ayrı örnek olarak incelendi. Varyantların kökü kopyaları bir araya getiren ayrı bir montaj; master'da karşılığı yok.
+Not: SolidWorks'ün hesapladığı özellikler kural dışı bırakıldı: Weight.
+Not: Girdi tablosu verilmediği için girdiler modelden tahmin edildi. Adlar modeldeki ölçü/özellik adlarıdır; DriveWorks'teki gerçek girdilerle karşılaştırın.
+Not: 'Conveyor_Assembly' tablosu: her satır bir modül kopyası; satır girdileri Frame_D1_Overall_Length. Formüllerde Conveyor_Assembly_Adet satır sayısı, Conveyor_Assembly_Sira satır numarası, <sütun>_Ilk / _Son / _Toplam / _EnBuyuk / _EnKucuk tablo özetleridir.

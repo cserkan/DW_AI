@@ -31,9 +31,13 @@ namespace RuleForge.Inference
             return b.Count(a.Contains) < 0.5 * Math.Min(a.Count, b.Count);
         }
 
-        public static NameMap Map(ModelSnapshot reference, ModelSnapshot variant)
+        /// <param name="knownDocuments">Adlarından çözülmüş dosya eşlemeleri (varyant dosyası → referans dosyası), varsa.</param>
+        public static NameMap Map(ModelSnapshot reference, ModelSnapshot variant, IDictionary<string, string>? knownDocuments = null)
         {
             var map = new NameMap();
+            if (knownDocuments != null)
+                foreach (var kv in knownDocuments)
+                    if (reference.FindDocument(kv.Value) != null) map.Documents[kv.Key] = kv.Value;
             map.Documents[variant.RootDocument] = reference.RootDocument;
             MatchChildren(reference, variant, null, null, map);
             return map;

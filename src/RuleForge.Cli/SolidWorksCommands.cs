@@ -145,11 +145,17 @@ namespace RuleForge.Cli
         public static int Generate(Args args)
         {
             var rules = JsonStore.Load<RuleSet>(args.Require("rules"));
-            var result = RuleEngine.Evaluate(rules, RuleEngine.ParseAssignments(args.Assignments),
-                new EvaluationOptions { IncludeProposed = args.Flag("include-proposed") });
+            var inputs = RuleEngine.ParseAssignments(args.Assignments, out var tables);
+            var result = RuleEngine.Evaluate(rules, inputs, new EvaluationOptions { IncludeProposed = args.Flag("include-proposed") }, tables);
             Program.Print(result);
             if (!result.Success) return 1;
             if (args.Flag("dry-run")) return 0;
+            if (result.Actions.Any(a => a.Instance.HasValue))
+            {
+                Console.Error.WriteLine("Bu kural seti tekrarlanan bir modül (tablo) içeriyor; kopyalı modellerin üretimi henüz eklenmedi. " +
+                                        "Değerleri görmek için --dry-run kullanın.");
+                return 1;
+            }
 
 #if SOLIDWORKS
             var master = args.Get("master") ?? rules.MasterAssembly;

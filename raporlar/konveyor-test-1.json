@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 1,
+  "name": "Conveyor Assembly",
+  "description": "10 varyanttan otomatik çıkarıldı.",
+  "masterAssembly": "C:\\Users\\pc\\Downloads\\ConveryoSoloTemplate\\SOLIDWORKS Files\\Straight Conveyor\\Conveyor Assembly.SLDASM",
+  "inputs": [
+    {
+      "name": "LH_Rail_D1_bottom",
+      "label": "LH_Rail_D1_bottom",
+      "type": "number",
+      "min": 100,
+      "max": 150,
+      "default": "100",
+      "options": [],
+      "description": "Varyantlarda görülen aralık: 100 – 150"
+    },
+    {
+      "name": "Roller_D1_length",
+      "label": "Roller_D1_length",
+      "type": "number",
+      "min": 342,
+      "max": 910,
+      "default": "761",
+      "options": [],
+      "description": "Varyantlarda görülen aralık: 342 – 910"
+    },
+    {
+      "name": "Roller_D1_Base_Extrude",
+      "label": "Roller_D1_Base_Extrude",
+      "type": "number",
+      "min": 40,
+      "max": 60,
+      "default": "50",
+      "options": [],
+      "description": "Varyantlarda görülen aralık: 40 – 60"
+    },
+    {
+      "name": "Frame_D1_Floor",
+      "label": "Frame_D1_Floor",
+      "type": "number",
+      "min": 500,
+      "max": 1105,
+      "default": "661",
+      "options": [],
+      "description": "Varyantlarda görülen aralık: 500 – 1105"
+    }
+  ],
+  "tables": [
+    {
+      "name": "Conveyor_Assembly",
+      "label": "Conveyor Assembly kopyaları",
+      "module": "Conveyor Assembly.SLDASM",
+      "columns": [
+        {
+          "name": "Frame_D1_Overall_Length",
+          "label": "Frame.SLDPRT › D1@Overall Length",
+          "type": "number",
+          "min": 600,
+          "max": 2999,
+          "default": "1256",
+          "options": [],
+          "description": "Varyantlarda görülen aralık: 600 – 2999"
+        }
+      ],
+      "minRows": 2,
+      "maxRows": 5,
+      "description": "Her satır bir 'Conveyor Assembly.SLDASM' kopyası. Varyantlarda 2–5 satır görüldü."
+    }
+  ],
+  "variables": [
+    {
+      "name": "Frame_D1_Overall_Length_Esigi",
+      "expression": "1500",
+      "description": "Frame_D1_Overall_Length eşiği. Veriler 1500 ile 1600 arasındaki her değeri destekliyor; 2 kural bu değişkeni kullanıyor.",
+      "scope": "Conveyor_Assembly"
+    },
+    {
+      "name": "Conveyor_Bed_D1_Roller_Pattern",
+      "expression": "CEILING((Frame_D1_Overall_Length - 100) / 90)",
+      "description": "Adet: Conveyor Bed.SLDASM › D1@Roller Pattern (aralık formülleri buna bağlı).",
+      "scope": "Conveyor_Assembly"
+    }
+  ],
+  "rules": [
+    {
+      "id": "dim_Conveyor_Assembly_D1_RollerTop",
+      "description": "Conveyor Assembly.SLDASM › D1@RollerTop",
+      "target": {
+        "kind": "dimension",
+        "document": "Conveyor Assembly.SLDASM",
+        "name": "D1@RollerTop",
+        "key": "dimension:conveyor assembly.sldasm:d1@rollertop",
+        "expectedType": "number"
+      },
+      "expression": "Roller_D1_Base_Extrude / 2 + 70",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.5,
+      "evidence": "10 varyantta tam uyum (3 farklı Roller_D1_Base_Extrude değeri)."
+    },
+    {
+      "id": "dim_Frame_D1_Frame_Fixing_Holes",
+      "description": "Frame.SLDPRT › D1@Frame Fixing Holes",
+      "target": {
+        "kind": "dimension",
+        "document": "Frame.SLDPRT",
+        "name": "D1@Frame Fixing Holes",
+        "key": "dimension:frame.sldprt:d1@frame fixing holes",
+        "expectedType": "number"
+      },
+      "expression": "Frame_D1_Floor",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "10 varyantta tam uyum (10 farklı Frame_D1_Floor değeri)."
+    },
+    {
+      "id": "dim_Frame_D1_Half_Width",
+      "description": "Frame.SLDPRT › D1@Half Width",
+      "target": {
+        "kind": "dimension",
+        "document": "Frame.SLDPRT",
+        "name": "D1@Half Width",
+        "key": "dimension:frame.sldprt:d1@half width",
+        "expectedType": "number"
+      },
+      "expression": "Roller_D1_length / 2 + 45",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "10 varyantta tam uyum (10 farklı Roller_D1_length değeri)."
+    },
+    {
+      "id": "dim_Frame_D1_Sketch14",
+      "description": "Frame.SLDPRT › D1@Sketch14",
+      "target": {
+        "kind": "dimension",
+        "document": "Frame.SLDPRT",
+        "name": "D1@Sketch14",
+        "key": "dimension:frame.sldprt:d1@sketch14",
+        "expectedType": "number"
+      },
+      "expression": "Frame_D1_Floor",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "10 varyantta tam uyum (10 farklı Frame_D1_Floor değeri)."
+    },
+    {
+      "id": "dim_RH_Rail_D1_bottom",
+      "description": "RH Rail.SLDPRT › D1@bottom",
+      "target": {
+        "kind": "dimension",
+        "document": "RH Rail.SLDPRT",
+        "name": "D1@bottom",
+        "key": "dimension:rh rail.sldprt:d1@bottom",
+        "expectedType": "number"
+      },
+      "expression": "LH_Rail_D1_bottom",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "10 varyantta tam uyum (2 farklı LH_Rail_D1_bottom değeri). Diğer aday: RANGELOOKUP(LH_Rail_D1_bottom, 100, 100, 150)"
+    },
+    {
+      "id": "dim_Roller_D1_Sketch1",
+      "description": "Roller.SLDPRT › D1@Sketch1",
+      "target": {
+        "kind": "dimension",
+        "document": "Roller.SLDPRT",
+        "name": "D1@Sketch1",
+        "key": "dimension:roller.sldprt:d1@sketch1",
+        "expectedType": "number"
+      },
+      "expression": "Roller_D1_Base_Extrude",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.88,
+      "evidence": "10 varyantta tam uyum (3 farklı Roller_D1_Base_Extrude değeri)."
+    },
+    {
+      "id": "dim_Support_D1_Boss_Extrude4",
+      "description": "Support.SLDPRT › D1@Boss-Extrude4",
+      "target": {
+        "kind": "dimension",
+        "document": "Support.SLDPRT",
+        "name": "D1@Boss-Extrude4",
+        "key": "dimension:support.sldprt:d1@boss-extrude4",
+        "expectedType": "number"
+      },
+      "expression": "Frame_D1_Floor - 76.2",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.97,
+      "evidence": "7 varyantta tam uyum (7 farklı Frame_D1_Floor değeri)."
+    },
+    {
+      "id": "dim_Support_D1_Bottom",
+      "description": "Support.SLDPRT › D1@Bottom",
+      "target": {
+        "kind": "dimension",
+        "document": "Support.SLDPRT",
+        "name": "D1@Bottom",
+        "key": "dimension:support.sldprt:d1@bottom",
+        "expectedType": "number"
+      },
+      "expression": "Frame_D1_Floor - 76.2",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.97,
+      "evidence": "7 varyantta tam uyum (7 farklı Frame_D1_Floor değeri)."
+    },
+    {
+      "id": "dim_Support_D1_Sketch5",
+      "description": "Support.SLDPRT › D1@Sketch5",
+      "target": {
+        "kind": "dimension",
+        "document": "Support.SLDPRT",
+        "name": "D1@Sketch5",
+        "key": "dimension:support.sldprt:d1@sketch5",
+        "expectedType": "number"
+      },
+      "expression": "Frame_D1_Floor - 76.2",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.97,
+      "evidence": "7 varyantta tam uyum (7 farklı Frame_D1_Floor değeri)."
+    },
+    {
+      "id": "prop_Conveyor_Bed_Description",
+      "description": "Conveyor Bed.SLDASM › özellik 'Description'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Conveyor Bed.SLDASM",
+        "name": "Description",
+        "key": "customproperty:conveyor bed.sldasm:description",
+        "expectedType": "text"
+      },
+      "expression": "\"Conveyor Bed, \" & Frame_D1_Floor & \" high, \" & (Roller_D1_length + 90) & \" wide, \" & Frame_D1_Overall_Length_Ilk & \" long\"",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.94,
+      "evidence": "10 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor."
+    },
+    {
+      "id": "prop_Frame_Description",
+      "description": "Frame.SLDPRT › özellik 'Description'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Frame.SLDPRT",
+        "name": "Description",
+        "key": "customproperty:frame.sldprt:description",
+        "expectedType": "text"
+      },
+      "expression": "\"Frame, \" & Frame_D1_Floor & \" high, \" & (Roller_D1_length + 90) & \" wide, \" & Frame_D1_Overall_Length_Ilk & \" long\"",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.94,
+      "evidence": "10 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor."
+    },
+    {
+      "id": "prop_Frame_PartNumber",
+      "description": "Frame.SLDPRT › özellik 'PartNumber'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Frame.SLDPRT",
+        "name": "PartNumber",
+        "key": "customproperty:frame.sldprt:partnumber",
+        "expectedType": "text"
+      },
+      "expression": "\"CF-\" & Frame_D1_Floor & \"-\" & SWITCH(Roller_D1_Base_Extrude, 40, \"Lİ\", 50, \"ME\", 60, \"HE\") & \"-\" & (Roller_D1_length + 90) & \"-\" & Frame_D1_Overall_Length_Ilk",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.5,
+      "evidence": "10 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor."
+    },
+    {
+      "id": "prop_LH_Rail_Assembly_Description",
+      "description": "LH Rail Assembly.SLDASM › özellik 'Description'",
+      "target": {
+        "kind": "customProperty",
+        "document": "LH Rail Assembly.SLDASM",
+        "name": "Description",
+        "key": "customproperty:lh rail assembly.sldasm:description",
+        "expectedType": "text"
+      },
+      "expression": "\"Left Hand Rail, \" & Frame_D1_Overall_Length_Ilk & \" long \" & LH_Rail_D1_bottom & \" high\"",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "10 varyantta aynı metin şablonu. Diğer aday: \"Left Hand Rail, \" & Frame_D1_Overall_Length_Ilk & \" long \" & LH_Rail_D1_bottom & \" high\""
+    },
+    {
+      "id": "prop_LH_Rail_Description",
+      "description": "LH Rail.SLDPRT › özellik 'Description'",
+      "target": {
+        "kind": "customProperty",
+        "document": "LH Rail.SLDPRT",
+        "name": "Description",
+        "key": "customproperty:lh rail.sldprt:description",
+        "expectedType": "text"
+      },
+      "expression": "\"Left Hand Rail, \" & Frame_D1_Overall_Length_Ilk & \" long \" & LH_Rail_D1_bottom & \" high\"",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "10 varyantta aynı metin şablonu. Diğer aday: \"Left Hand Rail, \" & Frame_D1_Overall_Length_Ilk & \" long \" & LH_Rail_D1_bottom & \" high\""
+    },
+    {
+      "id": "prop_LH_Rail_PartNumber",
+      "description": "LH Rail.SLDPRT › özellik 'PartNumber'",
+      "target": {
+        "kind": "customProperty",
+        "document": "LH Rail.SLDPRT",
+        "name": "PartNumber",
+        "key": "customproperty:lh rail.sldprt:partnumber",
+        "expectedType": "text"
+      },
+      "expression": "\"LH-\" & Frame_D1_Overall_Length_Ilk & \"-\" & LH_Rail_D1_bottom & \"-R\"",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "10 varyantta aynı metin şablonu. Diğer aday: \"LH-\" & Frame_D1_Overall_Length_Ilk & \"-\" & LH_Rail_D1_bottom & \"-R\""
+    },
+    {
+      "id": "prop_RH_Rail_Assembly_Description",
+      "description": "RH Rail Assembly.SLDASM › özellik 'Description'",
+      "target": {
+        "kind": "customProperty",
+        "document": "RH Rail Assembly.SLDASM",
+        "name": "Description",
+        "key": "customproperty:rh rail assembly.sldasm:description",
+        "expectedType": "text"
+      },
+      "expression": "\"Right Hand Rail, \" & Frame_D1_Overall_Length_Ilk & \" long \" & LH_Rail_D1_bottom & \" high\"",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "10 varyantta aynı metin şablonu. Diğer aday: \"Right Hand Rail, \" & Frame_D1_Overall_Length_Ilk & \" long \" & LH_Rail_D1_bottom & \" high\""
+    },
+    {
+      "id": "prop_RH_Rail_Description",
+      "description": "RH Rail.SLDPRT › özellik 'Description'",
+      "target": {
+        "kind": "customProperty",
+        "document": "RH Rail.SLDPRT",
+        "name": "Description",
+        "key": "customproperty:rh rail.sldprt:description",
+        "expectedType": "text"
+      },
+      "expression": "\"Right Hand Rail, \" & Frame_D1_Overall_Length_Ilk & \" long \" & LH_Rail_D1_bottom & \" high\"",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "10 varyantta aynı metin şablonu. Diğer aday: \"Right Hand Rail, \" & Frame_D1_Overall_Length_Ilk & \" long \" & LH_Rail_D1_bottom & \" high\""
+    },
+    {
+      "id": "prop_RH_Rail_PartNumber",
+      "description": "RH Rail.SLDPRT › özellik 'PartNumber'",
+      "target": {
+        "kind": "customProperty",
+        "document": "RH Rail.SLDPRT",
+        "name": "PartNumber",
+        "key": "customproperty:rh rail.sldprt:partnumber",
+        "expectedType": "text"
+      },
+      "expression": "\"RH-\" & Frame_D1_Overall_Length_Ilk & \"-\" & LH_Rail_D1_bottom & \"-R\"",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "10 varyantta aynı metin şablonu. Diğer aday: \"RH-\" & Frame_D1_Overall_Length_Ilk & \"-\" & LH_Rail_D1_bottom & \"-R\""
+    },
+    {
+      "id": "prop_Roller_Assembly_Description",
+      "description": "Roller Assembly.SLDASM › özellik 'Description'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Roller Assembly.SLDASM",
+        "name": "Description",
+        "key": "customproperty:roller assembly.sldasm:description",
+        "expectedType": "text"
+      },
+      "expression": "SWITCH(Roller_D1_Base_Extrude, 40, \"Light\", 50, \"Medium\", 60, \"Heavy\") & \" Duty Roller, \" & Roller_D1_Base_Extrude & \" diameter \" & Roller_D1_length & \" long\"",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.88,
+      "evidence": "10 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor."
+    },
+    {
+      "id": "prop_Roller_Description",
+      "description": "Roller.SLDPRT › özellik 'Description'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Roller.SLDPRT",
+        "name": "Description",
+        "key": "customproperty:roller.sldprt:description",
+        "expectedType": "text"
+      },
+      "expression": "SWITCH(Roller_D1_Base_Extrude, 40, \"Light\", 50, \"Medium\", 60, \"Heavy\") & \" Duty Roller, \" & Roller_D1_Base_Extrude & \" diameter \" & Roller_D1_length & \" long\"",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.88,
+      "evidence": "10 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor."
+    },
+    {
+      "id": "prop_Roller_PartNumber",
+      "description": "Roller.SLDPRT › özellik 'PartNumber'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Roller.SLDPRT",
+        "name": "PartNumber",
+        "key": "customproperty:roller.sldprt:partnumber",
+        "expectedType": "text"
+      },
+      "expression": "\"R-\" & Roller_D1_Base_Extrude & \"-\" & SWITCH(Roller_D1_Base_Extrude, 40, \"Lİ\", 50, \"ME\", 60, \"HE\") & \"-\" & Roller_D1_length",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.88,
+      "evidence": "10 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor."
+    },
+    {
+      "id": "prop_Support_Description",
+      "description": "Support.SLDPRT › özellik 'Description'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Support.SLDPRT",
+        "name": "Description",
+        "key": "customproperty:support.sldprt:description",
+        "expectedType": "text"
+      },
+      "expression": "\"Support, \" & (Frame_D1_Floor - 76.2) & \" high\"",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.97,
+      "evidence": "7 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor."
+    },
+    {
+      "id": "prop_Support_PartNumber",
+      "description": "Support.SLDPRT › özellik 'PartNumber'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Support.SLDPRT",
+        "name": "PartNumber",
+        "key": "customproperty:support.sldprt:partnumber",
+        "expectedType": "text"
+      },
+      "expression": "\"CS-\" & (Frame_D1_Floor - 76.2) & \"-\" & SWITCH(Roller_D1_Base_Extrude, 40, \"Lİ\", 50, \"ME\")",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.88,
+      "evidence": "7 varyantta metin iskeleti aynı; içindeki sayılar girdilerle doğrusal, değişen kelimeler bir girdiye göre seçiliyor."
+    },
+    {
+      "id": "dim_LH_Rail_D1_bottom",
+      "description": "LH Rail.SLDPRT › D1@bottom",
+      "target": {
+        "kind": "dimension",
+        "document": "LH Rail.SLDPRT",
+        "name": "D1@bottom",
+        "key": "dimension:lh rail.sldprt:d1@bottom",
+        "expectedType": "number"
+      },
+      "expression": "LH_Rail_D1_bottom",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Bu değer girdinin kendisi."
+    },
+    {
+      "id": "dim_Roller_D1_length",
+      "description": "Roller.SLDPRT › D1@length",
+      "target": {
+        "kind": "dimension",
+        "document": "Roller.SLDPRT",
+        "name": "D1@length",
+        "key": "dimension:roller.sldprt:d1@length",
+        "expectedType": "number"
+      },
+      "expression": "Roller_D1_length",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Bu değer girdinin kendisi."
+    },
+    {
+      "id": "dim_Roller_D1_Base_Extrude",
+      "description": "Roller.SLDPRT › D1@Base-Extrude",
+      "target": {
+        "kind": "dimension",
+        "document": "Roller.SLDPRT",
+        "name": "D1@Base-Extrude",
+        "key": "dimension:roller.sldprt:d1@base-extrude",
+        "expectedType": "number"
+      },
+      "expression": "Roller_D1_Base_Extrude",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Bu değer girdinin kendisi."
+    },
+    {
+      "id": "dim_Frame_D1_Floor",
+      "description": "Frame.SLDPRT › D1@Floor",
+      "target": {
+        "kind": "dimension",
+        "document": "Frame.SLDPRT",
+        "name": "D1@Floor",
+        "key": "dimension:frame.sldprt:d1@floor",
+        "expectedType": "number"
+      },
+      "expression": "Frame_D1_Floor",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Bu değer girdinin kendisi."
+    },
+    {
+      "id": "sup_Conveyor_Frame_1_Support_3",
+      "description": "Conveyor Frame-1/Support-3 (bastırılmış mı)",
+      "target": {
+        "kind": "componentSuppression",
+        "component": "Conveyor Frame-1/Support-3",
+        "key": "componentsuppression:conveyor frame-1/support-3",
+        "expectedType": "bool"
+      },
+      "expression": "Frame_D1_Overall_Length <= Frame_D1_Overall_Length_Esigi",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Frame_D1_Overall_Length 1500 ile 1600 arasında bir eşikte değişiyor."
+    },
+    {
+      "id": "sup_Conveyor_Frame_1_Support_4",
+      "description": "Conveyor Frame-1/Support-4 (bastırılmış mı)",
+      "target": {
+        "kind": "componentSuppression",
+        "component": "Conveyor Frame-1/Support-4",
+        "key": "componentsuppression:conveyor frame-1/support-4",
+        "expectedType": "bool"
+      },
+      "expression": "Frame_D1_Overall_Length <= Frame_D1_Overall_Length_Esigi",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Frame_D1_Overall_Length 1500 ile 1600 arasında bir eşikte değişiyor."
+    },
+    {
+      "id": "dim_Conveyor_Bed_D1_Roller_Pattern",
+      "description": "Conveyor Bed.SLDASM › D1@Roller Pattern",
+      "target": {
+        "kind": "dimension",
+        "document": "Conveyor Bed.SLDASM",
+        "name": "D1@Roller Pattern",
+        "key": "dimension:conveyor bed.sldasm:d1@roller pattern",
+        "expectedType": "number"
+      },
+      "expression": "CEILING((Frame_D1_Overall_Length - 100) / 90)",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.9,
+      "evidence": "32 varyantta basamak (adet) fonksiyonu uyuyor; 36 farklı biçim de veriyle uyumlu. Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100)."
+    },
+    {
+      "id": "dim_Conveyor_Frame_D1_SupportCentreLine",
+      "description": "Conveyor Frame.SLDASM › D1@SupportCentreLine",
+      "target": {
+        "kind": "dimension",
+        "document": "Conveyor Frame.SLDASM",
+        "name": "D1@SupportCentreLine",
+        "key": "dimension:conveyor frame.sldasm:d1@supportcentreline",
+        "expectedType": "number"
+      },
+      "expression": "Frame_D1_Overall_Length / 2 - 38.1",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "14 varyantta tam uyum (9 farklı Frame_D1_Overall_Length değeri)."
+    },
+    {
+      "id": "dim_LH_Rail_D1_length",
+      "description": "LH Rail.SLDPRT › D1@length",
+      "target": {
+        "kind": "dimension",
+        "document": "LH Rail.SLDPRT",
+        "name": "D1@length",
+        "key": "dimension:lh rail.sldprt:d1@length",
+        "expectedType": "number"
+      },
+      "expression": "Frame_D1_Overall_Length",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "32 varyantta tam uyum (21 farklı Frame_D1_Overall_Length değeri)."
+    },
+    {
+      "id": "dim_LH_Rail_D1_Roller_Hole_Pattern",
+      "description": "LH Rail.SLDPRT › D1@Roller Hole Pattern",
+      "target": {
+        "kind": "dimension",
+        "document": "LH Rail.SLDPRT",
+        "name": "D1@Roller Hole Pattern",
+        "key": "dimension:lh rail.sldprt:d1@roller hole pattern",
+        "expectedType": "number"
+      },
+      "expression": "CEILING((Frame_D1_Overall_Length - 100) / 90)",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.9,
+      "evidence": "32 varyantta basamak (adet) fonksiyonu uyuyor; 36 farklı biçim de veriyle uyumlu. Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100)."
+    },
+    {
+      "id": "dim_RH_Rail_D1_length",
+      "description": "RH Rail.SLDPRT › D1@length",
+      "target": {
+        "kind": "dimension",
+        "document": "RH Rail.SLDPRT",
+        "name": "D1@length",
+        "key": "dimension:rh rail.sldprt:d1@length",
+        "expectedType": "number"
+      },
+      "expression": "Frame_D1_Overall_Length",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "32 varyantta tam uyum (21 farklı Frame_D1_Overall_Length değeri)."
+    },
+    {
+      "id": "dim_RH_Rail_D1_Roller_Hole_Pattern",
+      "description": "RH Rail.SLDPRT › D1@Roller Hole Pattern",
+      "target": {
+        "kind": "dimension",
+        "document": "RH Rail.SLDPRT",
+        "name": "D1@Roller Hole Pattern",
+        "key": "dimension:rh rail.sldprt:d1@roller hole pattern",
+        "expectedType": "number"
+      },
+      "expression": "CEILING((Frame_D1_Overall_Length - 100) / 90)",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.9,
+      "evidence": "32 varyantta basamak (adet) fonksiyonu uyuyor; 36 farklı biçim de veriyle uyumlu. Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Frame_D1_Overall_Length - 100)."
+    },
+    {
+      "id": "dim_Frame_D1_Overall_Length",
+      "description": "Frame.SLDPRT › D1@Overall Length",
+      "target": {
+        "kind": "dimension",
+        "document": "Frame.SLDPRT",
+        "name": "D1@Overall Length",
+        "key": "dimension:frame.sldprt:d1@overall length",
+        "expectedType": "number"
+      },
+      "expression": "Frame_D1_Overall_Length",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "Bu değer girdinin kendisi."
+    },
+    {
+      "id": "dim_Conveyor_Bed_D3_Roller_Pattern",
+      "description": "Conveyor Bed.SLDASM › D3@Roller Pattern",
+      "target": {
+        "kind": "dimension",
+        "document": "Conveyor Bed.SLDASM",
+        "name": "D3@Roller Pattern",
+        "key": "dimension:conveyor bed.sldasm:d3@roller pattern",
+        "expectedType": "number"
+      },
+      "expression": "ROUNDUP((Frame_D1_Overall_Length - 100) / (Conveyor_Bed_D1_Roller_Pattern - 1), 2)",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "32 varyantta eşit aralık formülü tam uyuyor: aralık = (Frame_D1_Overall_Length - 100) / (Conveyor Bed.SLDASM › D1@Roller Pattern - 1)."
+    },
+    {
+      "id": "dim_LH_Rail_D3_Roller_Hole_Pattern",
+      "description": "LH Rail.SLDPRT › D3@Roller Hole Pattern",
+      "target": {
+        "kind": "dimension",
+        "document": "LH Rail.SLDPRT",
+        "name": "D3@Roller Hole Pattern",
+        "key": "dimension:lh rail.sldprt:d3@roller hole pattern",
+        "expectedType": "number"
+      },
+      "expression": "ROUNDUP((Frame_D1_Overall_Length - 100) / (Conveyor_Bed_D1_Roller_Pattern - 1), 2)",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "32 varyantta eşit aralık formülü tam uyuyor: aralık = (Frame_D1_Overall_Length - 100) / (Conveyor Bed.SLDASM › D1@Roller Pattern - 1)."
+    },
+    {
+      "id": "dim_RH_Rail_D3_Roller_Hole_Pattern",
+      "description": "RH Rail.SLDPRT › D3@Roller Hole Pattern",
+      "target": {
+        "kind": "dimension",
+        "document": "RH Rail.SLDPRT",
+        "name": "D3@Roller Hole Pattern",
+        "key": "dimension:rh rail.sldprt:d3@roller hole pattern",
+        "expectedType": "number"
+      },
+      "expression": "ROUNDUP((Frame_D1_Overall_Length - 100) / (Conveyor_Bed_D1_Roller_Pattern - 1), 2)",
+      "scope": "Conveyor_Assembly",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.99,
+      "evidence": "32 varyantta eşit aralık formülü tam uyuyor: aralık = (Frame_D1_Overall_Length - 100) / (Conveyor Bed.SLDASM › D1@Roller Pattern - 1)."
+    }
+  ]
+}

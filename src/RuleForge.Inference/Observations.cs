@@ -78,17 +78,33 @@ namespace RuleForge.Inference
         public HashSet<string> SkippedCalculated { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>Yapısal eşlemeyi aç. Dönüş: referansla eşlenemeyen bileşen sayısı (tüm varyantlarda toplam).</summary>
-        public int UseStructure(ModelSnapshot reference, IReadOnlyList<VariantSample> samples)
+        /// <param name="knownDocuments">Örnek adı → adlarından çözülmüş dosya eşlemeleri (varsa eşlemeye tohum olur).</param>
+        public int UseStructure(ModelSnapshot reference, IReadOnlyList<VariantSample> samples,
+            IReadOnlyDictionary<string, Dictionary<string, string>>? knownDocuments = null)
         {
             _maps = new Dictionary<string, NameMap>(StringComparer.OrdinalIgnoreCase);
             int unmatched = 0;
             foreach (var s in samples)
             {
-                var map = StructureMatcher.Map(reference, s.Snapshot);
+                Dictionary<string, string>? known = null;
+                knownDocuments?.TryGetValue(s.Name, out known);
+                var map = StructureMatcher.Map(reference, s.Snapshot, known);
                 _maps[s.Name] = map;
-                unmatched += s.Snapshot.Components.Count(c => !c.IsPatternInstance && !map.Components.ContainsKey(c.Path));
+                var patterned = PatternDerived(s.Snapshot);
+                unmatched += s.Snapshot.Components.Count(c => !patterned.Contains(c.Path) && !map.Components.ContainsKey(c.Path));
             }
             return unmatched;
+        }
+
+        /// <summary>Desen örnekleri ve onların alt bileşenleri: sayıları desen ölçüsünden gelir, tek tek kural hedefi değildir.</summary>
+        internal static HashSet<string> PatternDerived(ModelSnapshot snapshot)
+        {
+            var set = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var c in snapshot.Components.Where(c => c.IsPatternInstance)) set.Add(c.Path);
+            if (set.Count == 0) return set;
+            foreach (var c in snapshot.Components)
+                if (set.Any(p => c.Path.StartsWith(p + "/", StringComparison.Ordinal))) set.Add(c.Path);
+            return set;
         }
 
         private string DocKey(VariantSample sample, string key)
@@ -175,8 +191,9 @@ namespace RuleForge.Inference
                     }
                 }
 
-                // Desen örneklerinin sayısı desen ölçüsünden gelir; tek tek örnekler kural hedefi değildir.
-                foreach (var comp in snap.Components.Where(c => !c.IsPatternInstance))
+                // Desen örneklerinin sayısı desen ölçüsünden gelir; tek tek örnekler (ve altları) kural hedefi değildir.
+                var patterned = PatternDerived(snap);
+                foreach (var comp in snap.Components.Where(c => !patterned.Contains(c.Path)))
                 {
                     var path = ComponentPath(sample, comp.Path);
 

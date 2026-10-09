@@ -1,0 +1,53 @@
+ÇAPRAZ DOĞRULAMA — her varyant sırayla çıkarıldı, kurallar kalan varyantlardan öğrenildi,
+sonra çıkarılan varyantın değerleri tahmin edildi ve gerçek değerlerle karşılaştırıldı.
+Cevap anahtarı gerekmez; her montaj setinde çalışır.
+
+Varyant                                       doğru  yanlış  kuralsız
+Conveyor assembly 0001__CONVEYOR LİNE 0001       78       6         0
+Conveyor assembly 0002__CONVEYOR LİNE 0002       77       1        12
+Conveyor assembly 0003__CONVEYOR LİNE 0003       96       0         0
+Conveyor assembly 0004__CONVEYOR LİNE 0004       84       0         0
+Conveyor assembly 0005__CONVEYOR LİNE 0005      102       0         0
+Conveyor assembly 0006__CONVEYOR LİNE 0006       96       0         0
+Conveyor assembly 0007__CONVEYOR LİNE 0007       68       0         0
+Conveyor assembly 0008__CONVEYOR LİNE 0008      130       0         0
+Conveyor assembly 0009__CONVEYOR LİNE 0009       90       0         0
+Conveyor assembly 0010__CONVEYOR LİNE 0010      120       0        20
+
+GENEL: 941/980 değer doğru tahmin edildi (%96.0); 7 yanlış, 32 değer için kural çıkarılamamıştı.
+Her turda doğru ve kararlı kural: 23/34
+
+RİSKLİ DEĞERLER (11) — bu kurallar yeni bir girdide yanlış çıkabilir:
+  Conveyor Bed.SLDASM › D1@Roller Pattern: 1 tahminde yanlış, 2 farklı formül
+      Conveyor assembly 0001__CONVEYOR LİNE 0001 satır 2: tahmin 11, gerçek 10  (formül: FLOOR((Frame_D1_Overall_Length - 100) / 90) + 1)
+  Conveyor Bed.SLDASM › D3@Roller Pattern: 1 tahminde yanlış
+      Conveyor assembly 0001__CONVEYOR LİNE 0001 satır 2: tahmin 90, gerçek 100  (formül: ROUNDUP((Frame_D1_Overall_Length - 100) / (Conveyor_Bed_D1_Roller_Pattern - 1), 2))
+  LH Rail.SLDPRT › D1@Roller Hole Pattern: 1 tahminde yanlış, 2 farklı formül
+      Conveyor assembly 0001__CONVEYOR LİNE 0001 satır 2: tahmin 11, gerçek 10  (formül: FLOOR((Frame_D1_Overall_Length - 100) / 90) + 1)
+  LH Rail.SLDPRT › D3@Roller Hole Pattern: 1 tahminde yanlış
+      Conveyor assembly 0001__CONVEYOR LİNE 0001 satır 2: tahmin 90, gerçek 100  (formül: ROUNDUP((Frame_D1_Overall_Length - 100) / (Conveyor_Bed_D1_Roller_Pattern - 1), 2))
+  RH Rail.SLDPRT › D1@Roller Hole Pattern: 1 tahminde yanlış, 2 farklı formül
+      Conveyor assembly 0001__CONVEYOR LİNE 0001 satır 2: tahmin 11, gerçek 10  (formül: FLOOR((Frame_D1_Overall_Length - 100) / 90) + 1)
+  RH Rail.SLDPRT › D3@Roller Hole Pattern: 1 tahminde yanlış
+      Conveyor assembly 0001__CONVEYOR LİNE 0001 satır 2: tahmin 90, gerçek 100  (formül: ROUNDUP((Frame_D1_Overall_Length - 100) / (Conveyor_Bed_D1_Roller_Pattern - 1), 2))
+  Support.SLDPRT › özellik 'PartNumber': 1 tahminde yanlış, 2 farklı formül
+      Conveyor assembly 0002__CONVEYOR LİNE 0002 satır 2: tahmin CS-525.8-ME, gerçek CS-525.8-Lİ  (formül: "CS-" & (Frame_D1_Floor - 76.2) & "-ME")
+  Frame.SLDPRT › özellik 'PartNumber': 8 tahminde kural yok
+      Conveyor assembly 0002__CONVEYOR LİNE 0002 satır 1: kural çıkarılamamıştı (gerçek değer CF-602-Lİ-882-622)
+      Conveyor assembly 0002__CONVEYOR LİNE 0002 satır 2: kural çıkarılamamıştı (gerçek değer CF-602-Lİ-882-622)
+  Roller Assembly.SLDASM › özellik 'Description': 8 tahminde kural yok
+      Conveyor assembly 0002__CONVEYOR LİNE 0002 satır 1: kural çıkarılamamıştı (gerçek değer Light Duty Roller, 40 diameter 792 long)
+      Conveyor assembly 0002__CONVEYOR LİNE 0002 satır 2: kural çıkarılamamıştı (gerçek değer Light Duty Roller, 40 diameter 792 long)
+  Roller.SLDPRT › özellik 'Description': 8 tahminde kural yok
+      Conveyor assembly 0002__CONVEYOR LİNE 0002 satır 1: kural çıkarılamamıştı (gerçek değer Light Duty Roller, 40 diameter 792 long)
+      Conveyor assembly 0002__CONVEYOR LİNE 0002 satır 2: kural çıkarılamamıştı (gerçek değer Light Duty Roller, 40 diameter 792 long)
+  Roller.SLDPRT › özellik 'PartNumber': 8 tahminde kural yok
+      Conveyor assembly 0002__CONVEYOR LİNE 0002 satır 1: kural çıkarılamamıştı (gerçek değer R-40-Lİ-792)
+      Conveyor assembly 0002__CONVEYOR LİNE 0002 satır 2: kural çıkarılamamıştı (gerçek değer R-40-Lİ-792)
+Not (Conveyor assembly 0002__CONVEYOR LİNE 0002): [Conveyor_Assembly 1] Kural prop_Frame_PartNumber: SWITCH: 40 için eşleşme yok. (konum 32)
+Not (Conveyor assembly 0002__CONVEYOR LİNE 0002): [Conveyor_Assembly 1] Kural prop_Roller_Assembly_Description: SWITCH: 40 için eşleşme yok. (konum 1)
+Not (Conveyor assembly 0002__CONVEYOR LİNE 0002): [Conveyor_Assembly 1] Kural prop_Roller_Description: SWITCH: 40 için eşleşme yok. (konum 1)
+Not (Conveyor assembly 0010__CONVEYOR LİNE 0010): [Conveyor_Assembly 1] Kural prop_Frame_PartNumber: SWITCH: 60 için eşleşme yok. (konum 32)
+Not (Conveyor assembly 0010__CONVEYOR LİNE 0010): [Conveyor_Assembly 1] Kural prop_Roller_Assembly_Description: SWITCH: 60 için eşleşme yok. (konum 1)
+Not (Conveyor assembly 0010__CONVEYOR LİNE 0010): [Conveyor_Assembly 1] Kural prop_Roller_Description: SWITCH: 60 için eşleşme yok. (konum 1)
+Not: Tekrarlanan modül ('Conveyor Assembly.SLDASM'): her varyant tüm kopyalarıyla birlikte çıkarıldı; değerler kopya (satır) bazında karşılaştırıldı.

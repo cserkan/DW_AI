@@ -33,9 +33,11 @@ namespace RuleForge.Inference
     {
         private const int MaxDrivers = 10;
 
+        /// <param name="seeds">Açıklamada kullanılabilecek hazır sütunlar (ör. tablo özetleri); kendileri girdi olarak dönmez.</param>
         public static List<DetectedDriver> Detect(List<Observation> observations, IReadOnlyList<VariantSample> samples,
-            double tolerance)
+            double tolerance, IReadOnlyList<InputColumn>? seeds = null)
         {
+            var seedColumns = seeds ?? new List<InputColumn>();
             var names = samples.Select(s => s.Name).ToList();
 
             // Tüm varyantlarda bulunan ve değişen gözlemler; aynı değer dizisine sahip olanlar tek grupta.
@@ -57,7 +59,7 @@ namespace RuleForge.Inference
                     var column = ToColumn(DriverName(rep), rep);
                     if (column == null) continue;
 
-                    var finder = new RelationFinder(chosen.Select(c => c.column).Concat(new[] { column }).ToList(), tolerance);
+                    var finder = new RelationFinder(seedColumns.Concat(chosen.Select(c => c.column)).Concat(new[] { column }).ToList(), tolerance);
                     var explained = unexplained
                         .Where(o => o != g && finder.Find(groups[o][0], groups[o][0].Target.ExpectedType, fast: true)
                             .Any(c => c.Confidence >= 0.7 && c.Expression.IndexOf(column.Name, StringComparison.OrdinalIgnoreCase) >= 0))
@@ -117,7 +119,11 @@ namespace RuleForge.Inference
                 var t = o.Values[n].AsText();
                 if (!labels.TryGetValue(t, out var i)) labels[t] = i = labels.Count;
                 return i;
-            });
+            }).ToList();
+            // Neredeyse her varyantta farklı olan metinler (açıklama, parça no) aynı bölünmeyi paylaşır ama aynı girdinin
+            // yansıması değildir; her biri kendi değerleriyle ayrı tutulur.
+            if (labels.Count > Math.Min(12, names.Count / 2))
+                return "t:" + string.Join("\u0001", names.Select(n => o.Values[n].AsText()));
             return "c:" + string.Join(",", parts);
         }
 

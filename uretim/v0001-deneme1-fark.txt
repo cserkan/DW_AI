@@ -1,0 +1,16 @@
+Üretilen: uretim\v0001-deneme1.json
+Beklenen: varyantlar\Cupboard Assy 0001__Cupboard Assy Cupboard Assy1.json
+
+KARŞILAŞTIRMA: 1177/1187 değer aynı, 10 fark.
+
+ÖZEL ÖZELLİKLER (10)
+  Cupboard Assy.SLDASM › özellik 'OrderNo': üretilen 1234, beklenen MF0001
+  Cupboard Base.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0001
+  Cupboard LeftDoor Framed.SLDPRT › özellik 'DWMaterial': üretilen , beklenen Oak
+  Cupboard LeftEnd.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0001
+  Cupboard Plinth.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0001
+  Cupboard Post.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0001
+  Cupboard RightDoor Framed.SLDPRT › özellik 'DWMaterial': üretilen , beklenen Oak
+  Cupboard RightEnd.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0001
+  Cupboard Shelf.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0001
+  Cupboard Top.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0001

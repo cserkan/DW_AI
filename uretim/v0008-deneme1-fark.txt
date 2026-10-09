@@ -1,0 +1,14 @@
+Üretilen: uretim\v0008-deneme1.json
+Beklenen: varyantlar\Cupboard Assy 0008__Cupboard Assy Cupboard Assy8.json
+
+KARŞILAŞTIRMA: 1130/1138 değer aynı, 8 fark.
+
+ÖZEL ÖZELLİKLER (8)
+  Cupboard Assy.SLDASM › özellik 'OrderNo': üretilen 1234, beklenen MF0008
+  Cupboard Base.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0008
+  Cupboard LeftEnd.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0008
+  Cupboard Plinth.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0008
+  Cupboard Post.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0008
+  Cupboard RightEnd.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0008
+  Cupboard Shelf.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0008
+  Cupboard Top.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0008

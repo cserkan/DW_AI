@@ -47,25 +47,32 @@ $rf = ".\src\RuleForge.Cli\bin\Release\net48\ruleforge.exe"
 - Kod değişikliğinden sonra `dotnet test tests\RuleForge.Tests` ve dolap/konveyör `infer` sonuçlarının
   bozulmadığını kontrol edin. Değişiklikleri commit edip push edin.
 
-## Bilinen durum (deneme 3)
+## Bilinen durum (9 Ekim 2026)
 
-- 1096 / 1106 değer DriveWorks ile aynı. Kalan farklar: 7 × OrderNo (beklenen) ve
-  **"Cupboard Base Assy-1/Cupboard Base-1" bastırılmış çıkıyor**. Hiçbir kural bunu istemiyor; deneme 2'de yoktu.
-  Olası neden: aynı adlı "Cupboard Base.SLDPRT" başka klasörden (önceki deneme ya da master) SolidWorks belleğinde
-  kalmış ve kopya yüklenememiş.
-- Bunun için üretime iki koruma eklendi (`src\RuleForge.SolidWorks\ModelGenerator.cs`):
-  `CheckLoaded` (açılışta master'da açık olup kopyada bastırılmış gelen bileşeni yeniden yükler, çıktı klasörü dışındaki
-  dosyayı kullanan bileşeni bildirir) ve `RestoreUnexpectedSuppression` (kural istemeden bastırılan bileşeni, hangi
-  eylemden sonra olduğuyla bildirir ve geri açar). Deneme 4'ün uyarıları nedeni gösterecek.
+- **Dolap gidiş-dönüş testi 4 varyantta temiz** (her birinde kalan 8 fark yalnızca OrderNo: 7 parça + ana montaj;
+  deneme 3'te Cupboard Base bastırıldığı için 7 görünüyordu):
+  0009 Shaker/Maple (`uretim\deneme6-fark.txt`, 1152/1160), 0001 Framed/Oak (`uretim\v0001-deneme2-fark.txt`, 1179/1187),
+  0008 düz kapak/Oak, yükseklik 458 eşik altı (`uretim\v0008-deneme1-fark.txt`, 1130/1138),
+  0010 düz kapak/Mahogany (`uretim\v0010-deneme1-fark.txt`, 1181/1189).
+- Bir kez 0008 okunurken SolidWorks kendiliğinden kapandı; tekrar okuyunca sorun çıkmadı. RuleForge SolidWorks kapalıysa
+  kendisi açıyor (o zaman SolidWorks görünmez çalışabilir ve dışarıdan `GetActiveObject` ile bulunamaz).
+- Deneme 3'teki bastırılmış Cupboard Base'in nedeni: deneme 3'ün `Cupboard Base.SLDPRT` dosyası SolidWorks belleğinde
+  **gizli** olarak açık kalmıştı. `CloseDoc` onu kapatmıyor; üretim bunu algılayıp duruyor. Çare: SolidWorks'ü kapatıp açmak.
+  Gizli belgeyi `Visible = true` yapmak SolidWorks'ü çökertti, denemeyin.
+- **SolidWorks'ü yeniden başlatmanız gerekirse** Gezgin üzerinden başlatın:
+  `explorer.exe "C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS (4)\SLDWORKS.exe"`. `Start-Process` ile Claude'un kabuğundan
+  başlatılan SolidWorks'e bağlanılıyor ama ilk uzun çağrıda takılıyor (RPC_E_SYS_CALL_FAILED).
+- Yeni ders (koda işlendi): değer sadece bazı varyantlarda var ve hep aynıysa (Framed kapağın `DWMaterial`'ı, Framed'ı
+  kullanan 3 varyantın hepsi Oak), değişen bir girdiye birebir eşitse o girdi kural olur (`= Material`).
+- JSON'da sayılar artık en kısa biçimde yazılıyor (Windows'taki .NET Framework 0.94'ü 0.93999999999999995 yazıyordu).
 - Önceki denemelerin dersleri (koda işlendi): ölçüler özellik ağacından bulunuyor (`FindDimension`); değiştirilen parça
   dosyası master klasöründen sipariş klasörüne kopyalanıyor; bu siparişte kullanılmayan dosyaların kuralları atlanıyor;
   silinmiş özellik = bastırılmış; tüm varyantlarda sabit ama master'dan farklı değer = sabit kural ("Pos No");
-  SolidWorks'ün yeniden numaraladığı özellik aileleri (CompCurve) için kural çıkarılmıyor.
+  SolidWorks'ün yeniden numaraladığı özellik aileleri (CompCurve) için kural çıkarılmıyor; üretimde `CheckLoaded` ve
+  `RestoreUnexpectedSuppression` korumaları var.
 
 ## Sonraki adımlar
 
-1. Dolap testi temiz çıkınca başka bir varyantla tekrarlayın (ör. 0001: Framed kapak, Oak, yükseklik 800;
-   girdiler `kurallar\dolap.girdiler.csv`).
-2. Konveyör hattı üretimi: tablo (tekrarlanan modül) içeren kural setleri için `generate` henüz yok. DriveWorks projesi
+1. Konveyör hattı üretimi: tablo (tekrarlanan modül) içeren kural setleri için `generate` henüz yok. DriveWorks projesi
    hat montajında 5 hazır konveyör tutup kullanılmayanları siliyor (`konveyor\ConveryoSoloTemplate.driveprojx`);
    benzer bir yaklaşım uygun olabilir.

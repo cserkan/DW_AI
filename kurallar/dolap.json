@@ -1448,6 +1448,22 @@
       "evidence": "Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, \"Mahogany\", \"Mahogany\", \"Maple\", \"Maple\", \"Oak\", \"Oak\")"
     },
     {
+      "id": "prop_Cupboard_LeftDoor_Framed_DWMaterial",
+      "description": "Cupboard LeftDoor Framed.SLDPRT › özellik 'DWMaterial'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Cupboard LeftDoor Framed.SLDPRT",
+        "name": "DWMaterial",
+        "key": "customproperty:cupboard leftdoor framed.sldprt:dwmaterial",
+        "expectedType": "text"
+      },
+      "expression": "Material",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Material girdisiyle aynı metin."
+    },
+    {
       "id": "prop_Cupboard_LeftDoor_Shaker_Style_DWMaterial",
       "description": "Cupboard LeftDoor Shaker Style.SLDPRT › özellik 'DWMaterial'",
       "target": {
@@ -1526,6 +1542,22 @@
       "source": "inference",
       "confidence": 0.99,
       "evidence": "Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, \"Mahogany\", \"Mahogany\", \"Maple\", \"Maple\", \"Oak\", \"Oak\")"
+    },
+    {
+      "id": "prop_Cupboard_RightDoor_Framed_DWMaterial",
+      "description": "Cupboard RightDoor Framed.SLDPRT › özellik 'DWMaterial'",
+      "target": {
+        "kind": "customProperty",
+        "document": "Cupboard RightDoor Framed.SLDPRT",
+        "name": "DWMaterial",
+        "key": "customproperty:cupboard rightdoor framed.sldprt:dwmaterial",
+        "expectedType": "text"
+      },
+      "expression": "Material",
+      "status": "proposed",
+      "source": "inference",
+      "confidence": 0.75,
+      "evidence": "Material girdisiyle aynı metin."
     },
     {
       "id": "prop_Cupboard_RightDoor_Shaker_Style_DWMaterial",

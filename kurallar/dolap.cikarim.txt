@@ -1,4 +1,4 @@
-Varyant: 9, gözlem: 1351, sabit: 935, kural önerisi: 107, açıklanamayan: 8 (bunlardan 1 kural: hiç değişmiyor ama master'dan farklı)
+Varyant: 9, gözlem: 1351, sabit: 935, kural önerisi: 109, açıklanamayan: 8 (bunlardan 1 kural: hiç değişmiyor ama master'dan farklı)
 
 TAHMİNİ GİRDİLER (kör test: girdi tablosu verilmedi, modelden bulundu)
   Assembly_Height  ←  Cupboard Assy.SLDASM › özellik 'Assembly Height'   (6 değeri açıklıyor)
@@ -315,6 +315,12 @@ DEĞİŞKENLER
   [75 %] ComponentReplace [Cupboard RightDoor Assy-1/Cupboard RightDoor Shaker Style-1]
          = SWITCH(Cupboard_LeftDoor_Shaker_Style_1_Dosyasi, "Cupboard LeftDoor Framed.SLDPRT", "Cupboard RightDoor Framed.SLDPRT", "Cupboard LeftDoor Shaker Style.SLDPRT", "Cupboard RightDoor Shaker Style.SLDPRT", "Cupboard LeftDoor.SLDPRT", "Cupboard RightDoor.SLDPRT")
          (Cupboard_LeftDoor_Shaker_Style_1_Dosyasi değerine göre belirleniyor (3 seçenek, 9 varyant).)
+  [75 %] CustomProperty [Cupboard LeftDoor Framed.SLDPRT :: DWMaterial]
+         = Material
+         (Material girdisiyle aynı metin.)
+  [75 %] CustomProperty [Cupboard RightDoor Framed.SLDPRT :: DWMaterial]
+         = Material
+         (Material girdisiyle aynı metin.)
   [50 %] Dimension [Cupboard LeftDoor Framed.SLDPRT :: D1@Bottom Plane]
          = Assembly_Height - 54
          (3 varyantta tam uyum (3 farklı Assembly_Height değeri).)

@@ -406,9 +406,16 @@ namespace RuleForge.Inference
                     report.ConstantCount++;
                     continue;
                 }
-                if (distinct <= 1) continue; // sadece bazı varyantlarda var ve değişmiyor
-
                 var candidates = finder.Find(obs, obs.Target.ExpectedType);
+                if (distinct <= 1)
+                {
+                    // Sadece bazı varyantlarda var ve değişmiyor (ör. sadece Oak siparişlerinde kullanılan Framed kapağın
+                    // DWMaterial'ı). Kütüphaneden gelen dosyada değer boş olabilir: başka varyantlarda değişen bir girdiye
+                    // birebir eşitse o girdiyi yaz, yoksa atla.
+                    candidates = obs.Target.ExpectedType != ExpectedType.Text ? new List<RelationCandidate>()
+                        : candidates.Where(c => IsVaryingInput(c.Expression, columns)).Take(1).ToList();
+                    if (candidates.Count == 0) continue;
+                }
                 var best = candidates.FirstOrDefault();
                 if (best == null)
                 {
@@ -489,6 +496,11 @@ namespace RuleForge.Inference
                     : $"{q.Value.Count} kural ({string.Join(", ", q.Value.Take(2))} …): {q.Key}");
             return needs;
         }
+
+        /// <summary>İfade tek başına bir girdi adı mı ve o girdi varyantlar arasında değişiyor mu?</summary>
+        private static bool IsVaryingInput(string expression, List<InputColumn> columns) =>
+            columns.Any(c => string.Equals(c.Name, expression, StringComparison.OrdinalIgnoreCase) &&
+                             c.Values.Values.Select(v => v.AsText()).Distinct(StringComparer.OrdinalIgnoreCase).Count() > 1);
 
         private static bool SameValue(Value a, Value b, double tolerance)
         {

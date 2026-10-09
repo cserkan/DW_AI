@@ -26,7 +26,31 @@ namespace RuleForge.Core.Json
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             };
             o.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            o.Converters.Add(new ShortDoubleConverter());
             return o;
+        }
+
+        /// <summary>
+        /// .NET Framework'te double en kısa biçimde yazılmıyor (0.94 → 0.93999999999999995). Aynı değere geri okunan en kısa
+        /// yazımı kullanır; böylece dosyalar her bilgisayarda aynı çıkar.
+        /// </summary>
+        private sealed class ShortDoubleConverter : JsonConverter<double>
+        {
+            public override double Read(ref Utf8JsonReader reader, System.Type typeToConvert, JsonSerializerOptions options) =>
+                reader.GetDouble();
+
+            public override void Write(Utf8JsonWriter writer, double value, JsonSerializerOptions options)
+            {
+                if (double.IsNaN(value) || double.IsInfinity(value))
+                {
+                    writer.WriteNumberValue(value); // ayarlara göre hata verir, varsayılan davranış
+                    return;
+                }
+                var c = System.Globalization.CultureInfo.InvariantCulture;
+                var text = value.ToString("G15", c);
+                if (double.Parse(text, c) != value) text = value.ToString("G17", c);
+                writer.WriteRawValue(text.Replace("E+", "E"), skipInputValidation: false);
+            }
         }
 
         public static string Serialize<T>(T value) => JsonSerializer.Serialize(value, Options);

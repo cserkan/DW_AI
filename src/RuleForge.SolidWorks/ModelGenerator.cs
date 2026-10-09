@@ -255,8 +255,10 @@ namespace RuleForge.SolidWorks
             conflicts = NameConflicts(outDir);
             if (conflicts.Count > 0)
             {
+                // Gizli belge bazen CloseDoc ile kapanmıyor (önceki bir üretimden bellekte kalmış): tek çare SolidWorks'ü yeniden başlatmak.
                 result.Errors.Add("SolidWorks'te çıktı dosyalarıyla aynı adlı belgeler açık; kopya montaj bunları kullanırdı. " +
-                                  "Bu belgeleri kapatıp tekrar deneyin: " + string.Join(", ", conflicts.Select(c => c.path)));
+                                  "Görünür olanları kapatın; gizli olanlar (pencerede görünmez) için SolidWorks'ü kapatıp yeniden açın. " +
+                                  "Belgeler: " + string.Join(", ", conflicts.Select(c => c.path + (c.visible ? "" : " (gizli)"))));
                 return null;
             }
             result.Log.Add($"Master kopyalandı → {outDir}");

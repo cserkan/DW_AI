@@ -368,5 +368,22 @@ namespace RuleForge.Tests
             Assert.Contains(report.Notes, n => n.Contains("Egri"));
             Assert.Contains(report.Rules, r => r.Target.Name == "Delik"); // kararlı adlı silme yine öğrenilir
         }
+
+        [Fact]
+        public void ValueSeenOnlyInSomeVariantsFollowsMatchingInput()
+        {
+            // Dolap testindeki Framed kapak: özellik sadece bazı varyantlarda var ve hepsinde aynı ("Sol"), ama değişen bir
+            // girdiye (Motor) eşit. Kütüphane dosyasında boş olabileceği için kural yazılmalı. Hiçbir girdiye uymayan sabit atlanır.
+            var samples = Samples((snap, boy, i) =>
+            {
+                if (boy <= 3000 || SyntheticConveyor.Specs[i].motor != "Sol") return;
+                var govde = snap.Documents.First(d => d.Key.StartsWith("Govde"));
+                govde.CustomProperties["MotorYonu"] = "Sol";
+                govde.CustomProperties["Not"] = "UZUN";
+            });
+            var report = RuleInferencer.Infer(samples, new InferenceOptions(), Master());
+            Assert.Equal("Motor", report.Rules.Single(r => r.Target.Name == "MotorYonu").Expression);
+            Assert.DoesNotContain(report.Rules, r => r.Target.Name == "Not");
+        }
     }
 }

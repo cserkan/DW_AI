@@ -63,7 +63,10 @@ namespace RuleForge.Inference
                 var rc = refKids[p.r];
                 var vc = varKids[p.v];
                 map.Components[vc.Path] = rc.Path;
-                if (!map.Documents.ContainsKey(vc.DocumentKey)) map.Documents[vc.DocumentKey] = rc.DocumentKey;
+                // Aynı yerde yapısı tamamen farklı bir parça varsa bu bir "parça değişimi"dir (ör. farklı kulp):
+                // dosyayı referanstakiyle eşleme, kendi adıyla kalsın ki değişim kural olarak görünsün.
+                if (!map.Documents.ContainsKey(vc.DocumentKey) && !IsReplacement(reference, rc, variant, vc))
+                    map.Documents[vc.DocumentKey] = rc.DocumentKey;
                 MatchChildren(reference, variant, rc.Path, vc.Path, map);
             }
         }
@@ -95,6 +98,15 @@ namespace RuleForge.Inference
             // Dosya adı da aynıysa (kodlanmamış parçalar, ör. kütüphane parçaları) kesin eşleşme.
             if (string.Equals(rc.DocumentKey, vc.DocumentKey, StringComparison.OrdinalIgnoreCase)) score += 1.0;
             return score;
+        }
+
+        private static bool IsReplacement(ModelSnapshot reference, ComponentInfo rc, ModelSnapshot variant, ComponentInfo vc)
+        {
+            if (string.Equals(rc.DocumentKey, vc.DocumentKey, StringComparison.OrdinalIgnoreCase)) return false;
+            var rdoc = reference.FindDocument(rc.DocumentKey);
+            var vdoc = variant.FindDocument(vc.DocumentKey);
+            if (rdoc == null || vdoc == null) return false; // bastırılmış: bilinmiyor
+            return Jaccard(Signature(rdoc), Signature(vdoc)) < 0.5;
         }
 
         private static HashSet<string> Signature(DocumentInfo doc)

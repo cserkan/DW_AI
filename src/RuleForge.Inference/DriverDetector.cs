@@ -140,7 +140,13 @@ namespace RuleForge.Inference
         private static InputColumn? ToColumn(string name, Observation o)
         {
             var values = new Dictionary<string, Value>(o.Values, StringComparer.OrdinalIgnoreCase);
-            if (values.Values.All(v => v.Kind == ValueKind.Number)) return new InputColumn(name, ColumnKind.Number, values);
+            if (values.Values.All(v => v.Kind == ValueKind.Number))
+            {
+                // DriveWorks'e girilen ölçüler pratikte tam sayıdır; 21.62 gibi değerler (ağırlık, kütle) hesaplanmış sonuçtur.
+                int integers = values.Values.Count(v => Math.Abs(v.AsNumber() - Math.Round(v.AsNumber())) < 1e-6);
+                if (integers < 0.8 * values.Count) return null;
+                return new InputColumn(name, ColumnKind.Number, values);
+            }
             if (values.Values.All(v => v.Kind == ValueKind.Bool)) return new InputColumn(name, ColumnKind.Bool, values);
             // Neredeyse her varyantta farklı olan metin (ör. açıklama, parça no) seçim girdisi değil, sonuçtur.
             var distinct = values.Values.Select(v => v.AsText()).Distinct(StringComparer.OrdinalIgnoreCase).Count();

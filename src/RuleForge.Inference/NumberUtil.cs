@@ -41,6 +41,23 @@ namespace RuleForge.Inference
         /// <summary>a1*x1 + a2*x2 + b ifadesini okunur biçimde yazar.</summary>
         public static string Linear(IList<(double coef, string name)> terms, double constant)
         {
+            // Tek girdi ve 1/d katsayısı: "0.5 * Genislik - 14" yerine "Genislik / 2 - 14" ya da "(Boy + 19) / 3".
+            var active = terms.Where(t => Math.Abs(t.coef) > 1e-12).ToList();
+            if (active.Count == 1 && active[0].coef > 0 && active[0].coef < 1)
+            {
+                var d = Math.Round(1 / active[0].coef);
+                if (d >= 2 && d <= 12 && Math.Abs(1 / d - active[0].coef) < 1e-9)
+                {
+                    var name = active[0].name;
+                    var c = constant * d;
+                    if (Math.Abs(constant - Math.Round(constant, 2)) < 1e-9)
+                        return Math.Abs(constant) < 1e-12 ? $"{name} / {Fmt(d)}"
+                            : $"{name} / {Fmt(d)} {(constant < 0 ? "-" : "+")} {Fmt(Math.Abs(constant))}";
+                    if (Math.Abs(c - Math.Round(c)) < 1e-6)
+                        return $"({name} {(c < 0 ? "-" : "+")} {Fmt(Math.Abs(Math.Round(c)))}) / {Fmt(d)}";
+                }
+            }
+
             var sb = new StringBuilder();
             foreach (var (coef, name) in terms)
             {

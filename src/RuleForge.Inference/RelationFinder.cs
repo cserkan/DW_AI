@@ -80,6 +80,7 @@ namespace RuleForge.Inference
                     Add(found, LinearTwo(samples, yn));
                     Add(found, StepFunction(samples, yn));
                     Add(found, PerCategoryLinear(samples, yn));
+                    if (found.Count == 0) Add(found, Piecewise(samples, yn));
                 }
             }
             if (allBool)
@@ -128,7 +129,12 @@ namespace RuleForge.Inference
                 var (a, b) = fit.Value;
                 if (Math.Abs(a) < 1e-9) continue; // sabit; girdiye bağlı değil
                 var snapped = SnapLine(xs, ys, a, b);
-                if (snapped == null) continue;
+                if (snapped == null)
+                {
+                    var rounded = RoundedLinear(x.Name, xs, ys, a, b);
+                    if (rounded != null) yield return rounded;
+                    continue;
+                }
                 var (sa, sb) = snapped.Value;
 
                 var conf = NumberUtil.Confidence(distinct, 2);
@@ -141,6 +147,110 @@ namespace RuleForge.Inference
                     Question = distinct == 2 ? $"Sadece 2 farklı {x.Name} değeri var; iki noktadan her zaman bir doğru geçer, daha fazla varyantla doğrulanmalı." : null,
                 };
             }
+        }
+
+        /// <summary>
+        /// y = ROUND((x + c) / d) gibi tam sayıya yuvarlanmış doğrusal ilişkiler (ör. raf aralığı = ROUND((H - 86) / 3)).
+        /// </summary>
+        private RelationCandidate? RoundedLinear(string name, double[] xs, double[] ys, double a, double b)
+        {
+            if (ys.Any(v => Math.Abs(v - Math.Round(v)) > 1e-6)) return null;
+            if (xs.Distinct().Count() < 4) return null; // yuvarlama çok şeyi örter; az veriyle güvenilmez
+            if (a <= 0 || a > 1) return null;          // bölme biçimi: x / d (d >= 1)
+
+            var forms = new (string fn, Func<double, double> f)[]
+            {
+                ("ROUND", v => Math.Round(v, MidpointRounding.AwayFromZero)),
+                ("FLOOR", Math.Floor),
+                ("CEILING", Math.Ceiling),
+            };
+            int d0 = (int)Math.Round(1 / a);
+            if (d0 > 12) return null; // büyük adımlar (her 1500 mm'de bir ayak gibi) basamak fonksiyonunun işi
+            var fits = new List<(string expr, int score)>();
+            for (int d = Math.Max(1, d0 - 1); d <= d0 + 1; d++)
+            {
+                // y ≈ (x + c) / d  →  c ≈ y*d - x
+                double c0 = Math.Round(ys.Select((v, i) => v * d - xs[i]).Average());
+                for (int dc = -d - 1; dc <= d + 1; dc++)
+                {
+                    double c = c0 + dc;
+                    foreach (var (fn, f) in forms)
+                    {
+                        bool ok = true;
+                        for (int i = 0; i < xs.Length && ok; i++)
+                            ok = Math.Abs(f(Math.Round((xs[i] + c) / d, 9)) - ys[i]) < 1e-6;
+                        if (!ok) continue;
+                        var inner = Math.Abs(c) < 1e-9 ? name : $"({NumberUtil.Linear(new[] { (1.0, name) }, c)})";
+                        var expr = d == 1 ? $"{fn}({inner})" : $"{fn}({inner} / {d})";
+                        int score = (fn == "ROUND" ? 0 : 1) + (Math.Abs(c % 10) < 1e-9 ? 0 : Math.Abs(c % 2) < 1e-9 ? 1 : 2);
+                        fits.Add((expr, score));
+                    }
+                }
+            }
+            if (fits.Count == 0) return null;
+            var best = fits.OrderBy(f => f.score).First();
+            int alternatives = fits.Select(f => f.expr).Distinct().Count();
+            return new RelationCandidate
+            {
+                Expression = best.expr,
+                Confidence = NumberUtil.Confidence(xs.Distinct().Count(), 3, Math.Min(alternatives, 25)),
+                Complexity = 3,
+                Evidence = $"{xs.Length} varyantta tam sayıya yuvarlanmış doğrusal ilişki uyuyor" +
+                           (alternatives > 1 ? $"; {alternatives} benzer formül de uyumlu." : "."),
+                Question = alternatives > 1 ? $"Yuvarlama formülü kesin mi? Veriyle uyumlu diğerleri de var (ör. {best.expr})." : null,
+            };
+        }
+
+        // ---------- eşiğe göre iki formül: IF(Yukseklik <= 750, Yukseklik / 2 - 25, ROUND((Yukseklik + 19) / 3)) ----------
+        private IEnumerable<RelationCandidate> Piecewise(List<string> samples, Dictionary<string, double> y)
+        {
+            foreach (var x in Numeric)
+            {
+                var pts = samples.Select(s => (x: x.Values[s].AsNumber(), y: y[s])).OrderBy(p => p.x).ToList();
+                if (pts.Select(p => p.x).Distinct().Count() < 5) continue;
+
+                RelationCandidate? best = null;
+                int bestBalance = -1;
+                for (int k = 2; k <= pts.Count - 2; k++)
+                {
+                    if (Math.Abs(pts[k - 1].x - pts[k].x) < 1e-9) continue;
+                    var left = SegmentExpression(x.Name, pts.Take(k).ToList());
+                    var right = SegmentExpression(x.Name, pts.Skip(k).ToList());
+                    if (left == null || right == null || left == right) continue;
+
+                    int balance = Math.Min(k, pts.Count - k);
+                    if (balance <= bestBalance) continue;
+                    bestBalance = balance;
+                    var lo = pts[k - 1].x;
+                    var hi = pts[k].x;
+                    var t = NumberUtil.RoundestBetween(lo, hi);
+                    best = new RelationCandidate
+                    {
+                        Expression = $"IF({x.Name} <= {NumberUtil.Fmt(t)}, {left}, {right})",
+                        Complexity = 6,
+                        Confidence = NumberUtil.Confidence(pts.Count, 5),
+                        Evidence = $"{x.Name} {NumberUtil.Fmt(lo)} ile {NumberUtil.Fmt(hi)} arasındaki bir eşikte formül değişiyor " +
+                                   $"(altında {k}, üstünde {pts.Count - k} varyant).",
+                        Question = $"{x.Name} için formülün değiştiği eşik {NumberUtil.Fmt(lo)} ile {NumberUtil.Fmt(hi)} arasında. Kesin değer nedir?" +
+                                   (k < 3 || pts.Count - k < 3 ? " Bir tarafta sadece 2 varyant var; o taraftaki formül daha fazla varyantla doğrulanmalı." : string.Empty),
+                    };
+                }
+                if (best != null) yield return best;
+            }
+        }
+
+        /// <summary>Bir veri parçası için sabit, doğrusal veya yuvarlanmış doğrusal ifade; uymazsa null.</summary>
+        private string? SegmentExpression(string name, List<(double x, double y)> seg)
+        {
+            var xs = seg.Select(p => p.x).ToArray();
+            var ys = seg.Select(p => p.y).ToArray();
+            if (ys.All(v => NumberUtil.Close(v, ys[0], _tol))) return NumberUtil.Fmt(NumberUtil.Nice(ys[0], _tol));
+            if (xs.Distinct().Count() < 2) return null;
+            var fit = FitLine(xs, ys);
+            if (fit == null) return null;
+            var snapped = SnapLine(xs, ys, fit.Value.a, fit.Value.b);
+            if (snapped != null) return NumberUtil.Linear(new[] { (snapped.Value.a, name) }, snapped.Value.b);
+            return RoundedLinear(name, xs, ys, fit.Value.a, fit.Value.b)?.Expression;
         }
 
         private (double a, double b)? FitLine(double[] xs, double[] ys)
@@ -294,6 +404,7 @@ namespace RuleForge.Inference
             {
                 var groups = samples.GroupBy(s => cat.Values[s]).ToList();
                 if (groups.Count < 2) continue;
+                if (groups.Any(g => g.Count() < 2)) continue; // tek varyantlık grup hiçbir şey kanıtlamaz
                 var parts = new List<string>();
                 bool ok = true;
                 int distinctTotal = 0;
@@ -471,7 +582,7 @@ namespace RuleForge.Inference
 
         // ---------- sayılı metin: "KONVEYOR 1500x400" → "KONVEYOR " & ((Bant - 300) / 2) & "x" & (Rulo - 50) ----------
         private static readonly System.Text.RegularExpressions.Regex NumberToken =
-            new System.Text.RegularExpressions.Regex(@"-?\d+(?:[.,]\d+)?", System.Text.RegularExpressions.RegexOptions.Compiled);
+            new System.Text.RegularExpressions.Regex(@"\d+(?:[.,]\d+)?", System.Text.RegularExpressions.RegexOptions.Compiled);
 
         private RelationCandidate? NumericTextTemplate(List<string> samples, Dictionary<string, Value> y)
         {

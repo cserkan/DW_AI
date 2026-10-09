@@ -168,6 +168,16 @@ namespace RuleForge.Inference
                 foreach (var comp in snap.Components.Where(c => !c.IsPatternInstance))
                 {
                     var path = ComponentPath(sample, comp.Path);
+
+                    // Bu yerde hangi dosya kullanılıyor? Değişiyorsa "parça değiştir" kuralı olur (ör. malzemeye göre kulp).
+                    if (!string.IsNullOrEmpty(comp.DocumentKey))
+                    {
+                        Get($"file:{path}",
+                                () => new RuleTarget { Kind = TargetKind.ComponentReplace, Component = path },
+                                $"{path} (kullanılan dosya)")
+                            .Values[sample.Name] = Value.Text(DocKey(sample, comp.DocumentKey));
+                    }
+
                     Get($"comp:{path}",
                             () => new RuleTarget { Kind = TargetKind.ComponentSuppression, Component = path },
                             $"{path} (bastırılmış mı)")

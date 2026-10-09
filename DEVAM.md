@@ -92,7 +92,12 @@ $t = "C:\Users\pc\Downloads\ConveryoSoloTemplate\SOLIDWORKS Files"
    adlarıyla (Duty, Height, Width…) bir girdi tablosu verilirse kurallar daha okunur olur.
 3. Teknik resim/PDF ve PDM için benzersiz dosya adı stratejisi (README "Bilinen sınırlamalar").
 
-## Sıradaki özellikler (kullanıcı onaylı; henüz başlanmadı)
+## Sıradaki özellikler (kullanıcı onaylı)
+
+**Sıra (kullanıcının talimatı):** önce devam eden iş bitecek (dolap üretim testi, ardından arayüz çalışması).
+Şirket bilgisi özelliği **arayüzden sonra** eklenecek; arayüz bitmeden başlanmayacak. Kullanıcı uyuyor, soru
+sormadan bu sırayla ilerleyin. Bulut oturumu ve yerel oturum aynı depoda aynı anda çalışmasın; bu özelliği
+yerel oturum yapar.
 
 ### Şirket bilgisi (müşteriye özel öğrenme)
 Amaç: mühendislerle yapılan konuşmalardan öğrenilen, kural olmayan bilgiler şirkete özel kalıcı olarak birikir ve

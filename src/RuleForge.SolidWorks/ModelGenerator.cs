@@ -31,7 +31,17 @@ namespace RuleForge.SolidWorks
         public List<string> Errors { get; } = new List<string>();
         public List<string> Warnings { get; } = new List<string>();
         public List<string> ExportedFiles { get; } = new List<string>();
+
+        /// <summary>Bu siparişte kullanılmayan dosyalara ait olduğu için uygulanmayan eylemler (hata değildir).</summary>
+        public List<string> Skipped { get; } = new List<string>();
+
         public bool Success => Errors.Count == 0;
+    }
+
+    /// <summary>Eylemin hedefi bu siparişte yok (ör. başka kapak tipinin dosyası): eylem atlanır, hata sayılmaz.</summary>
+    internal sealed class SkippedActionException : Exception
+    {
+        public SkippedActionException(string message) : base(message) { }
     }
 
     /// <summary>
@@ -79,6 +89,10 @@ namespace RuleForge.SolidWorks
                     try
                     {
                         context.Apply(action);
+                    }
+                    catch (SkippedActionException ex)
+                    {
+                        result.Skipped.Add($"{action.Rule.Id}: {ex.Message}");
                     }
                     catch (Exception ex)
                     {
@@ -183,8 +197,35 @@ namespace RuleForge.SolidWorks
                 result.Errors.Add("Pack and Go sonrası montaj bulunamadı: " + newRoot);
                 return null;
             }
+
+            // Aynı adlı bir belge başka klasörden açıksa SolidWorks kopya yerine onu kullanır: önce gizli olanları kapat, kalırsa dur.
+            var conflicts = NameConflicts(outDir);
+            foreach (var c in conflicts.Where(c => !c.visible)) app.CloseDoc(c.path);
+            conflicts = NameConflicts(outDir);
+            if (conflicts.Count > 0)
+            {
+                result.Errors.Add("SolidWorks'te çıktı dosyalarıyla aynı adlı belgeler açık; kopya montaj bunları kullanırdı. " +
+                                  "Bu belgeleri kapatıp tekrar deneyin: " + string.Join(", ", conflicts.Select(c => c.path)));
+                return null;
+            }
             result.Log.Add($"Master kopyalandı → {outDir}");
             return newRoot;
+        }
+
+        private List<(string path, bool visible)> NameConflicts(string outDir)
+        {
+            var names = new HashSet<string>(Directory.GetFiles(outDir).Select(Path.GetFileName), StringComparer.OrdinalIgnoreCase);
+            var list = new List<(string, bool)>();
+            if (_session.App.GetDocuments() is object[] docs)
+                foreach (var o in docs)
+                {
+                    if (!(o is ModelDoc2 d)) continue;
+                    var p = d.GetPathName();
+                    if (string.IsNullOrEmpty(p) || !names.Contains(Path.GetFileName(p))) continue;
+                    if (string.Equals(Path.GetDirectoryName(Path.GetFullPath(p)), outDir.TrimEnd('\\', '/'), StringComparison.OrdinalIgnoreCase)) continue;
+                    list.Add((p, d.Visible));
+                }
+            return list;
         }
 
         private void ExportDrawings(string outDir, GenerationResult result)
@@ -319,15 +360,31 @@ namespace RuleForge.SolidWorks
                     case TargetKind.ComponentReplace:
                     {
                         var comp = Component(t.Component!);
-                        var file = v.AsText();
-                        if (!Path.IsPathRooted(file)) file = Path.GetFullPath(Path.Combine(_masterDir, file));
-                        if (!File.Exists(file)) throw new FileNotFoundException("Yeni bileşen dosyası yok: " + file);
+                        var wanted = v.AsText();
+                        var name = Path.GetFileName(wanted);
+                        if (string.Equals(Path.GetFileName(comp.GetPathName() ?? string.Empty), name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            _result.Log.Add($"{t} = {name} (zaten bu dosya, değişiklik yok)");
+                            break;
+                        }
+                        // Yeni dosya master klasöründen (ya da alt klasörlerinden) sipariş klasörüne kopyalanır: sipariş kendi
+                        // kendine yeter, sonraki ölçü kuralları kopyayı değiştirir, master asla değişmez.
+                        var source = Path.IsPathRooted(wanted) ? wanted : FindLibraryFile(name);
+                        if (source == null || !File.Exists(source))
+                            throw new FileNotFoundException($"Yeni bileşen dosyası master klasöründe bulunamadı: {name} (aranan: {_masterDir})");
+                        var dest = Path.Combine(_outDir, name);
+                        if (!File.Exists(dest))
+                        {
+                            File.Copy(source, dest);
+                            File.SetAttributes(dest, File.GetAttributes(dest) & ~FileAttributes.ReadOnly);
+                            if (string.Equals(Path.GetExtension(dest), ".SLDASM", StringComparison.OrdinalIgnoreCase))
+                                _result.Warnings.Add($"{name} bir montaj; alt bileşenleri hâlâ master klasöründen referanslanıyor.");
+                        }
                         _root.ClearSelection2(true);
                         comp.Select4(false, null, false);
-                        if (!((AssemblyDoc)_root).ReplaceComponents(file, "", false, true))
+                        if (!((AssemblyDoc)_root).ReplaceComponents(dest, "", false, true))
                             throw new InvalidOperationException("Bileşen değiştirilemedi.");
                         _components = null; // ağaç değişti
-                        _result.Warnings.Add($"{t.Component} → {file} (bu dosya çıktı klasörüne kopyalanmadı, ortak kütüphaneden referanslanıyor).");
                         Log(action);
                         break;
                     }
@@ -370,16 +427,41 @@ namespace RuleForge.SolidWorks
 
             private void Log(ModelAction action) => _result.Log.Add($"{action.Target} = {action.Value}");
 
-            /// <summary>Master'daki dosya anahtarı → kopyadaki açık belge.</summary>
+            /// <summary>
+            /// Master'daki dosya anahtarı → kopyadaki açık belge. Belge bu siparişte kullanılmıyorsa (ör. başka kapak tipinin
+            /// dosyası) ya da sadece bastırılmış bileşenlerde geçiyorsa yüklenmemiştir: eylem atlanır.
+            /// </summary>
             private ModelDoc2 Document(string? key)
             {
                 if (string.IsNullOrWhiteSpace(key) || string.Equals(key, _masterRootKey, StringComparison.OrdinalIgnoreCase))
                     return _root;
                 var path = Path.Combine(_outDir, key);
                 if (_session.App.GetOpenDocumentByName(path) is ModelDoc2 open) return open;
-                // Bastırılmış bileşenin belgesi yüklenmemiş olabilir; diskten aç.
-                if (!File.Exists(path)) throw new FileNotFoundException("Belge çıktı klasöründe yok: " + key);
-                return _session.Open(path);
+                throw new SkippedActionException(File.Exists(path)
+                    ? $"{key} bu siparişte sadece bastırılmış bileşenlerde ya da hiç kullanılmıyor."
+                    : $"{key} bu siparişte kullanılmıyor.");
+            }
+
+            /// <summary>Değiştirme dosyasını master klasöründe, sonra alt klasörlerinde, sonra bir üst klasörde arar.</summary>
+            private string? FindLibraryFile(string name)
+            {
+                var direct = Path.Combine(_masterDir, name);
+                if (File.Exists(direct)) return direct;
+                foreach (var root in new[] { _masterDir, Path.GetDirectoryName(_masterDir) })
+                {
+                    if (string.IsNullOrEmpty(root) || !Directory.Exists(root)) continue;
+                    try
+                    {
+                        var found = Directory.EnumerateFiles(root!, name, SearchOption.AllDirectories)
+                            .FirstOrDefault(f => !f.StartsWith(_outDir, StringComparison.OrdinalIgnoreCase));
+                        if (found != null) return found;
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        // erişilemeyen klasörleri atla
+                    }
+                }
+                return null;
             }
 
             private Component2 Component(string path)

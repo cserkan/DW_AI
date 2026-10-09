@@ -74,6 +74,12 @@ namespace RuleForge.Cli
             File.WriteAllText(reportPath, text);
             Console.WriteLine($"Kurallar: {output}  (hepsi 'önerilen' durumda)");
             Console.WriteLine($"Rapor:    {reportPath}  (chat komutuna --report ile verin)");
+            if (report.InputValues.Count > 0)
+            {
+                var inputsPath = Path.ChangeExtension(output, ".girdiler.csv");
+                File.WriteAllText(inputsPath, report.ToInputCsv(), new System.Text.UTF8Encoding(true));
+                Console.WriteLine($"Girdiler: {inputsPath}  (her varyantın girdi değerleri; bir varyantı yeniden üretmek için)");
+            }
             if (report.SuggestedVariants.Count > 0)
             {
                 var csvPath = Path.ChangeExtension(output, ".oneriler.csv");
@@ -97,6 +103,29 @@ namespace RuleForge.Cli
             File.WriteAllText(output, text);
             Console.WriteLine($"Rapor: {output}");
             return 0;
+        }
+
+        /// <summary>
+        /// İki modeli karşılaştırır (ör. RuleForge'un ürettiği ile DriveWorks'ün ürettiği). Dosya adları farklı olabilir;
+        /// parçalar yapılarına göre eşleştirilir. Fark yoksa 0, varsa 1 döner.
+        /// </summary>
+        public static int Compare(Args args)
+        {
+            var files = args.NonAssignments.ToList();
+            if (files.Count != 2) throw new UsageException("İki snapshot verin: compare uretilen.json beklenen.json");
+            foreach (var f in files)
+                if (!File.Exists(f)) throw new UsageException("Bulunamadı: " + f);
+            var actual = JsonStore.Load<ModelSnapshot>(files[0]);
+            var expected = JsonStore.Load<ModelSnapshot>(files[1]);
+            var report = SnapshotComparer.Compare(actual, expected, new InferenceOptions { NamePattern = args.Get("name-pattern") });
+            var text = $"Üretilen: {files[0]}\nBeklenen: {files[1]}\n\n" + report.ToText();
+            Console.WriteLine(text);
+            if (args.Get("o", "output") is string output)
+            {
+                File.WriteAllText(output, text);
+                Console.WriteLine($"Rapor: {output}");
+            }
+            return report.DifferenceCount == 0 ? 0 : 1;
         }
 
         /// <summary>Snapshot adını girdi tablosundaki satırla eşleştirir: tam eşleşme, sonra içerme.</summary>

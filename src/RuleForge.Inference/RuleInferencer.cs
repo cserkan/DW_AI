@@ -69,6 +69,30 @@ namespace RuleForge.Inference
         /// <summary>Varyantlar arasında değişen tüm değerlerin özeti ("ne değişti?").</summary>
         public List<ChangedValue> Changes { get; set; } = new List<ChangedValue>();
 
+        /// <summary>Her varyantın girdi değerleri (kör testte modelden okunan, girdi tablosu verildiyse o tablo).</summary>
+        public Dictionary<string, Dictionary<string, Value>> InputValues { get; set; } =
+            new Dictionary<string, Dictionary<string, Value>>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>Tekrarlanan modül varsa her varyantın tablo satırları.</summary>
+        public Dictionary<string, List<Dictionary<string, Value>>> RowValues { get; set; } =
+            new Dictionary<string, List<Dictionary<string, Value>>>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Varyantların girdi tablosu (CSV, ayraç ';'). Bir varyantı programla yeniden üretmek için girdileri buradan alın;
+        /// --inputs ile çıkarıma geri de verilebilir.
+        /// </summary>
+        public string ToInputCsv()
+        {
+            var table = Tables.FirstOrDefault();
+            var rows = InputValues.Keys.Concat(RowValues.Keys).Distinct(StringComparer.OrdinalIgnoreCase).Select(name => new SuggestedVariant
+            {
+                Name = name,
+                Inputs = InputValues.TryGetValue(name, out var inputs) ? inputs : new Dictionary<string, Value>(),
+                Rows = RowValues.TryGetValue(name, out var r) ? r : new List<Dictionary<string, Value>>(),
+            }).ToList();
+            return VariantPlanner.ToCsv(Inputs, rows, table);
+        }
+
         public RuleSet ToRuleSet(string name, string masterAssembly)
         {
             return new RuleSet
@@ -308,6 +332,9 @@ namespace RuleForge.Inference
             DedupeNeeds(needs);
             report.Needs = needs;
             report.SuggestedVariants = VariantPlanner.Plan(report.Inputs, columns, needs, report.Notes);
+            foreach (var s in samples)
+                report.InputValues[s.Name] = columns.Where(c => c.Values.ContainsKey(s.Name))
+                    .ToDictionary(c => c.Name, c => c.Values[s.Name], StringComparer.OrdinalIgnoreCase);
 
             if (samples.Count < 6)
                 report.Notes.Add($"Sadece {samples.Count} varyant var; güven düşük. Girdi aralığının uçlarını kapsayan 8–15 varyant önerilir.");

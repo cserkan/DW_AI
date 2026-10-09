@@ -189,6 +189,13 @@ namespace RuleForge.Inference
             DedupeNeeds(rowNeeds);
             report.Needs = needs.Concat(rowNeeds).ToList();
             report.SuggestedVariants = PlanWithRows(report, tableDef, globalColumns, rowColumns, aggregates, needs, rowNeeds);
+            foreach (var v in variants)
+            {
+                report.InputValues[v.Name] = globalColumns.Where(c => c.Values.ContainsKey(v.Name))
+                    .ToDictionary(c => c.Name, c => c.Values[v.Name], StringComparer.OrdinalIgnoreCase);
+                report.RowValues[v.Name] = instancesOf[v.Name].Select(i => rowColumns.Where(c => c.Values.ContainsKey(i))
+                    .ToDictionary(c => c.Name, c => c.Values[i], StringComparer.OrdinalIgnoreCase)).ToList();
+            }
 
             report.Notes.Add($"'{table}' tablosu: her satır bir modül kopyası; satır girdileri {(tableDef.Columns.Count > 0 ? string.Join(", ", tableDef.Columns.Select(c => c.Name)) : "yok")}. " +
                              $"Formüllerde {countName} satır sayısı, {table}_Sira satır numarası, <sütun>_Ilk / _Son / _Toplam / _EnBuyuk / _EnKucuk tablo özetleridir.");

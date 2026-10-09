@@ -252,3 +252,54 @@ namespace RuleForge.Tests
         }
     }
 }
+
+namespace RuleForge.Tests
+{
+    /// <summary>Üretilen model ile beklenen modelin (ör. DriveWorks varyantı) karşılaştırılması.</summary>
+    public class SnapshotComparerTests
+    {
+        [Fact]
+        public void IdenticalModelsHaveNoDifferences()
+        {
+            var a = SyntheticConveyor.Build("A", 3000, 600, "Sol");
+            var report = SnapshotComparer.Compare(a, SyntheticConveyor.Build("B", 3000, 600, "Sol"));
+            Assert.Equal(0, report.DifferenceCount);
+            Assert.True(report.Same > 10);
+        }
+
+        [Fact]
+        public void MatchesRenamedFilesAndReportsRealDifferences()
+        {
+            // Beklenen model DriveWorks gibi kodlu adlarla kaydedilmiş; değerlerden biri farklı.
+            var actual = SyntheticConveyor.Build("Uretilen", 3000, 600, "Sol");
+            var expected = SyntheticConveyor.Build("DW", 3000, 650, "Sol", sfx: "_SP0042");
+            var report = SnapshotComparer.Compare(actual, expected);
+            Assert.Empty(report.OnlyInActual);
+            Assert.Empty(report.OnlyInExpected);
+            Assert.Contains(report.Differences, d => d.Label.Contains("Rulo") && d.Actual == "650" && d.Expected == "700");
+            Assert.DoesNotContain(report.Differences, d => d.Label.Contains("Govde"));
+        }
+
+        [Fact]
+        public void ReplacedPartIsOneLineAndDeletedEqualsSuppressed()
+        {
+            var actual = SyntheticConveyor.Build("Uretilen", 3000, 600, "Sol");
+            var expected = SyntheticConveyor.Build("DW", 3000, 600, "Sol");
+            // Beklenende kapak yerine adı ve yapısı farklı bir parça var (ör. topuz → kulp); ayrıca bastırılmış bileşen
+            // orada hiç yok (DriveWorks "Delete").
+            var kapak = expected.Documents.First(d => d.Key.StartsWith("Kapak"));
+            kapak.Key = "Tutamak.SLDPRT";
+            kapak.Dimensions = new List<DimensionInfo> { new DimensionInfo { Name = "D1@Revolve1", Value = 360 } };
+            kapak.Features.Add(new FeatureInfo { Name = "Revolve1", Type = "Revolution" });
+            foreach (var c in expected.Components.Where(c => c.DocumentKey.StartsWith("Kapak"))) c.DocumentKey = kapak.Key;
+            var suppressed = actual.Components.Where(c => c.Suppressed).Select(c => c.Path).ToList();
+            expected.Components.RemoveAll(c => suppressed.Contains(c.Path));
+
+            var report = SnapshotComparer.Compare(actual, expected);
+            Assert.True(report.OnlyInActual.Contains("Kapak.SLDPRT"), report.ToText());
+            Assert.Contains("Tutamak.SLDPRT", report.OnlyInExpected);
+            Assert.Contains(report.Differences, d => d.Kind == TargetKind.ComponentReplace && d.Actual == "Kapak.SLDPRT" && d.Expected == "Tutamak.SLDPRT");
+            Assert.DoesNotContain(report.Differences, d => d.Kind == TargetKind.ComponentSuppression);
+        }
+    }
+}

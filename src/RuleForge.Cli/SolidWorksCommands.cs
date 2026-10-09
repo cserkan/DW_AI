@@ -173,6 +173,12 @@ namespace RuleForge.Cli
                     ExportStep = args.Flag("step"),
                 });
                 foreach (var l in gen.Log) Console.WriteLine("  " + l);
+                if (gen.Skipped.Count > 0)
+                {
+                    Console.WriteLine($"{gen.Skipped.Count} eylem bu siparişte kullanılmayan dosyalar için atlandı (normal):");
+                    foreach (var k in gen.Skipped.Take(10)) Console.WriteLine("  - " + k);
+                    if (gen.Skipped.Count > 10) Console.WriteLine($"  … (+{gen.Skipped.Count - 10})");
+                }
                 foreach (var w in gen.Warnings) Console.WriteLine("Uyarı: " + w);
                 foreach (var e in gen.Errors) Console.WriteLine("HATA: " + e);
                 foreach (var f in gen.ExportedFiles) Console.WriteLine("Dışa aktarıldı: " + f);

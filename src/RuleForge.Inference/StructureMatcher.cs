@@ -101,7 +101,25 @@ namespace RuleForge.Inference
 
             // Dosya adı (ya da DriveWorks adından çözülen master adı) aynıysa kesin eşleşme.
             if (string.Equals(MasterName(rc.DocumentKey), MasterName(vc.DocumentKey), StringComparison.OrdinalIgnoreCase)) score += 1.0;
+
+            // Bileşen adı (örnek numarası ve DriveWorks kodu hariç) aynıysa: "Kapak-1" ↔ "Kapak-1", "Frame-1" ↔ "Frame FRAME-1-0007-1".
+            if (SameBaseName(rc.Name, vc.Name)) score += 0.5;
             return score;
+        }
+
+        private static bool SameBaseName(string reference, string variant)
+        {
+            string Base(string name)
+            {
+                var decoded = DriveWorksNaming.DecodeComponentName(name) ?? name;
+                var dash = decoded.LastIndexOf('-');
+                return DocumentMatcher.Normalize(dash > 0 ? decoded.Substring(0, dash) : decoded).Trim();
+            }
+            var r = Base(reference);
+            var v = Base(variant);
+            if (r.Length == 0 || v.Length == 0) return false;
+            if (r == v) return true;
+            return v.StartsWith(r, StringComparison.Ordinal) && !char.IsLetter(v[r.Length]);
         }
 
         private static string MasterName(string key) => DriveWorksNaming.DecodeFile(key) ?? key;

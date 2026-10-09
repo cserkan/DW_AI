@@ -27,6 +27,9 @@ Kullanım: ruleforge <komut> [seçenekler]
   crossval  <snapshot.json... | klasör> [infer ile aynı seçenekler] [-o rapor.txt]
             Her varyantı sırayla çıkarıp kuralları kalanlardan öğrenir, çıkarılanı tahmin eder.
             Cevap anahtarı olmadan kuralların yeni girdilerde ne kadar güvenilir olduğunu ölçer.
+  compare   <uretilen.json> <beklenen.json> [-o fark.txt]
+            İki modeli karşılaştırır (ör. RuleForge'un ürettiği ile DriveWorks'ün ürettiği varyant).
+            Dosya adları farklı olabilir; parçalar yapılarına göre eşleştirilir.
   chat      --rules kurallar.json [--snapshot master.json] [--report cikarim.txt] [--effort high]
             Claude ile sohbet ederek kural yazar/düzeltir. ANTHROPIC_API_KEY gerekir.
   validate  --rules kurallar.json [--snapshot master.json]
@@ -68,6 +71,7 @@ Kullanım: ruleforge <komut> [seçenekler]
                     case "generate": return SolidWorksCommands.Generate(new Args(rest, "pdf", "step", "include-proposed", "visible", "dry-run"));
                     case "infer": return InferCommand.Run(new Args(rest));
                     case "crossval": return InferCommand.CrossValidate(new Args(rest));
+                    case "compare": return InferCommand.Compare(new Args(rest));
                     case "chat": return await ChatCommand.RunAsync(new Args(rest)).ConfigureAwait(false);
                     case "validate": return Validate(new Args(rest));
                     case "approve": return Approve(new Args(rest, "all"));

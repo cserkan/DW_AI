@@ -161,8 +161,23 @@ Kuralları onaylama yetkisi sadece kullanıcıdadır.
 1. Pack and Go ile master'ı (teknik resimler dahil) sipariş klasörüne kopyalar.
 2. Kopyayı açar.
 3. Konfigürasyon, bastırma ve değiştirme işlemlerini, ardından ölçüleri ve özellikleri uygular.
+   Değiştirilen parçanın yeni dosyası (ör. başka bir kulp) master klasöründe aranır ve sipariş klasörüne kopyalanır.
+   Bu siparişte kullanılmayan dosyalara ait kurallar (ör. başka kapak tipinin ölçüleri) atlanır; bunlar hata sayılmaz.
 4. Rebuild eder ve kaydeder.
 5. İstenirse PDF ve STEP olarak dışa aktarır.
+
+### 5. Üretilen modeli kontrol et (gidiş-dönüş testi)
+
+Bir DriveWorks varyantının girdileriyle (`infer` her varyantın girdilerini `kurallar.girdiler.csv` dosyasına yazar)
+model üretin, üretilen modeli okuyun ve DriveWorks'ün ürettiğiyle karşılaştırın:
+
+```powershell
+& $rf extract "C:\Siparisler\deneme1\Montaj.SLDASM" -o uretim\deneme1.json
+& $rf compare uretim\deneme1.json "varyantlar\<aynı girdili DriveWorks varyantı>.json" -o uretim\deneme1-fark.txt
+```
+
+Dosya adları farklı olsa da parçalar yapılarına göre eşleştirilir. Silinmiş bileşen, bastırılmış bileşenle aynı sayılır.
+Değiştirilen parçalar tek satırda "sadece bir modelde" olarak gösterilir.
 
 ## Her montaj setinde çalışması için: güvenilirlik ve bir sonraki varyantlar
 

@@ -135,6 +135,14 @@ namespace RuleForge.Inference
             }
 
             var extractor = new ObservationExtractor(options);
+            var snapshots = samples.Select(s => s.Snapshot).ToList();
+            if (options.MatchByStructure ?? (options.NamePattern == null && StructureMatcher.IsNeeded(snapshots)))
+            {
+                var unmatched = extractor.UseStructure(master ?? snapshots[0], samples);
+                report.Notes.Add("Dosya adları varyantlar arasında farklı; parçalar montaj yapısına göre eşleştirildi. Adlar " +
+                                 (master != null ? "master modelden" : $"ilk varyanttan ({samples[0].Name})") + " alındı." +
+                                 (unmatched > 0 ? $" {unmatched} bileşen eşlenemedi." : string.Empty));
+            }
             var observations = extractor.Extract(samples);
             report.ObservationCount = observations.Count;
 

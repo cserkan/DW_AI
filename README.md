@@ -94,6 +94,9 @@ SP002;2200;500;Sag
 ```
 
 `--name-pattern`, DriveWorks'ün dosya adlarına eklediği ekleri temizler (`Govde_SP001.SLDPRT` → `Govde.SLDPRT`).
+Dosya adları her varyantta tamamen farklı kodlarsa (ör. `100234.SLDPRT`, `100871.SLDPRT`) buna gerek yoktur:
+program bunu fark eder ve parçaları **montaj ağacındaki yerleri ve özellik/ölçü adlarıyla** eşleştirir.
+Bu durumda `--master master.json` verin ki kurallar kodlar yerine master'daki okunur adlarla yazılsın.
 Girdi tablosu yoksa modeldeki bir ölçüyü girdi yapabilirsiniz: `--input Boy=dim:Govde.SLDPRT:D1@Boss`.
 
 **Kör test (girdi tablosu olmadan):** `--inputs` vermezseniz program DriveWorks girdilerini kendisi tahmin eder.

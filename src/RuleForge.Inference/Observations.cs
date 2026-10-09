@@ -69,6 +69,34 @@ namespace RuleForge.Inference
             return string.Join("/", parts);
         }
 
+        private Dictionary<string, NameMap>? _maps;
+
+        /// <summary>Yapısal eşlemeyi aç. Dönüş: referansla eşlenemeyen bileşen sayısı (tüm varyantlarda toplam).</summary>
+        public int UseStructure(ModelSnapshot reference, IReadOnlyList<VariantSample> samples)
+        {
+            _maps = new Dictionary<string, NameMap>(StringComparer.OrdinalIgnoreCase);
+            int unmatched = 0;
+            foreach (var s in samples)
+            {
+                var map = StructureMatcher.Map(reference, s.Snapshot);
+                _maps[s.Name] = map;
+                unmatched += s.Snapshot.Components.Count(c => !c.IsPatternInstance && !map.Components.ContainsKey(c.Path));
+            }
+            return unmatched;
+        }
+
+        private string DocKey(VariantSample sample, string key)
+        {
+            if (_maps != null) return _maps[sample.Name].Documents.TryGetValue(key, out var m) ? m : key;
+            return NormalizeDocumentKey(key);
+        }
+
+        private string ComponentPath(VariantSample sample, string path)
+        {
+            if (_maps != null) return _maps[sample.Name].Components.TryGetValue(path, out var m) ? m : path;
+            return NormalizeComponentPath(path);
+        }
+
         public List<Observation> Extract(IReadOnlyList<VariantSample> samples)
         {
             var map = new Dictionary<string, Observation>(StringComparer.OrdinalIgnoreCase);
@@ -86,10 +114,10 @@ namespace RuleForge.Inference
             foreach (var sample in samples)
             {
                 var snap = sample.Snapshot;
-                var rootKey = NormalizeDocumentKey(snap.RootDocument);
+                var rootKey = DocKey(sample, snap.RootDocument);
                 foreach (var doc in snap.Documents)
                 {
-                    var docKey = NormalizeDocumentKey(doc.Key);
+                    var docKey = DocKey(sample, doc.Key);
                     foreach (var dim in doc.Dimensions)
                     {
                         // Referans ölçüler ve denklemle sürülen ölçüler kural hedefi olamaz.
@@ -136,9 +164,10 @@ namespace RuleForge.Inference
                     }
                 }
 
-                foreach (var comp in snap.Components)
+                // Desen örneklerinin sayısı desen ölçüsünden gelir; tek tek örnekler kural hedefi değildir.
+                foreach (var comp in snap.Components.Where(c => !c.IsPatternInstance))
                 {
-                    var path = NormalizeComponentPath(comp.Path);
+                    var path = ComponentPath(sample, comp.Path);
                     Get($"comp:{path}",
                             () => new RuleTarget { Kind = TargetKind.ComponentSuppression, Component = path },
                             $"{path} (bastırılmış mı)")

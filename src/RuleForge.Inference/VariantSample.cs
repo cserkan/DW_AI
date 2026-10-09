@@ -38,6 +38,12 @@ namespace RuleForge.Inference
         public Dictionary<string, string> InputObservations { get; set; } =
             new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
+        /// <summary>
+        /// Parçaları dosya adı yerine montaj yapısına göre eşleştir (her varyantta dosya adları farklı kodsa).
+        /// null = otomatik: NamePattern yoksa ve ilk iki varyantın dosya adları çoğunlukla farklıysa açılır.
+        /// </summary>
+        public bool? MatchByStructure { get; set; }
+
         public bool IncludeCustomProperties { get; set; } = true;
         public bool IncludeFeatureSuppression { get; set; } = true;
     }

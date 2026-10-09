@@ -167,3 +167,79 @@ namespace RuleForge.Tests
         }
     }
 }
+
+namespace RuleForge.Tests
+{
+    /// <summary>DriveWorks'ün her varyantta dosyalara farklı kod vermesi durumu (ör. 100234.SLDPRT).</summary>
+    public class CodedNameTests
+    {
+        private readonly Xunit.Abstractions.ITestOutputHelper _out;
+
+        public CodedNameTests(Xunit.Abstractions.ITestOutputHelper output)
+        {
+            _out = output;
+        }
+
+        internal static RuleForge.Core.Model.ModelSnapshot Recode(RuleForge.Core.Model.ModelSnapshot snap, int seed)
+        {
+            var rnd = new System.Random(seed);
+            var codes = new System.Collections.Generic.Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
+            string Code(string key)
+            {
+                var stem = System.IO.Path.GetFileNameWithoutExtension(key);
+                if (!codes.TryGetValue(stem, out var c)) codes[stem] = c = rnd.Next(100000, 999999).ToString();
+                return c + System.IO.Path.GetExtension(key);
+            }
+            string Path(string p) => string.Join("/", System.Linq.Enumerable.Select(p.Split('/'), seg =>
+            {
+                var dash = seg.LastIndexOf('-');
+                return System.IO.Path.GetFileNameWithoutExtension(Code(seg.Substring(0, dash) + ".x")) + seg.Substring(dash);
+            }));
+
+            foreach (var d in snap.Documents) d.Key = Code(d.Key);
+            snap.RootDocument = Code(snap.RootDocument);
+            foreach (var c in snap.Components)
+            {
+                c.DocumentKey = Code(c.DocumentKey);
+                c.Path = Path(c.Path);
+                c.Name = c.Path;
+                if (c.ParentPath != null) c.ParentPath = Path(c.ParentPath);
+            }
+            return snap;
+        }
+
+        [Fact]
+        public void BlindTestWithCodedFileNames()
+        {
+            var samples = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Select(SyntheticConveyor.Samples(),
+                (s, i) => new RuleForge.Inference.VariantSample(s.Name, Recode(s.Snapshot, i + 1))));
+            Assert.True(RuleForge.Inference.StructureMatcher.IsNeeded(System.Linq.Enumerable.ToList(
+                System.Linq.Enumerable.Select(samples, s => s.Snapshot))));
+
+            var report = RuleForge.Inference.RuleInferencer.Infer(samples);
+            _out.WriteLine(report.ToText());
+
+            Assert.Equal(3, report.Drivers.Count);
+            Assert.Contains(report.Notes, n => n.Contains("yapısına göre"));
+            Assert.Single(report.Unexplained); // sadece Kapak gürültüsü
+            Assert.Contains(report.Rules, r => r.Target.Kind == RuleForge.Core.Rules.TargetKind.ComponentSuppression && r.Expression.Contains("<= 6000"));
+        }
+
+        [Fact]
+        public void CodedVariantsMapToMasterNames()
+        {
+            var samples = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Select(SyntheticConveyor.Samples(),
+                (s, i) => new RuleForge.Inference.VariantSample(s.Name, Recode(s.Snapshot, i + 1), s.Inputs)));
+            var master = SyntheticConveyor.Build("master", 3000, 600, "Sol");
+            var report = RuleForge.Inference.RuleInferencer.Infer(samples, null, master);
+            _out.WriteLine(report.ToText());
+
+            Assert.Equal("Boy - 40", System.Linq.Enumerable.Single(report.Rules, r => r.Target.Document == "Govde.SLDPRT" && r.Target.Name == "D1@Boss").Expression);
+            Assert.Equal("2 * Boy + 300", System.Linq.Enumerable.Single(report.Rules, r => r.Target.Document == "Bant.SLDPRT").Expression);
+            Assert.Equal("Genislik + 50", System.Linq.Enumerable.Single(report.Rules, r => r.Target.Document == "Rulo.SLDPRT").Expression);
+            Assert.StartsWith("RANGELOOKUP(Genislik", System.Linq.Enumerable.Single(report.Rules, r => r.Target.Document == "Profil.SLDPRT").Expression);
+            Assert.Equal("Motor = \"Sag\"", System.Linq.Enumerable.Single(report.Rules, r => r.Target.Component == "MotorSol-1").Expression);
+            Assert.Equal("Boy <= 3000", System.Linq.Enumerable.Single(report.Rules, r => r.Target.Component == "OrtaDestek-1").Expression);
+        }
+    }
+}

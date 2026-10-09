@@ -292,6 +292,11 @@ namespace RuleForge.Inference
         {
             var exact = reference.FindDocument(doc.Key);
             if (exact != null) return exact.Key;
+            // Bastırılmış bileşenlerin belgeleri okunmamış olabilir; bileşenlerin kullandığı dosya adı da birebir eşleşmedir
+            // ("Shelf Peg1" okunmadı diye "Shelf Peg" ile eşlenmesin).
+            var referenced = reference.Components.Select(c => c.DocumentKey)
+                .FirstOrDefault(k => string.Equals(k, doc.Key, StringComparison.OrdinalIgnoreCase));
+            if (referenced != null) return referenced;
 
             var decoded = DriveWorksNaming.DecodeFile(doc.Key);
             if (decoded != null && reference.FindDocument(decoded) is DocumentInfo dw) return dw.Key;

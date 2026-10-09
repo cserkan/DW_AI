@@ -71,9 +71,13 @@ namespace RuleForge.SolidWorks
             }
 
             var outputName = request.Actions.FirstOrDefault(a => a.Target.Kind == TargetKind.OutputFileName)?.Value.AsText();
-            var copiedRoot = CopyMaster(master, outDir, outputName, request.AllowClosingMaster, result);
+            var copiedRoot = CopyMaster(master, outDir, outputName, request.AllowClosingMaster, result, out var masterStates);
             if (copiedRoot == null) return result;
             result.AssemblyPath = copiedRoot;
+            // Kurallar gereği bastırılacak bileşenler (ve altındakiler); bunların dışında bastırılan bileşen beklenmedik demektir.
+            var allowedSuppressed = new HashSet<string>(request.Actions
+                .Where(a => a.Target.Kind == TargetKind.ComponentSuppression && a.Value.AsBool())
+                .Select(a => a.Target.Component!), StringComparer.OrdinalIgnoreCase);
 
             var app = _session.App;
             var root = _session.Open(copiedRoot);
@@ -82,6 +86,10 @@ namespace RuleForge.SolidWorks
             {
                 if (root is AssemblyDoc asm) asm.ResolveAllLightWeightComponents(false);
                 var context = new ApplyContext(_session, root, Path.GetFileName(master), outDir, Path.GetDirectoryName(master)!, result);
+
+                // Açılış kontrolü: master'da açık olan bileşen kopyada bastırılmış geldiyse ya da çıktı klasörü dışındaki bir
+                // dosyayı kullanıyorsa (ör. aynı adlı dosya başka klasörden bellekte kalmış) üretim yanlış olur.
+                context.CheckLoaded(masterStates);
 
                 // Sıra önemli: önce yapı (konfigürasyon, bastırma, değiştirme), sonra ölçüler, en son özellikler.
                 foreach (var action in request.Actions.OrderBy(a => Order(a.Target.Kind)))
@@ -98,10 +106,15 @@ namespace RuleForge.SolidWorks
                     {
                         result.Errors.Add($"{action.Rule.Id} ({action.Target}): {ex.Message}");
                     }
+                    // Yapısal eylemlerden sonra: kural istemediği hâlde bastırılan bileşen var mı? Varsa hangi eylemden sonra olduğunu yaz, geri aç.
+                    if (action.Target.Kind == TargetKind.FeatureSuppression || action.Target.Kind == TargetKind.ComponentReplace ||
+                        action.Target.Kind == TargetKind.Configuration || action.Target.Kind == TargetKind.ComponentSuppression)
+                        context.RestoreUnexpectedSuppression(masterStates, allowedSuppressed, $"'{action.Rule.Id}' uygulandıktan sonra");
                 }
 
                 context.RebuildModifiedParts();
                 root.ForceRebuild3(false);
+                context.RestoreUnexpectedSuppression(masterStates, allowedSuppressed, "rebuild sonrasında");
                 int whatsWrong = root.Extension.GetWhatsWrongCount();
                 if (whatsWrong > 0)
                     result.Warnings.Add($"Rebuild sonrası {whatsWrong} hata/uyarı var: {WhatsWrong(root)}");
@@ -123,6 +136,16 @@ namespace RuleForge.SolidWorks
 
             if (request.ExportPdf) ExportDrawings(outDir, result);
             return result;
+        }
+
+        /// <summary>Bileşen adı ("Alt-1/Parca-2") → bastırılmış mı.</summary>
+        internal static Dictionary<string, bool> ComponentStates(ModelDoc2 doc)
+        {
+            var states = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+            if (doc is AssemblyDoc asm && asm.GetComponents(false) is object[] all)
+                foreach (var o in all)
+                    if (o is Component2 c) states[c.Name2] = c.IsSuppressed();
+            return states;
         }
 
         /// <summary>SolidWorks'ün "What's Wrong" listesindeki özellikler ve hata kodları (swFeatureError_e).</summary>
@@ -166,11 +189,13 @@ namespace RuleForge.SolidWorks
         }
 
         /// <summary>Pack and Go: montaj + parçalar + aynı adlı teknik resimler tek klasöre kopyalanır.</summary>
-        private string? CopyMaster(string master, string outDir, string? outputName, bool allowClose, GenerationResult result)
+        private string? CopyMaster(string master, string outDir, string? outputName, bool allowClose, GenerationResult result,
+            out Dictionary<string, bool> masterStates)
         {
             var app = _session.App;
             bool wasOpen = app.GetOpenDocumentByName(master) != null;
             var doc = _session.Open(master, readOnly: true);
+            masterStates = ComponentStates(doc);
 
             var pack = doc.Extension.GetPackAndGo();
             pack.IncludeDrawings = true;
@@ -505,6 +530,52 @@ namespace RuleForge.SolidWorks
                     if (hit != null) return hit;
                 }
                 return null;
+            }
+
+            /// <summary>Kopya açıldıktan sonra: master'da açık bileşen bastırılmış geldiyse yeniden yüklemeyi dener; dışarıdaki dosyayı kullananları bildirir.</summary>
+            public void CheckLoaded(Dictionary<string, bool> masterStates)
+            {
+                foreach (var c in AllComponents())
+                {
+                    if (masterStates.TryGetValue(c.Name2, out var wasSuppressed) && !wasSuppressed && c.IsSuppressed())
+                    {
+                        c.SetSuppression2((int)swComponentSuppressionState_e.swComponentFullyResolved);
+                        if (c.IsSuppressed())
+                            _result.Errors.Add($"'{c.Name2}' kopya açılırken yüklenemedi (master'da açık). SolidWorks'te aynı adlı bir dosya başka " +
+                                               "klasörden açık kalmış olabilir: SolidWorks'ü tamamen kapatıp tekrar deneyin.");
+                        else
+                            _result.Warnings.Add($"'{c.Name2}' kopya açılırken bastırılmış geldi (master'da açık); yeniden yüklendi.");
+                    }
+                    if (c.IsSuppressed()) continue;
+                    var path = c.GetPathName();
+                    if (!string.IsNullOrEmpty(path) && !Path.GetFullPath(path).StartsWith(_outDir, StringComparison.OrdinalIgnoreCase))
+                        _result.Errors.Add($"'{c.Name2}' çıktı klasöründeki kopya yerine başka bir dosyayı kullanıyor: {path}. " +
+                                           "SolidWorks'te aynı adlı bir dosya açık kalmış olabilir: SolidWorks'ü tamamen kapatıp tekrar deneyin.");
+                }
+            }
+
+            /// <summary>Kural istemediği hâlde (master'da açıkken) bastırılmış bileşenleri bildirir ve geri açar.</summary>
+            public void RestoreUnexpectedSuppression(Dictionary<string, bool> masterStates, HashSet<string> allowed, string when)
+            {
+                foreach (var c in AllComponents())
+                {
+                    var name = c.Name2;
+                    if (!masterStates.TryGetValue(name, out var wasSuppressed) || wasSuppressed || !c.IsSuppressed()) continue;
+                    if (allowed.Any(a => string.Equals(a, name, StringComparison.OrdinalIgnoreCase) ||
+                                         name.StartsWith(a + "/", StringComparison.OrdinalIgnoreCase)))
+                        continue;
+                    int status = c.SetSuppression2((int)swComponentSuppressionState_e.swComponentFullyResolved);
+                    _result.Warnings.Add($"'{name}' {when} bastırılmış hâle geldi; hiçbir kural bunu istemiyordu" +
+                                         (status == (int)swSuppressionError_e.swSuppressionChangeOk ? ", geri açıldı." : $", geri açılamadı (kod {status})."));
+                    _components = null;
+                }
+            }
+
+            private IEnumerable<Component2> AllComponents()
+            {
+                if (((AssemblyDoc)_root).GetComponents(false) is object[] all)
+                    foreach (var o in all)
+                        if (o is Component2 c) yield return c;
             }
 
             private static bool IsSuppressed(Feature feature)

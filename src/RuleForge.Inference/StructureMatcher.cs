@@ -119,7 +119,8 @@ namespace RuleForge.Inference
             var v = Base(variant);
             if (r.Length == 0 || v.Length == 0) return false;
             if (r == v) return true;
-            return v.StartsWith(r, StringComparison.Ordinal) && !char.IsLetter(v[r.Length]);
+            // "Frame FRAME-1-0007" gibi DriveWorks adları: master adı + boşluk + kod. "Shelf Peg1" ile "Shelf Peg" farklı parçalardır.
+            return v.StartsWith(r + " ", StringComparison.Ordinal);
         }
 
         private static string MasterName(string key) => DriveWorksNaming.DecodeFile(key) ?? key;

@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RuleForge</title>
+<style>
+:root {
+  --bg: #f5f6f8; --panel: #ffffff; --ink: #1d2433; --muted: #5d6676; --line: #dfe3ea; --soft: #eef1f6;
+  --accent: #2357d8; --accent-ink: #ffffff; --accent-soft: #e6edfd;
+  --ok: #1f7a4d; --ok-soft: #e3f4ec; --warn: #9a6200; --warn-soft: #fdf3dc; --err: #b3261e; --err-soft: #fbe7e5;
+  --radius: 10px; --shadow: 0 1px 2px rgba(20,30,50,.06), 0 4px 16px rgba(20,30,50,.05);
+  --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12151b; --panel: #1a1f27; --ink: #e6e9ef; --muted: #9aa3b2; --line: #2c333f; --soft: #222833;
+    --accent: #7ea2ff; --accent-ink: #0d1424; --accent-soft: #233150;
+    --ok: #5fcf97; --ok-soft: #173326; --warn: #f0b85a; --warn-soft: #3a2e15; --err: #ff8a80; --err-soft: #3d1c1a;
+    --shadow: none;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 "Segoe UI", system-ui, -apple-system, sans-serif; }
+button, input, select { font: inherit; color: inherit; }
+header { display: flex; align-items: center; gap: 16px; padding: 14px 24px; background: var(--panel); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; flex-wrap: wrap; }
+.brand { font-weight: 700; font-size: 18px; letter-spacing: .2px; }
+.brand span { color: var(--accent); }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tab { border: 1px solid var(--line); background: transparent; padding: 7px 14px; border-radius: 999px; cursor: pointer; }
+.tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.tab .sorun { color: var(--err); margin-left: 4px; }
+main { max-width: 1320px; margin: 0 auto; padding: 20px 24px 60px; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 20px; }
+@media (max-width: 960px) { main { grid-template-columns: 1fr; padding: 16px; } header { padding: 12px 16px; } }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px 20px; min-width: 0; }
+.panel + .panel { margin-top: 20px; }
+h2 { font-size: 16px; margin: 0 0 4px; }
+.sub { color: var(--muted); font-size: 13.5px; margin: 0 0 14px; }
+.field { display: grid; grid-template-columns: minmax(130px, 2fr) minmax(0, 3fr); gap: 4px 14px; align-items: center; padding: 9px 0; border-top: 1px solid var(--soft); }
+.field:first-of-type { border-top: 0; }
+.field label { font-weight: 600; }
+.field .hint { grid-column: 2; color: var(--muted); font-size: 12.5px; }
+.field .hint.out { color: var(--warn); }
+@media (max-width: 520px) { .field { grid-template-columns: 1fr; } .field .hint { grid-column: 1; } }
+.inwrap { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.inwrap .unit { color: var(--muted); font-size: 13px; }
+input[type=text], input[type=number], select { width: 100%; min-width: 0; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: var(--accent); }
+input.out { border-color: var(--warn); background: var(--warn-soft); }
+.rows { margin-top: 6px; }
+.row { display: grid; grid-template-columns: 110px minmax(0, 1fr) 36px; gap: 10px; align-items: center; padding: 6px 0; }
+.row .n { font-weight: 600; color: var(--muted); }
+.icon { border: 1px solid var(--line); background: transparent; border-radius: 8px; height: 34px; width: 34px; cursor: pointer; color: var(--muted); }
+.icon:hover { color: var(--err); border-color: var(--err); }
+.icon:disabled { opacity: .35; cursor: default; }
+.link { border: 0; background: transparent; color: var(--accent); cursor: pointer; padding: 6px 0; font-weight: 600; }
+.link:disabled { color: var(--muted); cursor: default; }
+.tableblock { padding: 12px 0 4px; border-top: 1px solid var(--soft); }
+.tableblock h3 { font-size: 14.5px; margin: 0; }
+.order { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: end; margin-top: 4px; }
+.order label { font-weight: 600; display: block; margin-bottom: 4px; }
+.checks { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0 0; color: var(--muted); font-size: 13.5px; }
+.checks label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
+.primary { background: var(--accent); color: var(--accent-ink); border: 0; padding: 10px 22px; border-radius: 8px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.primary:disabled { opacity: .5; cursor: default; }
+.secondary { background: transparent; border: 1px solid var(--line); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 13.5px; white-space: nowrap; }
+.secondary:hover { border-color: var(--accent); color: var(--accent); }
+.status { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; font-size: 14px; }
+.status.ok { background: var(--ok-soft); color: var(--ok); }
+.status.warn { background: var(--warn-soft); color: var(--warn); }
+.status.err { background: var(--err-soft); color: var(--err); }
+.status.info { background: var(--accent-soft); color: var(--accent); }
+.msgs { margin: 0 0 12px; padding: 0; list-style: none; font-size: 13.5px; }
+.msgs li { padding: 6px 10px; border-radius: 6px; margin-bottom: 4px; }
+.msgs li.err { background: var(--err-soft); color: var(--err); }
+.msgs li.warn { background: var(--warn-soft); color: var(--warn); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.stat { background: var(--soft); border-radius: 8px; padding: 10px 12px; }
+.stat b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: 12.5px; }
+.toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+.toolbar input { flex: 1 1 180px; }
+.toolbar select { flex: 0 1 200px; width: auto; }
+.list { max-height: 480px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--soft); vertical-align: top; }
+th { position: sticky; top: 0; background: var(--panel); color: var(--muted); font-weight: 600; font-size: 12.5px; z-index: 1; }
+td.v { font-family: var(--mono); font-size: 12.5px; word-break: break-word; }
+td.f { font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
+td.t { color: var(--muted); white-space: nowrap; }
+td.h { word-break: break-word; }
+.pill { display: inline-block; padding: 1px 8px; border-radius: 999px; background: var(--soft); color: var(--muted); font-size: 12px; white-space: nowrap; }
+.empty { color: var(--muted); padding: 18px; text-align: center; font-size: 14px; }
+.log { font-family: var(--mono); font-size: 12.5px; background: var(--soft); border-radius: 8px; padding: 10px 12px; max-height: 280px; overflow: auto; white-space: pre-wrap; word-break: break-word; }
+.views { display: flex; gap: 6px; margin-bottom: 14px; border-bottom: 1px solid var(--line); }
+.view { border: 0; background: transparent; padding: 8px 12px; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 600; }
+.view[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+.hidden { display: none !important; }
+.spin { width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: s 0.8s linear infinite; flex: none; }
+@keyframes s { to { transform: rotate(360deg); } }
+.result { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.path { font-family: var(--mono); font-size: 12.5px; word-break: break-all; color: var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Rule<span>Forge</span></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Ürünler"></nav>
+</header>
+
+<main>
+  <section>
+    <div class="panel" id="formPanel">
+      <h2 id="urunAd">Yükleniyor…</h2>
+      <p class="sub" id="urunAciklama"></p>
+      <div id="sorun"></div>
+      <form id="form" autocomplete="off" onsubmit="return false"></form>
+    </div>
+
+    <div class="panel">
+      <h2>Sipariş</h2>
+      <p class="sub">Parçalar ortak kütüphaneye benzersiz adlarla yazılır; aynısı daha önce üretildiyse yeniden kullanılır.</p>
+      <div class="order">
+        <div><label for="siparis">Sipariş adı</label><input type="text" id="siparis" maxlength="60"></div>
+        <button class="primary" id="uret" type="button">Üret</button>
+      </div>
+      <div class="checks">
+        <label><input type="checkbox" id="pdf"> Teknik resim PDF</label>
+        <label><input type="checkbox" id="step"> STEP</label>
+        <label title="Kurallar varyantlardan çıkarıldı ve henüz onaylanmadı. Kapatırsanız sadece onaylı kurallar uygulanır."><input type="checkbox" id="onerilen" checked> Önerilen kuralları uygula</label>
+      </div>
+      <div id="isPanel" class="hidden" style="margin-top:16px">
+        <div id="isDurum"></div>
+        <div class="log" id="isGunluk"></div>
+        <div class="result" id="isSonuc"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="views" role="tablist">
+      <button class="view" data-view="hesap" aria-selected="true">Hesaplanan</button>
+      <button class="view" data-view="siparisler" aria-selected="false">Siparişler</button>
+      <button class="view" data-view="kutuphane" aria-selected="false">Kütüphane</button>
+    </div>
+
+    <div data-pane="hesap">
+      <div id="hesapDurum"></div>
+      <ul class="msgs" id="mesajlar"></ul>
+      <div class="stats" id="istatistik"></div>
+      <div class="toolbar">
+        <input type="text" id="ara" placeholder="Eylemlerde ara (ör. Frame, Description)…">
+        <select id="tur"><option value="">Tüm türler</option></select>
+      </div>
+      <div class="list" id="eylemler"></div>
+    </div>
+
+    <div data-pane="siparisler" class="hidden"><div class="list" id="siparisListe"></div></div>
+    <div data-pane="kutuphane" class="hidden">
+      <div class="toolbar"><input type="text" id="kutAra" placeholder="Kütüphanede ara…"><button class="secondary" id="kutAc" type="button">Klasörü aç</button></div>
+      <div class="list" id="kutListe"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { } },
+};
+
+async function api(path, body) {
+  const res = await fetch(path, body === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({ hata: "Sunucudan geçersiz yanıt." }));
+  if (!res.ok) throw new Error(data.hata || res.statusText);
+  return data;
+}
+
+let urunler = [], urun = null, durum = { girdiler: {}, tablolar: {} }, sonEylemler = [], kutuphane = null;
+
+async function basla() {
+  try { urunler = await api("/api/urunler"); }
+  catch (e) { $("urunAd").textContent = "Sunucuya bağlanılamadı"; $("urunAciklama").textContent = e.message; return; }
+  const tabs = $("tabs");
+  tabs.innerHTML = urunler.map(u => `<button class="tab" role="tab" data-id="${esc(u.id)}" aria-selected="false">${esc(u.ad)}${u.sorun ? '<span class="sorun" title="' + esc(u.sorun) + '">●</span>' : ""}</button>`).join("");
+  tabs.querySelectorAll(".tab").forEach(b => b.onclick = () => urunSec(b.dataset.id));
+  const son = store.get("rf.urun");
+  urunSec(urunler.some(u => u.id === son) ? son : urunler[0]?.id);
+}
+
+async function urunSec(id) {
+  if (!id) return;
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.id === id));
+  store.set("rf.urun", id);
+  urun = await api("/api/urun?id=" + encodeURIComponent(id));
+  $("urunAd").textContent = urun.ad;
+  $("urunAciklama").textContent = (urun.aciklama || "") + ` ${urun.kuralSayisi} kural (${urun.onayliKural} onaylı).`;
+  $("sorun").innerHTML = urun.sorun ? `<div class="status err">${esc(urun.sorun)}</div>` : "";
+  const kayitli = store.get("rf.form." + id);
+  durum = { girdiler: {}, tablolar: {} };
+  for (const g of urun.girdiler) durum.girdiler[g.name] = kayitli?.girdiler?.[g.name] ?? g.varsayilan ?? "";
+  for (const t of urun.tablolar) {
+    const satirlar = kayitli?.tablolar?.[t.name] ?? Array.from({ length: Math.max(t.minSatir, 1) }, () => Object.fromEntries(t.sutunlar.map(c => [c.name, c.varsayilan ?? ""])));
+    durum.tablolar[t.name] = satirlar;
+  }
+  $("siparis").value = urun.siparisOnerisi;
+  formCiz();
+  hesapla();
+  siparisleriYukle();
+  kutuphane = null;
+  if (aktifGorunum === "kutuphane") kutuphaneYukle();
+}
+
+function alan(g, deger, onChange, idSuffix) {
+  const id = "g_" + g.name + (idSuffix || "");
+  let input;
+  if (g.tip === "secim") {
+    input = `<select id="${esc(id)}">` + g.secenekler.map(s => `<option value="${esc(s.deger)}"${String(s.deger) === String(deger) ? " selected" : ""}>${esc(s.etiket)}</option>`).join("") + `</select>`;
+  } else {
+    const num = g.tip === "sayi";
+    input = `<input id="${esc(id)}" type="${num ? "number" : "text"}" ${num ? 'step="any" inputmode="decimal"' : ""} value="${esc(deger)}">`;
+  }
+  return { id, html: `<div class="inwrap">${input}${g.birim ? `<span class="unit">${esc(g.birim)}</span>` : ""}</div>`, bagla: () => {
+    const el = $(id);
+    el.addEventListener(g.tip === "secim" ? "change" : "input", () => { onChange(el.value); aralikKontrol(el, g); });
+    aralikKontrol(el, g);
+  } };
+}
+
+function aralikKontrol(el, g) {
+  if (g.tip !== "sayi") return;
+  const v = parseFloat(String(el.value).replace(",", "."));
+  const out = !isNaN(v) && ((g.min != null && v < g.min) || (g.max != null && v > g.max));
+  el.classList.toggle("out", out);
+  const hint = el.closest(".field")?.querySelector(".hint");
+  if (hint) { hint.classList.toggle("out", out); hint.textContent = aralikMetni(g, out); }
+}
+
+function aralikMetni(g, out) {
+  if (g.tip !== "sayi" || g.min == null) return "";
+  const r = `${g.min} – ${g.max}${g.birim ? " " + g.birim : ""}`;
+  return out ? `Varyantlarda görülen aralığın (${r}) dışında: kurallar burada denenmedi.` : `Varyantlarda görülen aralık: ${r}`;
+}
+
+function formCiz() {
+  const form = $("form");
+  const baglar = [];
+  let html = "";
+  for (const g of urun.girdiler) {
+    const a = alan(g, durum.girdiler[g.name], v => { durum.girdiler[g.name] = v; degisti(); });
+    baglar.push(a.bagla);
+    html += `<div class="field"><label for="${esc(a.id)}">${esc(g.etiket)}</label>${a.html}<div class="hint">${esc(aralikMetni(g, false))}</div></div>`;
+  }
+  for (const t of urun.tablolar) {
+    const satirlar = durum.tablolar[t.name];
+    html += `<div class="tableblock"><h3>${esc(t.etiket)}</h3><p class="sub" style="margin:2px 0 4px">${t.minSatir}–${t.maxSatir} ${esc(t.satirEtiketi.toLowerCase())}; her biri için ayrı değerler.</p><div class="rows">`;
+    satirlar.forEach((satir, i) => {
+      for (const c of t.sutunlar) {
+        const a = alan(c, satir[c.name], v => { satir[c.name] = v; degisti(); }, "_" + t.name + "_" + i);
+        baglar.push(a.bagla);
+        html += `<div class="row"><span class="n">${esc(t.satirEtiketi)} ${i + 1}</span>${a.html}<button type="button" class="icon" title="Sil" data-sil="${esc(t.name)}" data-i="${i}" ${satirlar.length <= t.minSatir ? "disabled" : ""}>✕</button></div>`;
+      }
+    });
+    html += `</div><button type="button" class="link" data-ekle="${esc(t.name)}" ${satirlar.length >= t.maxSatir ? "disabled" : ""}>+ ${esc(t.satirEtiketi)} ekle</button></div>`;
+  }
+  form.innerHTML = html;
+  baglar.forEach(b => b());
+  form.querySelectorAll("[data-sil]").forEach(b => b.onclick = () => { durum.tablolar[b.dataset.sil].splice(+b.dataset.i, 1); formCiz(); degisti(); });
+  form.querySelectorAll("[data-ekle]").forEach(b => b.onclick = () => {
+    const t = urun.tablolar.find(x => x.name === b.dataset.ekle);
+    const rows = durum.tablolar[t.name];
+    rows.push({ ...(rows[rows.length - 1] || Object.fromEntries(t.sutunlar.map(c => [c.name, c.varsayilan ?? ""]))) });
+    formCiz(); degisti();
+  });
+}
+
+let zamanlayici = null, istekNo = 0;
+function degisti() {
+  store.set("rf.form." + urun.id, durum);
+  clearTimeout(zamanlayici);
+  zamanlayici = setTimeout(hesapla, 250);
+}
+
+function istekGovdesi(extra) {
+  return { id: urun.id, girdiler: durum.girdiler, tablolar: durum.tablolar, onerilen: $("onerilen").checked, ...extra };
+}
+
+async function hesapla() {
+  const no = ++istekNo;
+  let r;
+  try { r = await api("/api/hesapla", istekGovdesi()); }
+  catch (e) { if (no === istekNo) { $("hesapDurum").innerHTML = `<div class="status err">${esc(e.message)}</div>`; } return; }
+  if (no !== istekNo) return;
+  $("hesapDurum").innerHTML = r.basarili
+    ? `<div class="status ok">Kurallar hesaplandı: modele ${r.eylemler.length} değişiklik uygulanacak.</div>`
+    : `<div class="status err">Kurallar hesaplanamadı. Aşağıdaki hataları düzeltin.</div>`;
+  $("mesajlar").innerHTML = r.hatalar.map(h => `<li class="err">${esc(h)}</li>`).join("") + r.uyarilar.map(h => `<li class="warn">${esc(h)}</li>`).join("");
+  sonEylemler = r.eylemler;
+  const say = (f) => r.eylemler.filter(f).length;
+  const kart = (n, s) => `<div class="stat"><b>${n}</b><span>${esc(s)}</span></div>`;
+  $("istatistik").innerHTML = kart(say(a => a.tur === "Ölçü"), "ölçü") + kart(say(a => a.tur.includes("bastırma")), "bastırma")
+    + kart(say(a => a.tur === "Parça değişimi"), "parça değişimi") + kart(say(a => a.tur === "Özel özellik"), "özel özellik");
+  const turler = [...new Set(r.eylemler.map(a => a.tur))];
+  const sel = $("tur"), secili = sel.value;
+  sel.innerHTML = `<option value="">Tüm türler</option>` + turler.map(t => `<option${t === secili ? " selected" : ""}>${esc(t)}</option>`).join("");
+  eylemleriCiz();
+  $("uret").disabled = !r.basarili || !!urun.sorun;
+}
+
+function eylemleriCiz() {
+  const q = $("ara").value.trim().toLocaleLowerCase("tr");
+  const tur = $("tur").value;
+  const tablo = urun.tablolar[0];
+  const liste = sonEylemler.filter(a => (!tur || a.tur === tur) && (!q || (a.hedef + " " + a.deger).toLocaleLowerCase("tr").includes(q)));
+  if (!liste.length) { $("eylemler").innerHTML = `<div class="empty">${sonEylemler.length ? "Eşleşen eylem yok." : "Henüz eylem yok."}</div>`; return; }
+  const satirSutunu = sonEylemler.some(a => a.satir != null);
+  $("eylemler").innerHTML = `<table><thead><tr>${satirSutunu ? "<th>" + esc(tablo?.satirEtiketi || "Satır") + "</th>" : ""}<th>Tür</th><th>Hedef</th><th>Değer</th></tr></thead><tbody>`
+    + liste.slice(0, 600).map(a => `<tr>${satirSutunu ? `<td class="t">${a.satir ?? "hat"}</td>` : ""}<td class="t">${esc(a.tur)}</td><td class="h">${esc(a.hedef)}</td><td class="v">${esc(a.deger)}</td></tr>`).join("")
+    + `</tbody></table>` + (liste.length > 600 ? `<div class="empty">İlk 600 gösteriliyor (${liste.length}).</div>` : "");
+}
+$("ara").addEventListener("input", eylemleriCiz);
+$("tur").addEventListener("change", eylemleriCiz);
+$("onerilen").addEventListener("change", hesapla);
+
+// ---- Üretim
+$("uret").onclick = async () => {
+  $("uret").disabled = true;
+  $("isPanel").classList.remove("hidden");
+  $("isSonuc").innerHTML = "";
+  $("isGunluk").textContent = "";
+  $("isDurum").innerHTML = `<div class="status info"><span class="spin"></span>Başlatılıyor…</div>`;
+  try {
+    const r = await api("/api/uret", istekGovdesi({ siparis: $("siparis").value, pdf: $("pdf").checked, step: $("step").checked }));
+    izle(r.is);
+  } catch (e) {
+    $("isDurum").innerHTML = `<div class="status err">${esc(e.message)}</div>`;
+    $("uret").disabled = false;
+  }
+};
+
+async function izle(id) {
+  let r;
+  try { r = await api("/api/is?id=" + id); } catch (e) { setTimeout(() => izle(id), 2000); return; }
+  $("isGunluk").textContent = r.gunluk.join("\n");
+  $("isGunluk").scrollTop = 1e9;
+  if (r.durum === "calisiyor") {
+    $("isDurum").innerHTML = `<div class="status info"><span class="spin"></span>${esc(r.siparis)} üretiliyor… ${r.sure} sn</div>`;
+    setTimeout(() => izle(id), 1500);
+    return;
+  }
+  const uyarilar = r.uyarilar.map(w => `<li class="warn">${esc(w)}</li>`).join("");
+  if (r.durum === "bitti") {
+    $("isDurum").innerHTML = `<div class="status ok">${esc(r.siparis)} hazır (${r.sure} sn). ${esc(r.kutuphane || "")}</div>` + (uyarilar ? `<ul class="msgs">${uyarilar}</ul>` : "");
+    $("isSonuc").innerHTML = `<button class="secondary" data-ac="${esc(r.montaj)}" data-sw="1">SolidWorks'te aç</button><button class="secondary" data-ac="${esc(r.klasor)}">Klasörü aç</button><span class="path">${esc(r.montaj)}</span>`;
+    baglaAc($("isSonuc"));
+    $("siparis").value = sonrakiAd(r.siparis);
+  } else {
+    $("isDurum").innerHTML = `<div class="status err">Üretim başarısız.</div><ul class="msgs">${r.hatalar.map(h => `<li class="err">${esc(h)}</li>`).join("")}${uyarilar}</ul>`;
+  }
+  $("uret").disabled = false;
+  siparisleriYukle();
+  kutuphane = null;
+  if (aktifGorunum === "kutuphane") kutuphaneYukle();
+}
+
+function sonrakiAd(ad) {
+  const m = /^(.*?)(\d+)$/.exec(ad);
+  return m ? m[1] + String(+m[2] + 1).padStart(m[2].length, "0") : ad + "-2";
+}
+
+function baglaAc(root) {
+  root.querySelectorAll("[data-ac]").forEach(b => b.onclick = async () => {
+    try { await api("/api/ac", { yol: b.dataset.ac, solidWorks: !!b.dataset.sw }); }
+    catch (e) { alert(e.message); }
+  });
+}
+
+// ---- Görünümler
+let aktifGorunum = "hesap";
+document.querySelectorAll(".view").forEach(b => b.onclick = () => {
+  aktifGorunum = b.dataset.view;
+  document.querySelectorAll(".view").forEach(x => x.setAttribute("aria-selected", x === b));
+  document.querySelectorAll("[data-pane]").forEach(p => p.classList.toggle("hidden", p.dataset.pane !== aktifGorunum));
+  if (aktifGorunum === "kutuphane" && !kutuphane) kutuphaneYukle();
+  if (aktifGorunum === "siparisler") siparisleriYukle();
+});
+
+async function siparisleriYukle() {
+  if (!urun) return;
+  const liste = await api("/api/siparisler?id=" + encodeURIComponent(urun.id)).catch(() => []);
+  $("siparisListe").innerHTML = liste.length
+    ? `<table><thead><tr><th>Sipariş</th><th>Tarih</th><th></th></tr></thead><tbody>` + liste.map(s => `<tr><td><b>${esc(s.ad)}</b><div class="path">${esc(s.montaj || "(montaj yok)")}</div></td><td class="t">${esc(s.tarih)}</td><td style="text-align:right;white-space:nowrap">${s.montaj ? `<button class="secondary" data-ac="${esc(s.montaj)}" data-sw="1">SolidWorks</button> ` : ""}<button class="secondary" data-ac="${esc(s.klasor)}">Klasör</button></td></tr>`).join("") + `</tbody></table>`
+    : `<div class="empty">Bu ürün için henüz sipariş üretilmedi.</div>`;
+  baglaAc($("siparisListe"));
+}
+
+async function kutuphaneYukle() {
+  kutuphane = await api("/api/kutuphane?id=" + encodeURIComponent(urun.id)).catch(() => ({ dosyalar: [] }));
+  kutuphaneCiz();
+}
+function kutuphaneCiz() {
+  const q = $("kutAra").value.trim().toLocaleLowerCase("tr");
+  const liste = (kutuphane?.dosyalar || []).filter(d => !q || [d.file, d.master, d.order, d.summary].join(" ").toLocaleLowerCase("tr").includes(q));
+  $("kutListe").innerHTML = liste.length
+    ? `<table><thead><tr><th>Dosya</th><th>Master</th><th>Açıklama</th><th>İlk sipariş</th></tr></thead><tbody>` + liste.map(d => `<tr><td class="f">${esc(d.file)}</td><td class="t">${esc(d.master)}</td><td class="h">${esc(d.summary || "")}</td><td class="t">${esc(d.order)}<div>${esc(d.tarih)}</div></td></tr>`).join("") + `</tbody></table>`
+    : `<div class="empty">${kutuphane?.dosyalar?.length ? "Eşleşen dosya yok." : "Kütüphane boş: ilk üretimden sonra dolacak."}</div>`;
+}
+$("kutAra").addEventListener("input", kutuphaneCiz);
+$("kutAc").onclick = () => kutuphane?.klasor && api("/api/ac", { yol: kutuphane.klasor }).catch(e => alert(e.message));
+
+basla();
+</script>
+</body>
+</html>

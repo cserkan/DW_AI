@@ -39,7 +39,11 @@ Kullanım: ruleforge <komut> [seçenekler]
             Tekrarlanan modül (tablo) satırları: ""Tablo.Sütun=1200;800"" iki satır (çift tırnak içinde).
   generate  --rules kurallar.json --master master.SLDASM --out klasör [Ad=Değer ...]
             [--pdf] [--step] [--include-proposed] [--visible] [--dry-run]
-            Yeni sipariş modelini üretir.                                           [Windows + SolidWorks]
+            [--library klasör | --no-library] [--root kök.SLDASM] [--slots ""Ad-5;Ad-8""]
+            Yeni sipariş modelini üretir. Parçalar kütüphaneye benzersiz adlarla yazılır,
+            aynısı daha önce üretildiyse yeniden kullanılır.                       [Windows + SolidWorks]
+  arayuz    [--config urunler.json] [--port 5050] [--no-browser]
+            Tarayıcı arayüzünü açar: ürün seç, değerleri gir, üret.                 [üretim: Windows + SolidWorks]
 ";
 
         private static async Task<int> Main(string[] argv)
@@ -69,6 +73,8 @@ Kullanım: ruleforge <komut> [seçenekler]
                     case "extract": return SolidWorksCommands.Extract(new Args(rest, "visible"));
                     case "extract-variants": return SolidWorksCommands.ExtractVariants(new Args(rest, "visible", "list"));
                     case "generate": return SolidWorksCommands.Generate(new Args(rest, "pdf", "step", "include-proposed", "visible", "dry-run", "no-library"));
+                    case "arayuz":
+                    case "ui": return Arayuz.ArayuzSunucu.Calistir(new Args(rest, "no-browser"));
                     case "infer": return InferCommand.Run(new Args(rest));
                     case "crossval": return InferCommand.CrossValidate(new Args(rest));
                     case "compare": return InferCommand.Compare(new Args(rest));

@@ -303,10 +303,24 @@ $RF chat --rules kurallar.json --snapshot master.json --report kurallar.cikarim.
 
 - **Aynı parçanın farklı boyutlu örnekleri:** Bir dosyadaki ölçü değişince o dosyanın tüm örnekleri değişir.
   Farklı boyutlu örnekler için parçanın ayrı kopyası gerekir (DriveWorks'teki "farklı ad ile kaydet" kuralı). Planlı.
-- **Dosya adlandırma:** Şu an her sipariş kendi klasörüne, master ile aynı dosya adlarıyla üretilir.
-  PDM için benzersiz ad stratejisi (sipariş no eki) eklenecek.
+- **Dosya adlandırma:** Kütüphane adları master adı + sıra no (`Frame-0003`). Parametreli okunur adlar (DriveWorks
+  "intelligent file naming" gibi) için bir adlandırma kuralı henüz yok.
 - **Teknik resimler:** Görünüşler ve ölçüler rebuild ile güncellenir. Antet, not ve tablo kuralları henüz yok.
-- **Arayüz:** Şimdilik komut satırı. Sırada SolidWorks Task Pane eklentisi veya WPF formu var; form, girdi
-  tanımlarından otomatik oluşturulacak.
-- **Gerçek SolidWorks testi:** SolidWorks katmanı 2015 interop'una karşı derleniyor ve imzalar doğrulandı.
-  Ancak gerçek SolidWorks'te çalıştırma testleri Windows makinede yapılmalı.
+- **Arayüz:** Yerel tarayıcı arayüzü var (aşağıda). Kural düzenleme, onay ve "şirket kuralları" bölümü henüz yok.
+
+## Arayüz
+
+```powershell
+& $rf arayuz            # ya da depo klasöründeki "RuleForge Arayuz.cmd" dosyasına çift tıklayın
+```
+
+Bilgisayarda küçük bir sunucu başlar (sadece bu bilgisayardan erişilir, `http://127.0.0.1:5050/`) ve tarayıcı açılır.
+Ürünler `urunler.json` dosyasındadır: kural dosyası, master montaj, kopyaları toplayan montaj (kök) ve formdaki Türkçe
+etiketler, birimler, seçenek listeleri. Sayfada:
+
+- Ürün seçilir; form kural dosyasının girdilerinden oluşur. Tekrarlanan modüllerde (konveyörler) satır eklenip silinir.
+  Varyantlarda görülen aralığın dışındaki değerler işaretlenir.
+- Değer değiştikçe kurallar anında hesaplanır; modele uygulanacak tüm değişiklikler aranabilir bir listede görünür.
+- **Üret:** SolidWorks'te arka planda üretir, günlüğü canlı gösterir; sonunda "SolidWorks'te aç" ve "Klasörü aç".
+  Siparişler `SiparisKlasoru\<ürün>\<sipariş>`, parçalar `Kutuphane\<ürün>` altına yazılır.
+- **Siparişler** ve **Kütüphane** sekmeleri önceki siparişleri ve kütüphanedeki dosyaları (açıklama, ilk sipariş) listeler.

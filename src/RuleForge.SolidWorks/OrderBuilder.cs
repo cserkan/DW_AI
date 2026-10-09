@@ -31,6 +31,9 @@ namespace RuleForge.SolidWorks
         public bool ExportPdf { get; set; }
         public bool ExportStep { get; set; }
 
+        /// <summary>Aşama mesajları (arayüzde canlı günlük).</summary>
+        public Action<string>? Progress { get; set; }
+
         /// <summary>Varsayılan kütüphane: sipariş klasörünün yanındaki "Kutuphane" klasörü.</summary>
         public static string DefaultLibrary(string outputFolder) =>
             Path.Combine(Path.GetDirectoryName(Path.GetFullPath(outputFolder).TrimEnd('\\', '/')) ?? ".", "Kutuphane");
@@ -110,7 +113,7 @@ namespace RuleForge.SolidWorks
             // çalışma klasörü sipariş klasörünün yanında.
             var workDir = useLibrary ? outDir.TrimEnd('\\', '/') + ".calisma" : outDir;
             if (useLibrary && Directory.Exists(workDir)) Directory.Delete(workDir, true);
-            var generator = new ModelGenerator(_session);
+            var generator = new ModelGenerator(_session) { Progress = request.Progress };
             var actions = request.Evaluation.Actions;
             GenerationResult gen;
             if (actions.Any(a => a.Instance.HasValue))
@@ -143,6 +146,7 @@ namespace RuleForge.SolidWorks
             }
             if (!useLibrary || !gen.Success) return gen;
 
+            request.Progress?.Invoke("Kütüphaneye yayınlanıyor (daha önce üretilmiş parçalar aranıyor)…");
             var order = Path.GetFileName(outDir.TrimEnd('\\', '/'));
             var rootStem = Path.GetFileNameWithoutExtension(gen.AssemblyPath);
             new LibraryPublisher(_session).Publish(gen.AssemblyPath, outDir, request.LibraryFolder!, rootStem + " " + order, order, gen.Sources, gen);

@@ -102,6 +102,9 @@ namespace RuleForge.SolidWorks
     {
         private readonly SwSession _session;
 
+        /// <summary>Aşama mesajları (ör. arayüzde canlı günlük). Ayrıntılar yine sonuçtaki Log'dadır.</summary>
+        public Action<string>? Progress { get; set; }
+
         public ModelGenerator(SwSession session)
         {
             _session = session;
@@ -154,6 +157,7 @@ namespace RuleForge.SolidWorks
                     return result;
                 }
 
+                Progress?.Invoke($"{Path.GetFileName(copiedRoot)}: {request.Actions.Count} kural uygulanıyor…");
                 // Sıra önemli: önce yapı (konfigürasyon, bastırma, değiştirme), sonra ölçüler, en son özellikler.
                 foreach (var action in request.Actions.OrderBy(a => Order(a.Target.Kind)))
                 {
@@ -175,6 +179,7 @@ namespace RuleForge.SolidWorks
                         context.RestoreUnexpectedSuppression(masterStates, allowedSuppressed, $"'{action.Rule.Id}' uygulandıktan sonra");
                 }
 
+                Progress?.Invoke($"{Path.GetFileName(copiedRoot)}: yeniden oluşturuluyor ve kaydediliyor…");
                 context.RebuildModifiedParts();
                 root.ForceRebuild3(false);
                 context.RestoreUnexpectedSuppression(masterStates, allowedSuppressed, "rebuild sonrasında");
@@ -222,6 +227,7 @@ namespace RuleForge.SolidWorks
             var rowResults = new List<GenerationResult>();
             for (int i = 0; i < request.Rows.Count; i++)
             {
+                Progress?.Invoke($"Satır {i + 1} / {request.Rows.Count} üretiliyor…");
                 var row = Generate(new GenerationRequest
                 {
                     MasterAssemblyPath = request.ModuleAssemblyPath,
@@ -244,6 +250,7 @@ namespace RuleForge.SolidWorks
             ShareDocuments(request.SharedDocuments, rowResults, outDir, result);
 
             // 2) Hat master'ı.
+            Progress?.Invoke("Kopyalar hat montajına yerleştiriliyor…");
             var copiedRoot = CopyMaster(rootMaster, outDir, null, true, result, out var rootStates);
             if (copiedRoot == null) return result;
             result.AssemblyPath = copiedRoot;

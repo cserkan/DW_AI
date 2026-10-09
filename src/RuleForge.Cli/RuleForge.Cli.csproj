@@ -16,6 +16,9 @@
     <ProjectReference Include="..\RuleForge.Inference\RuleForge.Inference.csproj" />
     <ProjectReference Include="..\RuleForge.AI\RuleForge.AI.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Arayuz\index.html" />
+  </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
     <ProjectReference Include="..\RuleForge.SolidWorks\RuleForge.SolidWorks.csproj" />
   </ItemGroup>

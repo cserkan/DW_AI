@@ -1,0 +1,61 @@
+{
+  "siparisKlasoru": "C:\\RuleForge\\Siparisler",
+  "kutuphane": "C:\\RuleForge\\Kutuphane",
+  "urunler": [
+    {
+      "id": "dolap",
+      "ad": "Dolap",
+      "aciklama": "DriveWorks Cupboard örneği: ölçüler, kapak tipi ve malzeme.",
+      "kurallar": "kurallar/dolap.json",
+      "master": "C:\\Users\\pc\\Downloads\\CupboardSoloTemplate\\SOLIDWORKS Files\\Cupboard Assy.SLDASM",
+      "girdiler": {
+        "Assembly_Height": { "etiket": "Yükseklik", "birim": "mm" },
+        "Assembly_Width": { "etiket": "Genişlik", "birim": "mm" },
+        "Assembly_Depth": { "etiket": "Derinlik", "birim": "mm" },
+        "Cupboard_LeftDoor_Shaker_Style_1_Dosyasi": {
+          "etiket": "Kapak tipi",
+          "secenekEtiketleri": {
+            "Cupboard LeftDoor Framed.SLDPRT": "Çerçeveli (Framed)",
+            "Cupboard LeftDoor Shaker Style.SLDPRT": "Shaker",
+            "Cupboard LeftDoor.SLDPRT": "Düz"
+          }
+        },
+        "Material": {
+          "etiket": "Malzeme",
+          "secenekEtiketleri": { "Mahogany": "Maun (Mahogany)", "Maple": "Akçaağaç (Maple)", "Oak": "Meşe (Oak)" }
+        }
+      }
+    },
+    {
+      "id": "konveyor",
+      "ad": "Konveyör hattı",
+      "aciklama": "2–5 düz konveyörden oluşan hat. Her konveyörün uzunluğu ayrı; diğer ölçüler tüm hatta ortak.",
+      "kurallar": "konveyor/kurallar.json",
+      "master": "C:\\Users\\pc\\Downloads\\ConveryoSoloTemplate\\SOLIDWORKS Files\\Straight Conveyor\\Conveyor Assembly.SLDASM",
+      "kok": "C:\\Users\\pc\\Downloads\\ConveryoSoloTemplate\\SOLIDWORKS Files\\Conveyor Line.SLDASM",
+      "girdiler": {
+        "Frame_D1_Floor": { "etiket": "Zeminden yükseklik", "birim": "mm" },
+        "Roller_D1_length": { "etiket": "Makara boyu", "birim": "mm" },
+        "Roller_D1_Base_Extrude": {
+          "etiket": "Makara çapı / yük sınıfı",
+          "birim": "mm",
+          "secenekler": [ "40", "50", "60" ],
+          "secenekEtiketleri": { "40": "40 mm (Hafif)", "50": "50 mm (Orta)", "60": "60 mm (Ağır)" }
+        },
+        "LH_Rail_D1_bottom": {
+          "etiket": "Yan ray yüksekliği",
+          "birim": "mm",
+          "secenekler": [ "100", "150" ],
+          "secenekEtiketleri": { "100": "100 mm (normal)", "150": "150 mm (yükseltilmiş)" }
+        }
+      },
+      "tablolar": {
+        "Conveyor_Assembly": {
+          "etiket": "Konveyörler",
+          "satirEtiketi": "Konveyör",
+          "sutunlar": { "Frame_D1_Overall_Length": { "etiket": "Uzunluk", "birim": "mm" } }
+        }
+      }
+    }
+  ]
+}

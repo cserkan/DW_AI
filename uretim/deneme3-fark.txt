@@ -1,0 +1,22 @@
+Üretilen: uretim\deneme3.json
+Beklenen: varyantlar\Cupboard Assy 0009__Cupboard Assy Cupboard Assy9.json
+
+KARŞILAŞTIRMA: 1096/1106 değer aynı, 10 fark.
+
+SADECE BİR MODELDE OLAN DOSYALAR
+  Cupboard Base.SLDPRT: sadece beklenen modelde
+
+BİLEŞEN BASTIRMA / SİLME (1)
+  Cupboard Base Assy-1/Cupboard Base-1 (bastırılmış mı): üretilen TRUE, beklenen FALSE
+
+KONFİGÜRASYONLAR (1)
+  Cupboard Base Assy-1/Cupboard Base-1 (konfigürasyon): üretilen (yok), beklenen Default
+
+ÖZEL ÖZELLİKLER (7)
+  Cupboard Assy.SLDASM › özellik 'OrderNo': üretilen 1234, beklenen MF0009
+  Cupboard LeftEnd.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard Plinth.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard Post.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard RightEnd.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard Shelf.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard Top.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009

@@ -78,6 +78,9 @@ namespace RuleForge.SolidWorks
         /// <summary>Bu siparişte kullanılmayan dosyalara ait olduğu için uygulanmayan eylemler (hata değildir).</summary>
         public List<string> Skipped { get; } = new List<string>();
 
+        /// <summary>Çıktı klasöründeki her kopya → kopyalandığı master (ya da kütüphane) dosyası.</summary>
+        public Dictionary<string, string> Sources { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
         /// <summary>Kuralların değer yazdığı belgelerin yolları.</summary>
         public HashSet<string> ModifiedDocuments { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -127,6 +130,13 @@ namespace RuleForge.SolidWorks
 
             var app = _session.App;
             var root = _session.Open(copiedRoot);
+            if (!IsInside(root.GetPathName(), outDir))
+            {
+                // SolidWorks bellekte aynı adlı bir belge (ör. gizli kalmış master) varsa kopya yerine onu döndürür.
+                result.Errors.Add($"Kopya yerine başka bir belge açıldı: {root.GetPathName()}. SolidWorks'te aynı adlı bir belge açık kalmış; " +
+                                  "SolidWorks'ü kapatıp yeniden açın. Hiçbir şey değiştirilmedi.");
+                return result;
+            }
             app.CommandInProgress = true;
             try
             {
@@ -137,6 +147,12 @@ namespace RuleForge.SolidWorks
                 // Açılış kontrolü: master'da açık olan bileşen kopyada bastırılmış geldiyse ya da çıktı klasörü dışındaki bir
                 // dosyayı kullanıyorsa (ör. aynı adlı dosya başka klasörden bellekte kalmış) üretim yanlış olur.
                 context.CheckLoaded(masterStates);
+                if (result.Errors.Count > 0)
+                {
+                    // Kopya başka dosyalara (ör. master'a) bağlıysa kural uygulamak ve kaydetmek o dosyaları değiştirirdi.
+                    result.Errors.Add("Açılış kontrolü başarısız: hiçbir kural uygulanmadı, hiçbir dosya kaydedilmedi.");
+                    return result;
+                }
 
                 // Sıra önemli: önce yapı (konfigürasyon, bastırma, değiştirme), sonra ölçüler, en son özellikler.
                 foreach (var action in request.Actions.OrderBy(a => Order(a.Target.Kind)))
@@ -166,12 +182,7 @@ namespace RuleForge.SolidWorks
                 if (whatsWrong > 0)
                     result.Warnings.Add($"Rebuild sonrası {whatsWrong} hata/uyarı var: {WhatsWrong(root)}");
 
-                int errors = 0, warnings = 0;
-                var saveOptions = (int)(swSaveAsOptions_e.swSaveAsOptions_Silent | swSaveAsOptions_e.swSaveAsOptions_SaveReferenced);
-                if (!root.Save3(saveOptions, ref errors, ref warnings))
-                    result.Errors.Add($"Kaydedilemedi (swFileSaveError_e = {errors}).");
-                else
-                    result.Log.Add("Kaydedildi: " + copiedRoot);
+                if (SaveInside(root, outDir, result)) result.Log.Add("Kaydedildi: " + copiedRoot);
 
                 if (request.ExportStep) Export(root, Path.ChangeExtension(copiedRoot, ".step"), null, result);
             }
@@ -224,6 +235,8 @@ namespace RuleForge.SolidWorks
                 result.Warnings.AddRange(row.Warnings.Select(l => tag + l));
                 result.Errors.AddRange(row.Errors.Select(l => tag + l));
                 result.Skipped.AddRange(row.Skipped.Select(l => tag + l));
+                foreach (var kv in row.Sources) result.Sources[kv.Key] = kv.Value;
+                result.ModifiedDocuments.UnionWith(row.ModifiedDocuments);
                 if (!row.Success) return result;
                 rowAssemblies.Add(row.AssemblyPath);
                 rowResults.Add(row);
@@ -237,6 +250,13 @@ namespace RuleForge.SolidWorks
 
             var app = _session.App;
             var root = _session.Open(copiedRoot);
+            if (!IsInside(root.GetPathName(), outDir))
+            {
+                // SolidWorks bellekte aynı adlı bir belge (ör. gizli kalmış master) varsa kopya yerine onu döndürür.
+                result.Errors.Add($"Kopya yerine başka bir belge açıldı: {root.GetPathName()}. SolidWorks'te aynı adlı bir belge açık kalmış; " +
+                                  "SolidWorks'ü kapatıp yeniden açın. Hiçbir şey değiştirilmedi.");
+                return result;
+            }
             app.CommandInProgress = true;
             try
             {
@@ -309,12 +329,7 @@ namespace RuleForge.SolidWorks
                 int whatsWrong = root.Extension.GetWhatsWrongCount();
                 if (whatsWrong > 0)
                     result.Warnings.Add($"Hat montajında rebuild sonrası {whatsWrong} hata/uyarı var: {WhatsWrong(root)}");
-                int errors = 0, warnings = 0;
-                var saveOptions = (int)(swSaveAsOptions_e.swSaveAsOptions_Silent | swSaveAsOptions_e.swSaveAsOptions_SaveReferenced);
-                if (!root.Save3(saveOptions, ref errors, ref warnings))
-                    result.Errors.Add($"Hat montajı kaydedilemedi (swFileSaveError_e = {errors}).");
-                else
-                    result.Log.Add("Kaydedildi: " + copiedRoot);
+                if (SaveInside(root, outDir, result)) result.Log.Add("Kaydedildi: " + copiedRoot);
                 if (request.ExportStep) Export(root, Path.ChangeExtension(copiedRoot, ".step"), null, result);
             }
             finally
@@ -369,6 +384,46 @@ namespace RuleForge.SolidWorks
                     result.Log.Add($"Ortak parça: satır {row} {Path.GetFileName(own)} yerine {Path.GetFileName(first)} kullanıyor ({relinked} dosya).");
                 }
             }
+        }
+
+        private static bool IsInside(string? path, string folder) =>
+            !string.IsNullOrEmpty(path) &&
+            string.Equals(Path.GetDirectoryName(Path.GetFullPath(path)), Path.GetFullPath(folder).TrimEnd('\\', '/'), StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Montajı ve değişmiş alt belgelerini tek tek kaydeder; sadece çıktı klasöründekileri. Klasör dışında değişmiş bir belge
+        /// varsa (ör. kopya yanlışlıkla master'a bağlanmış) hiçbir şey kaydedilmez: master dosyaları asla değişmemeli.
+        /// </summary>
+        private static bool SaveInside(ModelDoc2 root, string outDir, GenerationResult result)
+        {
+            var docs = new Dictionary<string, ModelDoc2>(StringComparer.OrdinalIgnoreCase) { [root.GetPathName()] = root };
+            if (root is AssemblyDoc asm && asm.GetComponents(false) is object[] all)
+                foreach (var c in all.OfType<Component2>())
+                    if (c.GetModelDoc2() is ModelDoc2 d && !string.IsNullOrEmpty(d.GetPathName()) && !docs.ContainsKey(d.GetPathName()))
+                        docs[d.GetPathName()] = d;
+            var outside = docs.Where(kv => !IsInside(kv.Key, outDir)).ToList();
+            var dirtyOutside = outside.Where(kv => kv.Value.GetSaveFlag()).Select(kv => kv.Key).ToList();
+            if (dirtyOutside.Count > 0)
+            {
+                result.Errors.Add("Çıktı klasörü dışındaki dosyalar değişmiş; hiçbir dosya kaydedilmedi (master'lar korunuyor): " +
+                                  string.Join(", ", dirtyOutside));
+                return false;
+            }
+            if (outside.Count > 0)
+                result.Warnings.Add("Montaj çıktı klasörü dışındaki dosyalar kullanıyor (değişmedikleri için dokunulmadı): " +
+                                    string.Join(", ", outside.Select(kv => Path.GetFileName(kv.Key))));
+            bool ok = true;
+            foreach (var kv in docs.Where(kv => !ReferenceEquals(kv.Value, root)).Concat(new[] { new KeyValuePair<string, ModelDoc2>(root.GetPathName(), root) }))
+            {
+                if (!ReferenceEquals(kv.Value, root) && !kv.Value.GetSaveFlag()) continue;
+                int errors = 0, warnings = 0;
+                if (!kv.Value.Save3((int)swSaveAsOptions_e.swSaveAsOptions_Silent, ref errors, ref warnings))
+                {
+                    result.Errors.Add($"Kaydedilemedi: {Path.GetFileName(kv.Key)} (swFileSaveError_e = {errors}).");
+                    ok = false;
+                }
+            }
+            return ok;
         }
 
         private static IEnumerable<Component2> TopLevel(AssemblyDoc asm) =>
@@ -483,6 +538,12 @@ namespace RuleForge.SolidWorks
             var statuses = doc.Extension.SavePackAndGo(pack) as int[];
             if (statuses != null && statuses.Any(s => s != (int)swPackAndGoSaveStatus_e.swPackAndGoSaveStatus_Succeed))
                 result.Warnings.Add("Pack and Go bazı dosyaları kopyalayamadı: durum kodları " + string.Join(",", statuses));
+            // Kopya → master eşlemesi (kütüphane parmak izi master dosyasının kendisini de içerir). Pack and Go'nun kendi listesi
+            // kullanılmıyor: dolu dönmüyor ve kayıttan önce istenince sonek ayarını bozuyor.
+            result.Sources[newRoot] = master;
+            if (app.GetDocumentDependencies2(master, true, true, false) is object[] deps)
+                foreach (var source in deps.OfType<string>().Where(s => s.Length > 0 && Path.IsPathRooted(s) && File.Exists(s)))
+                    result.Sources[Path.Combine(outDir, Path.GetFileNameWithoutExtension(source) + suffix + Path.GetExtension(source))] = source;
 
             // SolidWorks aynı adlı iki belgeyi aynı anda açamaz: kopyayı açmadan önce master kapanmalı.
             if (wasOpen)
@@ -536,6 +597,18 @@ namespace RuleForge.SolidWorks
                     list.Add((p, d.Visible));
                 }
             return list;
+        }
+
+        /// <summary>Kütüphaneye yayınladıktan sonra: sipariş klasöründeki ana montajı STEP, teknik resimleri PDF olarak dışa aktarır.</summary>
+        public void ExportOutputs(string assemblyPath, bool pdf, bool step, GenerationResult result)
+        {
+            if (step)
+            {
+                var doc = _session.Open(assemblyPath);
+                try { Export(doc, Path.ChangeExtension(assemblyPath, ".step"), null, result); }
+                finally { _session.Close(assemblyPath); }
+            }
+            if (pdf) ExportDrawings(Path.GetDirectoryName(Path.GetFullPath(assemblyPath))!, result);
         }
 
         private void ExportDrawings(string outDir, GenerationResult result)
@@ -707,7 +780,9 @@ namespace RuleForge.SolidWorks
                         var comp = Component(t.Component!);
                         var wanted = v.AsText();
                         var name = Path.GetFileName(wanted);
-                        if (string.Equals(Path.GetFileName(comp.GetPathName() ?? string.Empty), name, StringComparison.OrdinalIgnoreCase))
+                        var current = Path.GetFileName(comp.GetPathName() ?? string.Empty);
+                        if (string.Equals(current, name, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(current, Path.GetFileNameWithoutExtension(name) + _suffix + Path.GetExtension(name), StringComparison.OrdinalIgnoreCase))
                         {
                             _result.Log.Add($"{t} = {name} (zaten bu dosya, değişiklik yok)");
                             break;
@@ -717,7 +792,8 @@ namespace RuleForge.SolidWorks
                         var source = Path.IsPathRooted(wanted) ? wanted : FindLibraryFile(name);
                         if (source == null || !File.Exists(source))
                             throw new FileNotFoundException($"Yeni bileşen dosyası master klasöründe bulunamadı: {name} (aranan: {_masterDir})");
-                        var dest = Path.Combine(_outDir, name);
+                        var dest = Path.Combine(_outDir, Path.GetFileNameWithoutExtension(name) + _suffix + Path.GetExtension(name));
+                        _result.Sources[dest] = source;
                         if (!File.Exists(dest))
                         {
                             File.Copy(source, dest);

@@ -1,0 +1,5 @@
+Üretilen: uretim\H0008.json
+Beklenen: C:\Users\pc\Documents\DW_AI\konveyor\varyantlar\Conveyor assembly 0008__CONVEYOR LİNE 0008.json
+
+KARŞILAŞTIRMA: 1231/1231 değer aynı, 0 fark.
+Not: İki model karşılaştırılan tüm değerlerde aynı.

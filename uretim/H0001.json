@@ -1,0 +1,6073 @@
+{
+  "schemaVersion": 1,
+  "name": "Conveyor Line H0001",
+  "sourcePath": "C:\\RuleForge\\test1\\H0001\\Conveyor Line H0001.SLDASM",
+  "rootDocument": "Conveyor Line H0001.SLDASM",
+  "solidWorksVersion": "SOLIDWORKS 2026 (34.4.1)",
+  "extractedAtUtc": "2026-10-09T21:48:23.8812527Z",
+  "documents": [
+    {
+      "key": "Conveyor Line H0001.SLDASM",
+      "path": "C:\\RuleForge\\test1\\H0001\\Conveyor Line H0001.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [],
+      "features": [
+        {
+          "name": "Front Plane",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top Plane",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right Plane",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Mates",
+          "type": "MateGroup",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident1",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident2",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident3",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident4",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident5",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident6",
+          "type": "MateCoincident",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Weight": "419.54"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "Conveyor Assembly-0001.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\Conveyor Assembly-0001.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@RollerTop",
+          "feature": "RollerTop",
+          "fullName": "D1@RollerTop@Conveyor Assembly-0001.Assembly",
+          "value": 95,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Distance1",
+          "feature": "Distance1",
+          "fullName": "D1@Distance1@Conveyor Assembly-0001.Assembly",
+          "value": 0,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Front Left",
+          "feature": "Front Left",
+          "fullName": "D1@Front Left@Conveyor Assembly-0001.Assembly",
+          "value": 10,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Right",
+          "feature": "Right",
+          "fullName": "D1@Right@Conveyor Assembly-0001.Assembly",
+          "value": 10,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Front Right",
+          "feature": "Front Right",
+          "fullName": "D1@Front Right@Conveyor Assembly-0001.Assembly",
+          "value": 10,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Left",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "RollerTop",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident2",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Distance1",
+          "type": "MateDistanceDim",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident3",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Front Left",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Front Right",
+          "type": "RefPlane",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Project": " Project",
+        "Customer": "Customer",
+        "Material": "Material",
+        "Drawn By": "Drawn By",
+        "PartNumber": "PartNumber",
+        "Description": "Description",
+        "Description2": "Description2",
+        "Weight": "140.23"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "Conveyor Bed-0001.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\Conveyor Bed-0001.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@PLANE1",
+          "feature": "PLANE1",
+          "fullName": "D1@PLANE1@Conveyor Bed-0001.Assembly",
+          "value": 1191.249947,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Distance1",
+          "feature": "Distance1",
+          "fullName": "D1@Distance1@Conveyor Bed-0001.Assembly",
+          "value": 5,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Distance2",
+          "feature": "Distance2",
+          "fullName": "D1@Distance2@Conveyor Bed-0001.Assembly",
+          "value": 5,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller Pattern",
+          "feature": "Roller Pattern",
+          "fullName": "D1@Roller Pattern@Conveyor Bed-0001.Assembly",
+          "value": 8,
+          "unit": "none",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Roller Pattern",
+          "feature": "Roller Pattern",
+          "fullName": "D3@Roller Pattern@Conveyor Bed-0001.Assembly",
+          "value": 100.15,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "PLANE1",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        },
+        {
+          "name": "Distance1",
+          "type": "MateDistanceDim",
+          "suppressed": false
+        },
+        {
+          "name": "Distance2",
+          "type": "MateDistanceDim",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident1",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident2",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident4",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident5",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Roller Pattern",
+          "type": "LocalLPattern",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Description": "Conveyor Bed, 556 high, 851 wide, 801 long"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "RH Rail Assembly-0001.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\RH Rail Assembly-0001.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Description": "Right Hand Rail, 801 long 150 high"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "RH Rail-0001.SLDPRT",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\RH Rail-0001.SLDPRT",
+      "kind": "part",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default",
+        "Flat PatternSM-FLAT-PATTERN",
+        "DefaultSM-FLAT-PATTERN"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@length",
+          "feature": "length",
+          "fullName": "D1@length@RH Rail-0001.Part",
+          "value": 801,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@width",
+          "feature": "width",
+          "fullName": "D1@width@RH Rail-0001.Part",
+          "value": 40,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@bottom",
+          "feature": "bottom",
+          "fullName": "D1@bottom@RH Rail-0001.Part",
+          "value": 150,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller CL Horiz",
+          "feature": "Roller CL Horiz",
+          "fullName": "D1@Roller CL Horiz@RH Rail-0001.Part",
+          "value": 70,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller CL Vert",
+          "feature": "Roller CL Vert",
+          "fullName": "D1@Roller CL Vert@RH Rail-0001.Part",
+          "value": 50,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "Thickness@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "Thickness@Base-Extrude-Thin@RH Rail-0001.Part",
+          "value": 3.175,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D1@Sketch2@RH Rail-0001.Part",
+          "value": 26,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Cut-Extrude1",
+          "feature": "Cut-Extrude1",
+          "fullName": "D1@Sketch2@RH Rail-0001.Part",
+          "value": 26,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Roller Hole Pattern",
+          "feature": "Roller Hole Pattern",
+          "fullName": "D3@Roller Hole Pattern@RH Rail-0001.Part",
+          "value": 100.15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller Hole Pattern",
+          "feature": "Roller Hole Pattern",
+          "fullName": "D1@Roller Hole Pattern@RH Rail-0001.Part",
+          "value": 8,
+          "unit": "none",
+          "isDriven": false
+        },
+        {
+          "name": "Thickness@Sheet-Metal1",
+          "feature": "Sheet-Metal1",
+          "fullName": "Thickness@Sheet-Metal1@RH Rail-0001.Part",
+          "value": 3.175,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sheet-Metal1",
+          "feature": "Sheet-Metal1",
+          "fullName": "D1@Sheet-Metal1@RH Rail-0001.Part",
+          "value": 3,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Konfigürasyon Yorumları",
+          "type": "ConfigCommentsFolder",
+          "suppressed": false
+        },
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Left",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "length",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "width",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "bottom",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Roller CL Horiz",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Roller CL Vert",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch1",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Base-Extrude-Thin",
+          "type": "ExtruThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch2",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Cut-Extrude1",
+          "type": "Cut",
+          "suppressed": false
+        },
+        {
+          "name": "Roller Hole Pattern",
+          "type": "LPattern",
+          "suppressed": false
+        },
+        {
+          "name": "Sheet-Metal1",
+          "type": "SheetMetal",
+          "suppressed": false
+        },
+        {
+          "name": "Flatten-Bends1",
+          "type": "FlattenBends",
+          "suppressed": false
+        },
+        {
+          "name": "SharpBend14",
+          "type": "OneBend",
+          "suppressed": false
+        },
+        {
+          "name": "SharpBend15",
+          "type": "OneBend",
+          "suppressed": false
+        },
+        {
+          "name": "Process-Bends1",
+          "type": "ProcessBends",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "manufact": "machined",
+        "material": "steel",
+        "Description": "Right Hand Rail, 801 long 150 high",
+        "PartNumber": "RH-801-150-R"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "LH Rail Assembly-0001.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\LH Rail Assembly-0001.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Description": "Left Hand Rail, 801 long 150 high"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "LH Rail-0001.SLDPRT",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\LH Rail-0001.SLDPRT",
+      "kind": "part",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default",
+        "DefaultSM-FLAT-PATTERN"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@length",
+          "feature": "length",
+          "fullName": "D1@length@LH Rail-0001.Part",
+          "value": 801,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@bottom",
+          "feature": "bottom",
+          "fullName": "D1@bottom@LH Rail-0001.Part",
+          "value": 150,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@width",
+          "feature": "width",
+          "fullName": "D1@width@LH Rail-0001.Part",
+          "value": 40,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller CL Horiz",
+          "feature": "Roller CL Horiz",
+          "fullName": "D1@Roller CL Horiz@LH Rail-0001.Part",
+          "value": 70,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller CL Vert",
+          "feature": "Roller CL Vert",
+          "fullName": "D1@Roller CL Vert@LH Rail-0001.Part",
+          "value": 50,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "Thickness@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "Thickness@Base-Extrude-Thin@LH Rail-0001.Part",
+          "value": 3.175,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D1@Sketch2@LH Rail-0001.Part",
+          "value": 26,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Cut-Extrude1",
+          "feature": "Cut-Extrude1",
+          "fullName": "D1@Sketch2@LH Rail-0001.Part",
+          "value": 26,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Roller Hole Pattern",
+          "feature": "Roller Hole Pattern",
+          "fullName": "D3@Roller Hole Pattern@LH Rail-0001.Part",
+          "value": 100.15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller Hole Pattern",
+          "feature": "Roller Hole Pattern",
+          "fullName": "D1@Roller Hole Pattern@LH Rail-0001.Part",
+          "value": 8,
+          "unit": "none",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Sheet-Metal3",
+          "feature": "Sheet-Metal3",
+          "fullName": "D2@Sheet-Metal3@LH Rail-0001.Part",
+          "value": 500,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "Thickness@Sheet-Metal3",
+          "feature": "Sheet-Metal3",
+          "fullName": "Thickness@Sheet-Metal3@LH Rail-0001.Part",
+          "value": 3.175,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sheet-Metal3",
+          "feature": "Sheet-Metal3",
+          "fullName": "D1@Sheet-Metal3@LH Rail-0001.Part",
+          "value": 3,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Konfigürasyon Yorumları",
+          "type": "ConfigCommentsFolder",
+          "suppressed": false
+        },
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Left",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "length",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "bottom",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "width",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Roller CL Horiz",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Roller CL Vert",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch1",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Base-Extrude-Thin",
+          "type": "ExtruThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch2",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Cut-Extrude1",
+          "type": "Cut",
+          "suppressed": false
+        },
+        {
+          "name": "Roller Hole Pattern",
+          "type": "LPattern",
+          "suppressed": false
+        },
+        {
+          "name": "Sheet-Metal3",
+          "type": "SheetMetal",
+          "suppressed": false
+        },
+        {
+          "name": "Flatten-Bends3",
+          "type": "FlattenBends",
+          "suppressed": false
+        },
+        {
+          "name": "SharpBend5",
+          "type": "OneBend",
+          "suppressed": false
+        },
+        {
+          "name": "SharpBend6",
+          "type": "OneBend",
+          "suppressed": false
+        },
+        {
+          "name": "Process-Bends3",
+          "type": "ProcessBends",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "manufact": "machined",
+        "material": "steel",
+        "Description": "Left Hand Rail, 801 long 150 high",
+        "PartNumber": "LH-801-150-R"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "Roller Assembly-0001.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\Roller Assembly-0001.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Description": "Medium Duty Roller, 50 diameter 761 long"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "Roller-0001.SLDPRT",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\Roller-0001.SLDPRT",
+      "kind": "part",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@length",
+          "feature": "length",
+          "fullName": "D1@length@Roller-0001.Part",
+          "value": 761,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1123@Boss start",
+          "feature": "Boss start",
+          "fullName": "D1123@Boss start@Roller-0001.Part",
+          "value": 19.05,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Boss end",
+          "feature": "Boss end",
+          "fullName": "D1@Boss end@Roller-0001.Part",
+          "value": 19.05,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch1",
+          "feature": "Sketch1",
+          "fullName": "D1@Sketch1@Roller-0001.Part",
+          "value": 50,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Base-Extrude",
+          "feature": "Base-Extrude",
+          "fullName": "D1@Sketch1@Roller-0001.Part",
+          "value": 50,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1123@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D1123@Boss start@Roller-0001.Part",
+          "value": 19.05,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D17@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D17@Sketch2@Roller-0001.Part",
+          "value": 25.4,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1123@Boss-Extrude1",
+          "feature": "Boss-Extrude1",
+          "fullName": "D1123@Boss start@Roller-0001.Part",
+          "value": 19.05,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D17@Boss-Extrude1",
+          "feature": "Boss-Extrude1",
+          "fullName": "D17@Sketch2@Roller-0001.Part",
+          "value": 25.4,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Plane1",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Plane2",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Plane3",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "length",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Boss start",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Boss end",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch1",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Base-Extrude",
+          "type": "Extrusion",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch2",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude1",
+          "type": "Boss",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "material": "plastic",
+        "manufact": "purchased",
+        "Description": "Medium Duty Roller, 50 diameter 761 long",
+        "PartNumber": "R-50-ME-761"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "Conveyor Frame-0001.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\Conveyor Frame-0001.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default",
+        "No Support"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@PLANE1",
+          "feature": "PLANE1",
+          "fullName": "D1@PLANE1@Conveyor Frame-0001.Assembly",
+          "value": 504.605112,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@SupportCentreLine",
+          "feature": "SupportCentreLine",
+          "fullName": "D1@SupportCentreLine@Conveyor Frame-0001.Assembly",
+          "value": 362.4,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Distance1",
+          "feature": "Distance1",
+          "fullName": "D1@Distance1@Conveyor Frame-0001.Assembly",
+          "value": 0,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@SupportWidth",
+          "feature": "SupportWidth",
+          "fullName": "D1@SupportWidth@Conveyor Frame-0001.Assembly",
+          "value": 0,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "PLANE1",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident1",
+          "type": "MateCoincident",
+          "suppressed": true
+        },
+        {
+          "name": "SupportCentreLine",
+          "type": "MateDistanceDim",
+          "suppressed": true
+        },
+        {
+          "name": "Distance1",
+          "type": "MateDistanceDim",
+          "suppressed": true
+        },
+        {
+          "name": "Coincident3",
+          "type": "MateCoincident",
+          "suppressed": true
+        },
+        {
+          "name": "Coincident4",
+          "type": "MateCoincident",
+          "suppressed": true
+        },
+        {
+          "name": "SupportWidth",
+          "type": "MateDistanceDim",
+          "suppressed": true
+        }
+      ],
+      "equations": [],
+      "customProperties": {},
+      "configurationProperties": {}
+    },
+    {
+      "key": "Frame-0001.SLDPRT",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\Frame-0001.SLDPRT",
+      "kind": "part",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@Floor",
+          "feature": "Floor",
+          "fullName": "D1@Floor@Frame-0001.Part",
+          "value": 556,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Half Width",
+          "feature": "Half Width",
+          "fullName": "D1@Half Width@Frame-0001.Part",
+          "value": 425.5,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Overall Length",
+          "feature": "Overall Length",
+          "fullName": "D1@Overall Length@Frame-0001.Part",
+          "value": 801,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Middle length",
+          "feature": "Middle length",
+          "fullName": "D1@Middle length@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D1@Sketch2@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D2@Sketch2@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D3@Sketch2@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D4@Sketch2@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D5@Sketch2@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D6@Sketch2@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D5@Base-Extrude-Thin@Frame-0001.Part",
+          "value": 6.35,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D1@Sketch2@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D2@Sketch2@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D3@Sketch2@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D4@Sketch2@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D6@Sketch2@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch3",
+          "feature": "Sketch3",
+          "fullName": "D3@Sketch3@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch3",
+          "feature": "Sketch3",
+          "fullName": "D5@Sketch3@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch3",
+          "feature": "Sketch3",
+          "fullName": "D6@Sketch3@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Boss-Extrude-Thin1",
+          "feature": "Boss-Extrude-Thin1",
+          "fullName": "D5@Boss-Extrude-Thin1@Frame-0001.Part",
+          "value": 6.35,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude-Thin1",
+          "feature": "Boss-Extrude-Thin1",
+          "fullName": "D3@Sketch3@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Boss-Extrude-Thin1",
+          "feature": "Boss-Extrude-Thin1",
+          "fullName": "D6@Sketch3@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch4",
+          "feature": "Sketch4",
+          "fullName": "D3@Sketch4@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch4",
+          "feature": "Sketch4",
+          "fullName": "D5@Sketch4@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch4",
+          "feature": "Sketch4",
+          "fullName": "D6@Sketch4@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch4",
+          "feature": "Sketch4",
+          "fullName": "D1@Sketch4@Frame-0001.Part",
+          "value": 50.8,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Boss-Extrude-Thin2",
+          "feature": "Boss-Extrude-Thin2",
+          "fullName": "D5@Boss-Extrude-Thin2@Frame-0001.Part",
+          "value": 6.35,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude-Thin2",
+          "feature": "Boss-Extrude-Thin2",
+          "fullName": "D3@Sketch4@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Boss-Extrude-Thin2",
+          "feature": "Boss-Extrude-Thin2",
+          "fullName": "D6@Sketch4@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Boss-Extrude-Thin2",
+          "feature": "Boss-Extrude-Thin2",
+          "fullName": "D1@Sketch4@Frame-0001.Part",
+          "value": 50.8,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch5",
+          "feature": "Sketch5",
+          "fullName": "D3@Sketch5@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch5",
+          "feature": "Sketch5",
+          "fullName": "D5@Sketch5@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch5",
+          "feature": "Sketch5",
+          "fullName": "D6@Sketch5@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Boss-Extrude-Thin3",
+          "feature": "Boss-Extrude-Thin3",
+          "fullName": "D5@Boss-Extrude-Thin3@Frame-0001.Part",
+          "value": 6.35,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude-Thin3",
+          "feature": "Boss-Extrude-Thin3",
+          "fullName": "D3@Sketch5@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Boss-Extrude-Thin3",
+          "feature": "Boss-Extrude-Thin3",
+          "fullName": "D6@Sketch5@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Sketch8",
+          "feature": "Sketch8",
+          "fullName": "D4@Sketch8@Frame-0001.Part",
+          "value": 152.4,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch8",
+          "feature": "Sketch8",
+          "fullName": "D1@Sketch8@Frame-0001.Part",
+          "value": 101.6,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Sketch8",
+          "feature": "Sketch8",
+          "fullName": "D2@Sketch8@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch8",
+          "feature": "Sketch8",
+          "fullName": "D3@Sketch8@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Boss-Extrude2",
+          "feature": "Boss-Extrude2",
+          "fullName": "D1@Boss-Extrude2@Frame-0001.Part",
+          "value": 19.05,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Boss-Extrude2",
+          "feature": "Boss-Extrude2",
+          "fullName": "D4@Sketch8@Frame-0001.Part",
+          "value": 152.4,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Boss-Extrude2",
+          "feature": "Boss-Extrude2",
+          "fullName": "D2@Sketch8@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude2",
+          "feature": "Boss-Extrude2",
+          "fullName": "D3@Sketch8@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Plane4",
+          "feature": "Plane4",
+          "fullName": "D1@Plane4@Frame-0001.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch10",
+          "feature": "Sketch10",
+          "fullName": "D1@Plane4@Frame-0001.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch10",
+          "feature": "Sketch10",
+          "fullName": "D3@Sketch10@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch10",
+          "feature": "Sketch10",
+          "fullName": "D5@Sketch10@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch10",
+          "feature": "Sketch10",
+          "fullName": "D6@Sketch10@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Boss-Extrude4",
+          "feature": "Boss-Extrude4",
+          "fullName": "D1@Plane4@Frame-0001.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude4",
+          "feature": "Boss-Extrude4",
+          "fullName": "D3@Sketch10@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Boss-Extrude4",
+          "feature": "Boss-Extrude4",
+          "fullName": "D5@Sketch10@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Boss-Extrude4",
+          "feature": "Boss-Extrude4",
+          "fullName": "D6@Sketch10@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Plane6",
+          "feature": "Plane6",
+          "fullName": "D1@Plane6@Frame-0001.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch13",
+          "feature": "Sketch13",
+          "fullName": "D1@Plane6@Frame-0001.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch13",
+          "feature": "Sketch13",
+          "fullName": "D3@Sketch13@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch13",
+          "feature": "Sketch13",
+          "fullName": "D5@Sketch13@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch13",
+          "feature": "Sketch13",
+          "fullName": "D6@Sketch13@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Boss-Extrude6",
+          "feature": "Boss-Extrude6",
+          "fullName": "D1@Plane6@Frame-0001.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude6",
+          "feature": "Boss-Extrude6",
+          "fullName": "D3@Sketch13@Frame-0001.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Boss-Extrude6",
+          "feature": "Boss-Extrude6",
+          "fullName": "D5@Sketch13@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Boss-Extrude6",
+          "feature": "Boss-Extrude6",
+          "fullName": "D6@Sketch13@Frame-0001.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D1@Floor@Frame-0001.Part",
+          "value": 556,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D2@Sketch14@Frame-0001.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D3@Sketch14@Frame-0001.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D4@Sketch14@Frame-0001.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D5@Sketch14@Frame-0001.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D6@Sketch14@Frame-0001.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D7@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D7@Sketch14@Frame-0001.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D1@Floor@Frame-0001.Part",
+          "value": 556,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D2@Sketch14@Frame-0001.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D3@Sketch14@Frame-0001.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D4@Sketch14@Frame-0001.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D5@Sketch14@Frame-0001.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D6@Sketch14@Frame-0001.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D7@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D7@Sketch14@Frame-0001.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Back",
+          "feature": "Back",
+          "fullName": "D1@Back@Frame-0001.Part",
+          "value": 0,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "side",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Floor",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Half Width",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Overall Length",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Middle length",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch2",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Base-Extrude-Thin",
+          "type": "ExtruThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch3",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude-Thin1",
+          "type": "BossThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch4",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude-Thin2",
+          "type": "BossThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch5",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude-Thin3",
+          "type": "BossThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch8",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude2",
+          "type": "Boss",
+          "suppressed": false
+        },
+        {
+          "name": "Plane4",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch10",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude4",
+          "type": "Boss",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch11",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Plane5",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Mirror2",
+          "type": "MirrorPattern",
+          "suppressed": false
+        },
+        {
+          "name": "Plane6",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch13",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude6",
+          "type": "Boss",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Mirror1",
+          "type": "MirrorSolid",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch14",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Frame Fixing Holes",
+          "type": "Cut",
+          "suppressed": false
+        },
+        {
+          "name": "Back",
+          "type": "RefPlane",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "material": "Stainless",
+        "manufact": "weld",
+        "Description": "Frame, 556 high, 851 wide, 801 long",
+        "PartNumber": "CF-556-ME-851-801"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "Conveyor Assembly-0003.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\Conveyor Assembly-0003.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@RollerTop",
+          "feature": "RollerTop",
+          "fullName": "D1@RollerTop@Conveyor Assembly-0003.Assembly",
+          "value": 95,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Distance1",
+          "feature": "Distance1",
+          "fullName": "D1@Distance1@Conveyor Assembly-0003.Assembly",
+          "value": 0,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Front Left",
+          "feature": "Front Left",
+          "fullName": "D1@Front Left@Conveyor Assembly-0003.Assembly",
+          "value": 10,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Right",
+          "feature": "Right",
+          "fullName": "D1@Right@Conveyor Assembly-0003.Assembly",
+          "value": 10,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Front Right",
+          "feature": "Front Right",
+          "fullName": "D1@Front Right@Conveyor Assembly-0003.Assembly",
+          "value": 10,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Left",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "RollerTop",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident2",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Distance1",
+          "type": "MateDistanceDim",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident3",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Front Left",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Front Right",
+          "type": "RefPlane",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Project": " Project",
+        "Customer": "Customer",
+        "Material": "Material",
+        "Drawn By": "Drawn By",
+        "PartNumber": "PartNumber",
+        "Description": "Description",
+        "Description2": "Description2",
+        "Weight": "125.29"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "Conveyor Frame-0003.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\Conveyor Frame-0003.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default",
+        "No Support"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@PLANE1",
+          "feature": "PLANE1",
+          "fullName": "D1@PLANE1@Conveyor Frame-0003.Assembly",
+          "value": 504.605112,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@SupportCentreLine",
+          "feature": "SupportCentreLine",
+          "fullName": "D1@SupportCentreLine@Conveyor Frame-0003.Assembly",
+          "value": 261.9,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Distance1",
+          "feature": "Distance1",
+          "fullName": "D1@Distance1@Conveyor Frame-0003.Assembly",
+          "value": 0,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@SupportWidth",
+          "feature": "SupportWidth",
+          "fullName": "D1@SupportWidth@Conveyor Frame-0003.Assembly",
+          "value": 0,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "PLANE1",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident1",
+          "type": "MateCoincident",
+          "suppressed": true
+        },
+        {
+          "name": "SupportCentreLine",
+          "type": "MateDistanceDim",
+          "suppressed": true
+        },
+        {
+          "name": "Distance1",
+          "type": "MateDistanceDim",
+          "suppressed": true
+        },
+        {
+          "name": "Coincident3",
+          "type": "MateCoincident",
+          "suppressed": true
+        },
+        {
+          "name": "Coincident4",
+          "type": "MateCoincident",
+          "suppressed": true
+        },
+        {
+          "name": "SupportWidth",
+          "type": "MateDistanceDim",
+          "suppressed": true
+        }
+      ],
+      "equations": [],
+      "customProperties": {},
+      "configurationProperties": {}
+    },
+    {
+      "key": "Frame-0003.SLDPRT",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\Frame-0003.SLDPRT",
+      "kind": "part",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@Floor",
+          "feature": "Floor",
+          "fullName": "D1@Floor@Frame-0003.Part",
+          "value": 556,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Half Width",
+          "feature": "Half Width",
+          "fullName": "D1@Half Width@Frame-0003.Part",
+          "value": 425.5,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Overall Length",
+          "feature": "Overall Length",
+          "fullName": "D1@Overall Length@Frame-0003.Part",
+          "value": 600,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Middle length",
+          "feature": "Middle length",
+          "fullName": "D1@Middle length@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D1@Sketch2@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D2@Sketch2@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D3@Sketch2@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D4@Sketch2@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D5@Sketch2@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D6@Sketch2@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D5@Base-Extrude-Thin@Frame-0003.Part",
+          "value": 6.35,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D1@Sketch2@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D2@Sketch2@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D3@Sketch2@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D4@Sketch2@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D6@Sketch2@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch3",
+          "feature": "Sketch3",
+          "fullName": "D3@Sketch3@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch3",
+          "feature": "Sketch3",
+          "fullName": "D5@Sketch3@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch3",
+          "feature": "Sketch3",
+          "fullName": "D6@Sketch3@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Boss-Extrude-Thin1",
+          "feature": "Boss-Extrude-Thin1",
+          "fullName": "D5@Boss-Extrude-Thin1@Frame-0003.Part",
+          "value": 6.35,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude-Thin1",
+          "feature": "Boss-Extrude-Thin1",
+          "fullName": "D3@Sketch3@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Boss-Extrude-Thin1",
+          "feature": "Boss-Extrude-Thin1",
+          "fullName": "D6@Sketch3@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch4",
+          "feature": "Sketch4",
+          "fullName": "D3@Sketch4@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch4",
+          "feature": "Sketch4",
+          "fullName": "D5@Sketch4@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch4",
+          "feature": "Sketch4",
+          "fullName": "D6@Sketch4@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch4",
+          "feature": "Sketch4",
+          "fullName": "D1@Sketch4@Frame-0003.Part",
+          "value": 50.8,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Boss-Extrude-Thin2",
+          "feature": "Boss-Extrude-Thin2",
+          "fullName": "D5@Boss-Extrude-Thin2@Frame-0003.Part",
+          "value": 6.35,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude-Thin2",
+          "feature": "Boss-Extrude-Thin2",
+          "fullName": "D3@Sketch4@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Boss-Extrude-Thin2",
+          "feature": "Boss-Extrude-Thin2",
+          "fullName": "D6@Sketch4@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Boss-Extrude-Thin2",
+          "feature": "Boss-Extrude-Thin2",
+          "fullName": "D1@Sketch4@Frame-0003.Part",
+          "value": 50.8,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch5",
+          "feature": "Sketch5",
+          "fullName": "D3@Sketch5@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch5",
+          "feature": "Sketch5",
+          "fullName": "D5@Sketch5@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch5",
+          "feature": "Sketch5",
+          "fullName": "D6@Sketch5@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Boss-Extrude-Thin3",
+          "feature": "Boss-Extrude-Thin3",
+          "fullName": "D5@Boss-Extrude-Thin3@Frame-0003.Part",
+          "value": 6.35,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude-Thin3",
+          "feature": "Boss-Extrude-Thin3",
+          "fullName": "D3@Sketch5@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Boss-Extrude-Thin3",
+          "feature": "Boss-Extrude-Thin3",
+          "fullName": "D6@Sketch5@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Sketch8",
+          "feature": "Sketch8",
+          "fullName": "D4@Sketch8@Frame-0003.Part",
+          "value": 152.4,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch8",
+          "feature": "Sketch8",
+          "fullName": "D1@Sketch8@Frame-0003.Part",
+          "value": 101.6,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Sketch8",
+          "feature": "Sketch8",
+          "fullName": "D2@Sketch8@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch8",
+          "feature": "Sketch8",
+          "fullName": "D3@Sketch8@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Boss-Extrude2",
+          "feature": "Boss-Extrude2",
+          "fullName": "D1@Boss-Extrude2@Frame-0003.Part",
+          "value": 19.05,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Boss-Extrude2",
+          "feature": "Boss-Extrude2",
+          "fullName": "D4@Sketch8@Frame-0003.Part",
+          "value": 152.4,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Boss-Extrude2",
+          "feature": "Boss-Extrude2",
+          "fullName": "D2@Sketch8@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude2",
+          "feature": "Boss-Extrude2",
+          "fullName": "D3@Sketch8@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Plane4",
+          "feature": "Plane4",
+          "fullName": "D1@Plane4@Frame-0003.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch10",
+          "feature": "Sketch10",
+          "fullName": "D1@Plane4@Frame-0003.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch10",
+          "feature": "Sketch10",
+          "fullName": "D3@Sketch10@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch10",
+          "feature": "Sketch10",
+          "fullName": "D5@Sketch10@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch10",
+          "feature": "Sketch10",
+          "fullName": "D6@Sketch10@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Boss-Extrude4",
+          "feature": "Boss-Extrude4",
+          "fullName": "D1@Plane4@Frame-0003.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude4",
+          "feature": "Boss-Extrude4",
+          "fullName": "D3@Sketch10@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Boss-Extrude4",
+          "feature": "Boss-Extrude4",
+          "fullName": "D5@Sketch10@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Boss-Extrude4",
+          "feature": "Boss-Extrude4",
+          "fullName": "D6@Sketch10@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Plane6",
+          "feature": "Plane6",
+          "fullName": "D1@Plane6@Frame-0003.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch13",
+          "feature": "Sketch13",
+          "fullName": "D1@Plane6@Frame-0003.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch13",
+          "feature": "Sketch13",
+          "fullName": "D3@Sketch13@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch13",
+          "feature": "Sketch13",
+          "fullName": "D5@Sketch13@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch13",
+          "feature": "Sketch13",
+          "fullName": "D6@Sketch13@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Boss-Extrude6",
+          "feature": "Boss-Extrude6",
+          "fullName": "D1@Plane6@Frame-0003.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude6",
+          "feature": "Boss-Extrude6",
+          "fullName": "D3@Sketch13@Frame-0003.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Boss-Extrude6",
+          "feature": "Boss-Extrude6",
+          "fullName": "D5@Sketch13@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Boss-Extrude6",
+          "feature": "Boss-Extrude6",
+          "fullName": "D6@Sketch13@Frame-0003.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D1@Floor@Frame-0003.Part",
+          "value": 556,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D2@Sketch14@Frame-0003.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D3@Sketch14@Frame-0003.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D4@Sketch14@Frame-0003.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D5@Sketch14@Frame-0003.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D6@Sketch14@Frame-0003.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D7@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D7@Sketch14@Frame-0003.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D1@Floor@Frame-0003.Part",
+          "value": 556,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D2@Sketch14@Frame-0003.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D3@Sketch14@Frame-0003.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D4@Sketch14@Frame-0003.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D5@Sketch14@Frame-0003.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D6@Sketch14@Frame-0003.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D7@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D7@Sketch14@Frame-0003.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Back",
+          "feature": "Back",
+          "fullName": "D1@Back@Frame-0003.Part",
+          "value": 0,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "side",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Floor",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Half Width",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Overall Length",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Middle length",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch2",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Base-Extrude-Thin",
+          "type": "ExtruThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch3",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude-Thin1",
+          "type": "BossThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch4",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude-Thin2",
+          "type": "BossThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch5",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude-Thin3",
+          "type": "BossThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch8",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude2",
+          "type": "Boss",
+          "suppressed": false
+        },
+        {
+          "name": "Plane4",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch10",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude4",
+          "type": "Boss",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch11",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Plane5",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Mirror2",
+          "type": "MirrorPattern",
+          "suppressed": false
+        },
+        {
+          "name": "Plane6",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch13",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude6",
+          "type": "Boss",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Mirror1",
+          "type": "MirrorSolid",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch14",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Frame Fixing Holes",
+          "type": "Cut",
+          "suppressed": false
+        },
+        {
+          "name": "Back",
+          "type": "RefPlane",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "material": "Stainless",
+        "manufact": "weld",
+        "Description": "Frame, 556 high, 851 wide, 801 long",
+        "PartNumber": "CF-556-ME-851-801"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "Conveyor Bed-0003.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\Conveyor Bed-0003.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@PLANE1",
+          "feature": "PLANE1",
+          "fullName": "D1@PLANE1@Conveyor Bed-0003.Assembly",
+          "value": 1191.249947,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Distance1",
+          "feature": "Distance1",
+          "fullName": "D1@Distance1@Conveyor Bed-0003.Assembly",
+          "value": 5,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Distance2",
+          "feature": "Distance2",
+          "fullName": "D1@Distance2@Conveyor Bed-0003.Assembly",
+          "value": 5,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller Pattern",
+          "feature": "Roller Pattern",
+          "fullName": "D1@Roller Pattern@Conveyor Bed-0003.Assembly",
+          "value": 6,
+          "unit": "none",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Roller Pattern",
+          "feature": "Roller Pattern",
+          "fullName": "D3@Roller Pattern@Conveyor Bed-0003.Assembly",
+          "value": 100,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "PLANE1",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        },
+        {
+          "name": "Distance1",
+          "type": "MateDistanceDim",
+          "suppressed": false
+        },
+        {
+          "name": "Distance2",
+          "type": "MateDistanceDim",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident1",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident2",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident4",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident5",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Roller Pattern",
+          "type": "LocalLPattern",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Description": "Conveyor Bed, 556 high, 851 wide, 801 long"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "RH Rail Assembly-0003.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\RH Rail Assembly-0003.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Description": "Right Hand Rail, 801 long 150 high"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "RH Rail-0003.SLDPRT",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\RH Rail-0003.SLDPRT",
+      "kind": "part",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default",
+        "Flat PatternSM-FLAT-PATTERN",
+        "DefaultSM-FLAT-PATTERN"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@length",
+          "feature": "length",
+          "fullName": "D1@length@RH Rail-0003.Part",
+          "value": 600,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@width",
+          "feature": "width",
+          "fullName": "D1@width@RH Rail-0003.Part",
+          "value": 40,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@bottom",
+          "feature": "bottom",
+          "fullName": "D1@bottom@RH Rail-0003.Part",
+          "value": 150,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller CL Horiz",
+          "feature": "Roller CL Horiz",
+          "fullName": "D1@Roller CL Horiz@RH Rail-0003.Part",
+          "value": 70,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller CL Vert",
+          "feature": "Roller CL Vert",
+          "fullName": "D1@Roller CL Vert@RH Rail-0003.Part",
+          "value": 50,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "Thickness@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "Thickness@Base-Extrude-Thin@RH Rail-0003.Part",
+          "value": 3.175,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D1@Sketch2@RH Rail-0003.Part",
+          "value": 26,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Cut-Extrude1",
+          "feature": "Cut-Extrude1",
+          "fullName": "D1@Sketch2@RH Rail-0003.Part",
+          "value": 26,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Roller Hole Pattern",
+          "feature": "Roller Hole Pattern",
+          "fullName": "D3@Roller Hole Pattern@RH Rail-0003.Part",
+          "value": 100,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller Hole Pattern",
+          "feature": "Roller Hole Pattern",
+          "fullName": "D1@Roller Hole Pattern@RH Rail-0003.Part",
+          "value": 6,
+          "unit": "none",
+          "isDriven": false
+        },
+        {
+          "name": "Thickness@Sheet-Metal1",
+          "feature": "Sheet-Metal1",
+          "fullName": "Thickness@Sheet-Metal1@RH Rail-0003.Part",
+          "value": 3.175,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sheet-Metal1",
+          "feature": "Sheet-Metal1",
+          "fullName": "D1@Sheet-Metal1@RH Rail-0003.Part",
+          "value": 3,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Konfigürasyon Yorumları",
+          "type": "ConfigCommentsFolder",
+          "suppressed": false
+        },
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Left",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "length",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "width",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "bottom",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Roller CL Horiz",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Roller CL Vert",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch1",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Base-Extrude-Thin",
+          "type": "ExtruThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch2",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Cut-Extrude1",
+          "type": "Cut",
+          "suppressed": false
+        },
+        {
+          "name": "Roller Hole Pattern",
+          "type": "LPattern",
+          "suppressed": false
+        },
+        {
+          "name": "Sheet-Metal1",
+          "type": "SheetMetal",
+          "suppressed": false
+        },
+        {
+          "name": "Flatten-Bends1",
+          "type": "FlattenBends",
+          "suppressed": false
+        },
+        {
+          "name": "SharpBend14",
+          "type": "OneBend",
+          "suppressed": false
+        },
+        {
+          "name": "SharpBend15",
+          "type": "OneBend",
+          "suppressed": false
+        },
+        {
+          "name": "Process-Bends1",
+          "type": "ProcessBends",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "manufact": "machined",
+        "material": "steel",
+        "Description": "Right Hand Rail, 801 long 150 high",
+        "PartNumber": "RH-801-150-R"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "LH Rail Assembly-0003.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\LH Rail Assembly-0003.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Description": "Left Hand Rail, 801 long 150 high"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "LH Rail-0003.SLDPRT",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\LH Rail-0003.SLDPRT",
+      "kind": "part",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default",
+        "DefaultSM-FLAT-PATTERN"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@length",
+          "feature": "length",
+          "fullName": "D1@length@LH Rail-0003.Part",
+          "value": 600,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@bottom",
+          "feature": "bottom",
+          "fullName": "D1@bottom@LH Rail-0003.Part",
+          "value": 150,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@width",
+          "feature": "width",
+          "fullName": "D1@width@LH Rail-0003.Part",
+          "value": 40,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller CL Horiz",
+          "feature": "Roller CL Horiz",
+          "fullName": "D1@Roller CL Horiz@LH Rail-0003.Part",
+          "value": 70,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller CL Vert",
+          "feature": "Roller CL Vert",
+          "fullName": "D1@Roller CL Vert@LH Rail-0003.Part",
+          "value": 50,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "Thickness@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "Thickness@Base-Extrude-Thin@LH Rail-0003.Part",
+          "value": 3.175,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D1@Sketch2@LH Rail-0003.Part",
+          "value": 26,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Cut-Extrude1",
+          "feature": "Cut-Extrude1",
+          "fullName": "D1@Sketch2@LH Rail-0003.Part",
+          "value": 26,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Roller Hole Pattern",
+          "feature": "Roller Hole Pattern",
+          "fullName": "D3@Roller Hole Pattern@LH Rail-0003.Part",
+          "value": 100,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller Hole Pattern",
+          "feature": "Roller Hole Pattern",
+          "fullName": "D1@Roller Hole Pattern@LH Rail-0003.Part",
+          "value": 6,
+          "unit": "none",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Sheet-Metal3",
+          "feature": "Sheet-Metal3",
+          "fullName": "D2@Sheet-Metal3@LH Rail-0003.Part",
+          "value": 500,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "Thickness@Sheet-Metal3",
+          "feature": "Sheet-Metal3",
+          "fullName": "Thickness@Sheet-Metal3@LH Rail-0003.Part",
+          "value": 3.175,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sheet-Metal3",
+          "feature": "Sheet-Metal3",
+          "fullName": "D1@Sheet-Metal3@LH Rail-0003.Part",
+          "value": 3,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Konfigürasyon Yorumları",
+          "type": "ConfigCommentsFolder",
+          "suppressed": false
+        },
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Left",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "length",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "bottom",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "width",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Roller CL Horiz",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Roller CL Vert",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch1",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Base-Extrude-Thin",
+          "type": "ExtruThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch2",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Cut-Extrude1",
+          "type": "Cut",
+          "suppressed": false
+        },
+        {
+          "name": "Roller Hole Pattern",
+          "type": "LPattern",
+          "suppressed": false
+        },
+        {
+          "name": "Sheet-Metal3",
+          "type": "SheetMetal",
+          "suppressed": false
+        },
+        {
+          "name": "Flatten-Bends3",
+          "type": "FlattenBends",
+          "suppressed": false
+        },
+        {
+          "name": "SharpBend5",
+          "type": "OneBend",
+          "suppressed": false
+        },
+        {
+          "name": "SharpBend6",
+          "type": "OneBend",
+          "suppressed": false
+        },
+        {
+          "name": "Process-Bends3",
+          "type": "ProcessBends",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "manufact": "machined",
+        "material": "steel",
+        "Description": "Left Hand Rail, 801 long 150 high",
+        "PartNumber": "LH-801-150-R"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "Conveyor Assembly-0002.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\Conveyor Assembly-0002.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@RollerTop",
+          "feature": "RollerTop",
+          "fullName": "D1@RollerTop@Conveyor Assembly-0002.Assembly",
+          "value": 95,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Distance1",
+          "feature": "Distance1",
+          "fullName": "D1@Distance1@Conveyor Assembly-0002.Assembly",
+          "value": 0,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Front Left",
+          "feature": "Front Left",
+          "fullName": "D1@Front Left@Conveyor Assembly-0002.Assembly",
+          "value": 10,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Right",
+          "feature": "Right",
+          "fullName": "D1@Right@Conveyor Assembly-0002.Assembly",
+          "value": 10,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Front Right",
+          "feature": "Front Right",
+          "fullName": "D1@Front Right@Conveyor Assembly-0002.Assembly",
+          "value": 10,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Left",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "RollerTop",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident2",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Distance1",
+          "type": "MateDistanceDim",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident3",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Front Left",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Front Right",
+          "type": "RefPlane",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Project": " Project",
+        "Customer": "Customer",
+        "Material": "Material",
+        "Drawn By": "Drawn By",
+        "PartNumber": "PartNumber",
+        "Description": "Description",
+        "Description2": "Description2",
+        "Weight": "154.02"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "Conveyor Bed-0002.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\Conveyor Bed-0002.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@PLANE1",
+          "feature": "PLANE1",
+          "fullName": "D1@PLANE1@Conveyor Bed-0002.Assembly",
+          "value": 1191.249947,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Distance1",
+          "feature": "Distance1",
+          "fullName": "D1@Distance1@Conveyor Bed-0002.Assembly",
+          "value": 5,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Distance2",
+          "feature": "Distance2",
+          "fullName": "D1@Distance2@Conveyor Bed-0002.Assembly",
+          "value": 5,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller Pattern",
+          "feature": "Roller Pattern",
+          "fullName": "D1@Roller Pattern@Conveyor Bed-0002.Assembly",
+          "value": 10,
+          "unit": "none",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Roller Pattern",
+          "feature": "Roller Pattern",
+          "fullName": "D3@Roller Pattern@Conveyor Bed-0002.Assembly",
+          "value": 100,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "PLANE1",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        },
+        {
+          "name": "Distance1",
+          "type": "MateDistanceDim",
+          "suppressed": false
+        },
+        {
+          "name": "Distance2",
+          "type": "MateDistanceDim",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident1",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident2",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident4",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident5",
+          "type": "MateCoincident",
+          "suppressed": false
+        },
+        {
+          "name": "Roller Pattern",
+          "type": "LocalLPattern",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Description": "Conveyor Bed, 556 high, 851 wide, 801 long"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "RH Rail Assembly-0002.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\RH Rail Assembly-0002.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Description": "Right Hand Rail, 801 long 150 high"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "RH Rail-0002.SLDPRT",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\RH Rail-0002.SLDPRT",
+      "kind": "part",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default",
+        "Flat PatternSM-FLAT-PATTERN",
+        "DefaultSM-FLAT-PATTERN"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@length",
+          "feature": "length",
+          "fullName": "D1@length@RH Rail-0002.Part",
+          "value": 1000,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@width",
+          "feature": "width",
+          "fullName": "D1@width@RH Rail-0002.Part",
+          "value": 40,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@bottom",
+          "feature": "bottom",
+          "fullName": "D1@bottom@RH Rail-0002.Part",
+          "value": 150,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller CL Horiz",
+          "feature": "Roller CL Horiz",
+          "fullName": "D1@Roller CL Horiz@RH Rail-0002.Part",
+          "value": 70,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller CL Vert",
+          "feature": "Roller CL Vert",
+          "fullName": "D1@Roller CL Vert@RH Rail-0002.Part",
+          "value": 50,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "Thickness@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "Thickness@Base-Extrude-Thin@RH Rail-0002.Part",
+          "value": 3.175,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D1@Sketch2@RH Rail-0002.Part",
+          "value": 26,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Cut-Extrude1",
+          "feature": "Cut-Extrude1",
+          "fullName": "D1@Sketch2@RH Rail-0002.Part",
+          "value": 26,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Roller Hole Pattern",
+          "feature": "Roller Hole Pattern",
+          "fullName": "D3@Roller Hole Pattern@RH Rail-0002.Part",
+          "value": 100,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller Hole Pattern",
+          "feature": "Roller Hole Pattern",
+          "fullName": "D1@Roller Hole Pattern@RH Rail-0002.Part",
+          "value": 10,
+          "unit": "none",
+          "isDriven": false
+        },
+        {
+          "name": "Thickness@Sheet-Metal1",
+          "feature": "Sheet-Metal1",
+          "fullName": "Thickness@Sheet-Metal1@RH Rail-0002.Part",
+          "value": 3.175,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sheet-Metal1",
+          "feature": "Sheet-Metal1",
+          "fullName": "D1@Sheet-Metal1@RH Rail-0002.Part",
+          "value": 3,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Konfigürasyon Yorumları",
+          "type": "ConfigCommentsFolder",
+          "suppressed": false
+        },
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Left",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "length",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "width",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "bottom",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Roller CL Horiz",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Roller CL Vert",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch1",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Base-Extrude-Thin",
+          "type": "ExtruThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch2",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Cut-Extrude1",
+          "type": "Cut",
+          "suppressed": false
+        },
+        {
+          "name": "Roller Hole Pattern",
+          "type": "LPattern",
+          "suppressed": false
+        },
+        {
+          "name": "Sheet-Metal1",
+          "type": "SheetMetal",
+          "suppressed": false
+        },
+        {
+          "name": "Flatten-Bends1",
+          "type": "FlattenBends",
+          "suppressed": false
+        },
+        {
+          "name": "SharpBend14",
+          "type": "OneBend",
+          "suppressed": false
+        },
+        {
+          "name": "SharpBend15",
+          "type": "OneBend",
+          "suppressed": false
+        },
+        {
+          "name": "Process-Bends1",
+          "type": "ProcessBends",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "manufact": "machined",
+        "material": "steel",
+        "Description": "Right Hand Rail, 801 long 150 high",
+        "PartNumber": "RH-801-150-R"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "LH Rail Assembly-0002.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\LH Rail Assembly-0002.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "Description": "Left Hand Rail, 801 long 150 high"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "LH Rail-0002.SLDPRT",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\LH Rail-0002.SLDPRT",
+      "kind": "part",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default",
+        "DefaultSM-FLAT-PATTERN"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@length",
+          "feature": "length",
+          "fullName": "D1@length@LH Rail-0002.Part",
+          "value": 1000,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@bottom",
+          "feature": "bottom",
+          "fullName": "D1@bottom@LH Rail-0002.Part",
+          "value": 150,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@width",
+          "feature": "width",
+          "fullName": "D1@width@LH Rail-0002.Part",
+          "value": 40,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller CL Horiz",
+          "feature": "Roller CL Horiz",
+          "fullName": "D1@Roller CL Horiz@LH Rail-0002.Part",
+          "value": 70,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller CL Vert",
+          "feature": "Roller CL Vert",
+          "fullName": "D1@Roller CL Vert@LH Rail-0002.Part",
+          "value": 50,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "Thickness@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "Thickness@Base-Extrude-Thin@LH Rail-0002.Part",
+          "value": 3.175,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D1@Sketch2@LH Rail-0002.Part",
+          "value": 26,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Cut-Extrude1",
+          "feature": "Cut-Extrude1",
+          "fullName": "D1@Sketch2@LH Rail-0002.Part",
+          "value": 26,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Roller Hole Pattern",
+          "feature": "Roller Hole Pattern",
+          "fullName": "D3@Roller Hole Pattern@LH Rail-0002.Part",
+          "value": 100,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Roller Hole Pattern",
+          "feature": "Roller Hole Pattern",
+          "fullName": "D1@Roller Hole Pattern@LH Rail-0002.Part",
+          "value": 10,
+          "unit": "none",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Sheet-Metal3",
+          "feature": "Sheet-Metal3",
+          "fullName": "D2@Sheet-Metal3@LH Rail-0002.Part",
+          "value": 500,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "Thickness@Sheet-Metal3",
+          "feature": "Sheet-Metal3",
+          "fullName": "Thickness@Sheet-Metal3@LH Rail-0002.Part",
+          "value": 3.175,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sheet-Metal3",
+          "feature": "Sheet-Metal3",
+          "fullName": "D1@Sheet-Metal3@LH Rail-0002.Part",
+          "value": 3,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Konfigürasyon Yorumları",
+          "type": "ConfigCommentsFolder",
+          "suppressed": false
+        },
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Left",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "length",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "bottom",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "width",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Roller CL Horiz",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Roller CL Vert",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch1",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Base-Extrude-Thin",
+          "type": "ExtruThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch2",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Cut-Extrude1",
+          "type": "Cut",
+          "suppressed": false
+        },
+        {
+          "name": "Roller Hole Pattern",
+          "type": "LPattern",
+          "suppressed": false
+        },
+        {
+          "name": "Sheet-Metal3",
+          "type": "SheetMetal",
+          "suppressed": false
+        },
+        {
+          "name": "Flatten-Bends3",
+          "type": "FlattenBends",
+          "suppressed": false
+        },
+        {
+          "name": "SharpBend5",
+          "type": "OneBend",
+          "suppressed": false
+        },
+        {
+          "name": "SharpBend6",
+          "type": "OneBend",
+          "suppressed": false
+        },
+        {
+          "name": "Process-Bends3",
+          "type": "ProcessBends",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "manufact": "machined",
+        "material": "steel",
+        "Description": "Left Hand Rail, 801 long 150 high",
+        "PartNumber": "LH-801-150-R"
+      },
+      "configurationProperties": {}
+    },
+    {
+      "key": "Conveyor Frame-0002.SLDASM",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\Conveyor Frame-0002.SLDASM",
+      "kind": "assembly",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default",
+        "No Support"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@PLANE1",
+          "feature": "PLANE1",
+          "fullName": "D1@PLANE1@Conveyor Frame-0002.Assembly",
+          "value": 504.605112,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@SupportCentreLine",
+          "feature": "SupportCentreLine",
+          "fullName": "D1@SupportCentreLine@Conveyor Frame-0002.Assembly",
+          "value": 461.9,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Distance1",
+          "feature": "Distance1",
+          "fullName": "D1@Distance1@Conveyor Frame-0002.Assembly",
+          "value": 0,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@SupportWidth",
+          "feature": "SupportWidth",
+          "fullName": "D1@SupportWidth@Conveyor Frame-0002.Assembly",
+          "value": 0,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "Front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Right",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "PLANE1",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "MateGroup1",
+          "type": "MateGroup",
+          "suppressed": false
+        },
+        {
+          "name": "Coincident1",
+          "type": "MateCoincident",
+          "suppressed": true
+        },
+        {
+          "name": "SupportCentreLine",
+          "type": "MateDistanceDim",
+          "suppressed": true
+        },
+        {
+          "name": "Distance1",
+          "type": "MateDistanceDim",
+          "suppressed": true
+        },
+        {
+          "name": "Coincident3",
+          "type": "MateCoincident",
+          "suppressed": true
+        },
+        {
+          "name": "Coincident4",
+          "type": "MateCoincident",
+          "suppressed": true
+        },
+        {
+          "name": "SupportWidth",
+          "type": "MateDistanceDim",
+          "suppressed": true
+        }
+      ],
+      "equations": [],
+      "customProperties": {},
+      "configurationProperties": {}
+    },
+    {
+      "key": "Frame-0002.SLDPRT",
+      "path": "C:\\RuleForge\\test1\\Kutuphane-hat\\Frame-0002.SLDPRT",
+      "kind": "part",
+      "activeConfiguration": "Default",
+      "configurations": [
+        "Default"
+      ],
+      "dimensions": [
+        {
+          "name": "D1@Floor",
+          "feature": "Floor",
+          "fullName": "D1@Floor@Frame-0002.Part",
+          "value": 556,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Half Width",
+          "feature": "Half Width",
+          "fullName": "D1@Half Width@Frame-0002.Part",
+          "value": 425.5,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Overall Length",
+          "feature": "Overall Length",
+          "fullName": "D1@Overall Length@Frame-0002.Part",
+          "value": 1000,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Middle length",
+          "feature": "Middle length",
+          "fullName": "D1@Middle length@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D1@Sketch2@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D2@Sketch2@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D3@Sketch2@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D4@Sketch2@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D5@Sketch2@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch2",
+          "feature": "Sketch2",
+          "fullName": "D6@Sketch2@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D5@Base-Extrude-Thin@Frame-0002.Part",
+          "value": 6.35,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D1@Sketch2@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D2@Sketch2@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D3@Sketch2@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D4@Sketch2@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Base-Extrude-Thin",
+          "feature": "Base-Extrude-Thin",
+          "fullName": "D6@Sketch2@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch3",
+          "feature": "Sketch3",
+          "fullName": "D3@Sketch3@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch3",
+          "feature": "Sketch3",
+          "fullName": "D5@Sketch3@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch3",
+          "feature": "Sketch3",
+          "fullName": "D6@Sketch3@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Boss-Extrude-Thin1",
+          "feature": "Boss-Extrude-Thin1",
+          "fullName": "D5@Boss-Extrude-Thin1@Frame-0002.Part",
+          "value": 6.35,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude-Thin1",
+          "feature": "Boss-Extrude-Thin1",
+          "fullName": "D3@Sketch3@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Boss-Extrude-Thin1",
+          "feature": "Boss-Extrude-Thin1",
+          "fullName": "D6@Sketch3@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch4",
+          "feature": "Sketch4",
+          "fullName": "D3@Sketch4@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch4",
+          "feature": "Sketch4",
+          "fullName": "D5@Sketch4@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch4",
+          "feature": "Sketch4",
+          "fullName": "D6@Sketch4@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch4",
+          "feature": "Sketch4",
+          "fullName": "D1@Sketch4@Frame-0002.Part",
+          "value": 50.8,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Boss-Extrude-Thin2",
+          "feature": "Boss-Extrude-Thin2",
+          "fullName": "D5@Boss-Extrude-Thin2@Frame-0002.Part",
+          "value": 6.35,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude-Thin2",
+          "feature": "Boss-Extrude-Thin2",
+          "fullName": "D3@Sketch4@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Boss-Extrude-Thin2",
+          "feature": "Boss-Extrude-Thin2",
+          "fullName": "D6@Sketch4@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Boss-Extrude-Thin2",
+          "feature": "Boss-Extrude-Thin2",
+          "fullName": "D1@Sketch4@Frame-0002.Part",
+          "value": 50.8,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch5",
+          "feature": "Sketch5",
+          "fullName": "D3@Sketch5@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch5",
+          "feature": "Sketch5",
+          "fullName": "D5@Sketch5@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch5",
+          "feature": "Sketch5",
+          "fullName": "D6@Sketch5@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Boss-Extrude-Thin3",
+          "feature": "Boss-Extrude-Thin3",
+          "fullName": "D5@Boss-Extrude-Thin3@Frame-0002.Part",
+          "value": 6.35,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude-Thin3",
+          "feature": "Boss-Extrude-Thin3",
+          "fullName": "D3@Sketch5@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Boss-Extrude-Thin3",
+          "feature": "Boss-Extrude-Thin3",
+          "fullName": "D6@Sketch5@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Sketch8",
+          "feature": "Sketch8",
+          "fullName": "D4@Sketch8@Frame-0002.Part",
+          "value": 152.4,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch8",
+          "feature": "Sketch8",
+          "fullName": "D1@Sketch8@Frame-0002.Part",
+          "value": 101.6,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Sketch8",
+          "feature": "Sketch8",
+          "fullName": "D2@Sketch8@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch8",
+          "feature": "Sketch8",
+          "fullName": "D3@Sketch8@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Boss-Extrude2",
+          "feature": "Boss-Extrude2",
+          "fullName": "D1@Boss-Extrude2@Frame-0002.Part",
+          "value": 19.05,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Boss-Extrude2",
+          "feature": "Boss-Extrude2",
+          "fullName": "D4@Sketch8@Frame-0002.Part",
+          "value": 152.4,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Boss-Extrude2",
+          "feature": "Boss-Extrude2",
+          "fullName": "D2@Sketch8@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude2",
+          "feature": "Boss-Extrude2",
+          "fullName": "D3@Sketch8@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Plane4",
+          "feature": "Plane4",
+          "fullName": "D1@Plane4@Frame-0002.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch10",
+          "feature": "Sketch10",
+          "fullName": "D1@Plane4@Frame-0002.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch10",
+          "feature": "Sketch10",
+          "fullName": "D3@Sketch10@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch10",
+          "feature": "Sketch10",
+          "fullName": "D5@Sketch10@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch10",
+          "feature": "Sketch10",
+          "fullName": "D6@Sketch10@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Boss-Extrude4",
+          "feature": "Boss-Extrude4",
+          "fullName": "D1@Plane4@Frame-0002.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude4",
+          "feature": "Boss-Extrude4",
+          "fullName": "D3@Sketch10@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Boss-Extrude4",
+          "feature": "Boss-Extrude4",
+          "fullName": "D5@Sketch10@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Boss-Extrude4",
+          "feature": "Boss-Extrude4",
+          "fullName": "D6@Sketch10@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Plane6",
+          "feature": "Plane6",
+          "fullName": "D1@Plane6@Frame-0002.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch13",
+          "feature": "Sketch13",
+          "fullName": "D1@Plane6@Frame-0002.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch13",
+          "feature": "Sketch13",
+          "fullName": "D3@Sketch13@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch13",
+          "feature": "Sketch13",
+          "fullName": "D5@Sketch13@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch13",
+          "feature": "Sketch13",
+          "fullName": "D6@Sketch13@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Boss-Extrude6",
+          "feature": "Boss-Extrude6",
+          "fullName": "D1@Plane6@Frame-0002.Part",
+          "value": 45,
+          "unit": "degree",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Boss-Extrude6",
+          "feature": "Boss-Extrude6",
+          "fullName": "D3@Sketch13@Frame-0002.Part",
+          "value": 12.7,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Boss-Extrude6",
+          "feature": "Boss-Extrude6",
+          "fullName": "D5@Sketch13@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Boss-Extrude6",
+          "feature": "Boss-Extrude6",
+          "fullName": "D6@Sketch13@Frame-0002.Part",
+          "value": 76.2,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D1@Floor@Frame-0002.Part",
+          "value": 556,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D2@Sketch14@Frame-0002.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D3@Sketch14@Frame-0002.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D4@Sketch14@Frame-0002.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D5@Sketch14@Frame-0002.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D6@Sketch14@Frame-0002.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D7@Sketch14",
+          "feature": "Sketch14",
+          "fullName": "D7@Sketch14@Frame-0002.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D1@Floor@Frame-0002.Part",
+          "value": 556,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D2@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D2@Sketch14@Frame-0002.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D3@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D3@Sketch14@Frame-0002.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D4@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D4@Sketch14@Frame-0002.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D5@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D5@Sketch14@Frame-0002.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D6@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D6@Sketch14@Frame-0002.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D7@Frame Fixing Holes",
+          "feature": "Frame Fixing Holes",
+          "fullName": "D7@Sketch14@Frame-0002.Part",
+          "value": 15,
+          "unit": "millimeter",
+          "isDriven": false
+        },
+        {
+          "name": "D1@Back",
+          "feature": "Back",
+          "fullName": "D1@Back@Frame-0002.Part",
+          "value": 0,
+          "unit": "millimeter",
+          "isDriven": false
+        }
+      ],
+      "features": [
+        {
+          "name": "front",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "top",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "side",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Floor",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Half Width",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Overall Length",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Middle length",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch2",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Base-Extrude-Thin",
+          "type": "ExtruThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch3",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude-Thin1",
+          "type": "BossThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch4",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude-Thin2",
+          "type": "BossThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch5",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude-Thin3",
+          "type": "BossThin",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch8",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude2",
+          "type": "Boss",
+          "suppressed": false
+        },
+        {
+          "name": "Plane4",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch10",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude4",
+          "type": "Boss",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch11",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Plane5",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Mirror2",
+          "type": "MirrorPattern",
+          "suppressed": false
+        },
+        {
+          "name": "Plane6",
+          "type": "RefPlane",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch13",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Extrude6",
+          "type": "Boss",
+          "suppressed": false
+        },
+        {
+          "name": "Boss-Mirror1",
+          "type": "MirrorSolid",
+          "suppressed": false
+        },
+        {
+          "name": "Sketch14",
+          "type": "ProfileFeature",
+          "suppressed": false
+        },
+        {
+          "name": "Frame Fixing Holes",
+          "type": "Cut",
+          "suppressed": false
+        },
+        {
+          "name": "Back",
+          "type": "RefPlane",
+          "suppressed": false
+        }
+      ],
+      "equations": [],
+      "customProperties": {
+        "material": "Stainless",
+        "manufact": "weld",
+        "Description": "Frame, 556 high, 851 wide, 801 long",
+        "PartNumber": "CF-556-ME-851-801"
+      },
+      "configurationProperties": {}
+    }
+  ],
+  "components": [
+    {
+      "path": "Conveyor Assembly-0001-5",
+      "name": "Conveyor Assembly-0001-5",
+      "documentKey": "Conveyor Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1",
+      "name": "Conveyor Bed-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5",
+      "documentKey": "Conveyor Bed-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/RH Rail Assembly-0001-1",
+      "name": "RH Rail Assembly-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1",
+      "documentKey": "RH Rail Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/RH Rail Assembly-0001-1/RH Rail-0001-1",
+      "name": "RH Rail-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/RH Rail Assembly-0001-1",
+      "documentKey": "RH Rail-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/LH Rail Assembly-0001-1",
+      "name": "LH Rail Assembly-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1",
+      "documentKey": "LH Rail Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/LH Rail Assembly-0001-1/LH Rail-0001-1",
+      "name": "LH Rail-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/LH Rail Assembly-0001-1",
+      "documentKey": "LH Rail-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-1",
+      "name": "Roller Assembly-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-1/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-1",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-4",
+      "name": "Roller Assembly-0001-4",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-4/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-4",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-3",
+      "name": "Roller Assembly-0001-3",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-3/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-3",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-6",
+      "name": "Roller Assembly-0001-6",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-6/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-6",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-2",
+      "name": "Roller Assembly-0001-2",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-2/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-2",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-5",
+      "name": "Roller Assembly-0001-5",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-5/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-5",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-8",
+      "name": "Roller Assembly-0001-8",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-8/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-8",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-7",
+      "name": "Roller Assembly-0001-7",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-7/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Bed-0001-1/Roller Assembly-0001-7",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Frame-0001-1",
+      "name": "Conveyor Frame-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5",
+      "documentKey": "Conveyor Frame-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Frame-0001-1/Frame-0001-1",
+      "name": "Frame-0001-1",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Frame-0001-1",
+      "documentKey": "Frame-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Frame-0001-1/Support-0001-4",
+      "name": "Support-0001-4",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Frame-0001-1",
+      "documentKey": "Support-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": true,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0001-5/Conveyor Frame-0001-1/Support-0001-3",
+      "name": "Support-0001-3",
+      "parentPath": "Conveyor Assembly-0001-5/Conveyor Frame-0001-1",
+      "documentKey": "Support-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": true,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9",
+      "name": "Conveyor Assembly-0003-9",
+      "documentKey": "Conveyor Assembly-0003.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Frame-0003-1",
+      "name": "Conveyor Frame-0003-1",
+      "parentPath": "Conveyor Assembly-0003-9",
+      "documentKey": "Conveyor Frame-0003.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Frame-0003-1/Frame-0003-1",
+      "name": "Frame-0003-1",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Frame-0003-1",
+      "documentKey": "Frame-0003.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Frame-0003-1/Support-0001-3",
+      "name": "Support-0001-3",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Frame-0003-1",
+      "documentKey": "Support-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": true,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Frame-0003-1/Support-0001-4",
+      "name": "Support-0001-4",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Frame-0003-1",
+      "documentKey": "Support-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": true,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1",
+      "name": "Conveyor Bed-0003-1",
+      "parentPath": "Conveyor Assembly-0003-9",
+      "documentKey": "Conveyor Bed-0003.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/RH Rail Assembly-0003-1",
+      "name": "RH Rail Assembly-0003-1",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1",
+      "documentKey": "RH Rail Assembly-0003.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/RH Rail Assembly-0003-1/RH Rail-0003-1",
+      "name": "RH Rail-0003-1",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/RH Rail Assembly-0003-1",
+      "documentKey": "RH Rail-0003.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-1",
+      "name": "Roller Assembly-0001-1",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-1/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-1",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/LH Rail Assembly-0003-1",
+      "name": "LH Rail Assembly-0003-1",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1",
+      "documentKey": "LH Rail Assembly-0003.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/LH Rail Assembly-0003-1/LH Rail-0003-1",
+      "name": "LH Rail-0003-1",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/LH Rail Assembly-0003-1",
+      "documentKey": "LH Rail-0003.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-5",
+      "name": "Roller Assembly-0001-5",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-5/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-5",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-6",
+      "name": "Roller Assembly-0001-6",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-6/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-6",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-4",
+      "name": "Roller Assembly-0001-4",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-4/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-4",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-2",
+      "name": "Roller Assembly-0001-2",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-2/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-2",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-3",
+      "name": "Roller Assembly-0001-3",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-3/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0003-9/Conveyor Bed-0003-1/Roller Assembly-0001-3",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8",
+      "name": "Conveyor Assembly-0002-8",
+      "documentKey": "Conveyor Assembly-0002.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1",
+      "name": "Conveyor Bed-0002-1",
+      "parentPath": "Conveyor Assembly-0002-8",
+      "documentKey": "Conveyor Bed-0002.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-1",
+      "name": "Roller Assembly-0001-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-1/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-1",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-10",
+      "name": "Roller Assembly-0001-10",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-10/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-10",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-4",
+      "name": "Roller Assembly-0001-4",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-4/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-4",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-3",
+      "name": "Roller Assembly-0001-3",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-3/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-3",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-5",
+      "name": "Roller Assembly-0001-5",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-5/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-5",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-6",
+      "name": "Roller Assembly-0001-6",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-6/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-6",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-7",
+      "name": "Roller Assembly-0001-7",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-7/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-7",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-2",
+      "name": "Roller Assembly-0001-2",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-2/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-2",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-8",
+      "name": "Roller Assembly-0001-8",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-8/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-8",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-9",
+      "name": "Roller Assembly-0001-9",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1",
+      "documentKey": "Roller Assembly-0001.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": true
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-9/Roller-0001-1",
+      "name": "Roller-0001-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/Roller Assembly-0001-9",
+      "documentKey": "Roller-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/RH Rail Assembly-0002-1",
+      "name": "RH Rail Assembly-0002-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1",
+      "documentKey": "RH Rail Assembly-0002.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/RH Rail Assembly-0002-1/RH Rail-0002-1",
+      "name": "RH Rail-0002-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/RH Rail Assembly-0002-1",
+      "documentKey": "RH Rail-0002.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/LH Rail Assembly-0002-1",
+      "name": "LH Rail Assembly-0002-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1",
+      "documentKey": "LH Rail Assembly-0002.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/LH Rail Assembly-0002-1/LH Rail-0002-1",
+      "name": "LH Rail-0002-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Bed-0002-1/LH Rail Assembly-0002-1",
+      "documentKey": "LH Rail-0002.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Frame-0002-1",
+      "name": "Conveyor Frame-0002-1",
+      "parentPath": "Conveyor Assembly-0002-8",
+      "documentKey": "Conveyor Frame-0002.SLDASM",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Frame-0002-1/Support-0001-4",
+      "name": "Support-0001-4",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Frame-0002-1",
+      "documentKey": "Support-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": true,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Frame-0002-1/Frame-0002-1",
+      "name": "Frame-0002-1",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Frame-0002-1",
+      "documentKey": "Frame-0002.SLDPRT",
+      "configuration": "Default",
+      "suppressed": false,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    },
+    {
+      "path": "Conveyor Assembly-0002-8/Conveyor Frame-0002-1/Support-0001-3",
+      "name": "Support-0001-3",
+      "parentPath": "Conveyor Assembly-0002-8/Conveyor Frame-0002-1",
+      "documentKey": "Support-0001.SLDPRT",
+      "configuration": "Default",
+      "suppressed": true,
+      "excludedFromBom": false,
+      "isPatternInstance": false
+    }
+  ],
+  "mates": [
+    {
+      "name": "Coincident1",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Assembly-0001-5",
+        "Conveyor Assembly-0002-8"
+      ]
+    },
+    {
+      "name": "Coincident2",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Assembly-0001-5",
+        "Conveyor Assembly-0002-8"
+      ]
+    },
+    {
+      "name": "Coincident3",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Assembly-0001-5",
+        "Conveyor Assembly-0002-8"
+      ]
+    },
+    {
+      "name": "Coincident4",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Assembly-0002-8",
+        "Conveyor Assembly-0003-9"
+      ]
+    },
+    {
+      "name": "Coincident5",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Assembly-0002-8",
+        "Conveyor Assembly-0003-9"
+      ]
+    },
+    {
+      "name": "Coincident6",
+      "type": "COINCIDENT",
+      "suppressed": false,
+      "components": [
+        "Conveyor Assembly-0002-8",
+        "Conveyor Assembly-0003-9"
+      ]
+    }
+  ],
+  "root": {
+    "key": "Conveyor Line H0001.SLDASM",
+    "path": "C:\\RuleForge\\test1\\H0001\\Conveyor Line H0001.SLDASM",
+    "kind": "assembly",
+    "activeConfiguration": "Default",
+    "configurations": [
+      "Default"
+    ],
+    "dimensions": [],
+    "features": [
+      {
+        "name": "Front Plane",
+        "type": "RefPlane",
+        "suppressed": false
+      },
+      {
+        "name": "Top Plane",
+        "type": "RefPlane",
+        "suppressed": false
+      },
+      {
+        "name": "Right Plane",
+        "type": "RefPlane",
+        "suppressed": false
+      },
+      {
+        "name": "Mates",
+        "type": "MateGroup",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident1",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident2",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident3",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident4",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident5",
+        "type": "MateCoincident",
+        "suppressed": false
+      },
+      {
+        "name": "Coincident6",
+        "type": "MateCoincident",
+        "suppressed": false
+      }
+    ],
+    "equations": [],
+    "customProperties": {
+      "Weight": "419.54"
+    },
+    "configurationProperties": {}
+  }
+}

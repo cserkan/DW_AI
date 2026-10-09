@@ -53,6 +53,24 @@ $t = "C:\Users\pc\Downloads\ConveryoSoloTemplate\SOLIDWORKS Files"
 - PowerShell 5.1 BOM'suz `.ps1` betiklerini yanlış kodlamayla okur (Türkçe karakterler bozulur): betikleri BOM'lu UTF-8
   kaydedin. Kaynak dosyalarda ise BOM yok; `Set-Content -Encoding utf8` BOM ekler, dikkat.
 
+## Kütüphane ve master koruması (10 Ekim 2026)
+
+- **Benzersiz adlar + yeniden kullanım** (kullanıcı isteği): `generate` varsayılan olarak parçaları sipariş klasörünün
+  yanındaki `Kutuphane` klasörüne `Master-NNNN` adlarıyla yazar; aynı içerik (parmak izi) daha önce üretildiyse onu kullanır
+  (`LibraryPublisher`, `PartLibrary`). Model önce `<sipariş>.calisma` klasöründe kurulur, sonra taşınır.
+  Doğrulama (`C:\RuleForge\test1`): dolap 0009/0009 tekrar/0001/0008 ve hat 0001/0001 tekrar/0010/0008, hepsi DriveWorks ile
+  aynı (dolapta sadece OrderNo); aynı sipariş tekrarında 0 yeni dosya; 0010'daki dört özdeş konveyör tek dosya takımı.
+- **Olay:** denemeler sırasında master dosyaları değişti (konveyör modülü, `Conveyor Line`, `Cupboard Assy`). Nedenler:
+  kopya master'a bağlı açılınca üretim durmuyordu ve `SaveReferenced` master'ları kaydediyordu; bellekte gizli kalan aynı adlı
+  master, kopya yerine açılabiliyordu. Özgün dosyalar `Downloads\*-DriveWorksSolo-V1.zip`'ten geri yüklendi ve `master.json`,
+  `konveyor\master.json`, `konveyor\hat-master.json` ile birebir aynı oldukları doğrulandı; bozulmuş hâller
+  `C:\RuleForge\master-yedek-bozulmus-20261010` klasöründe. Korumalar: üretim boyunca master dosyaları salt-okunur, açılış
+  kontrolü başarısızsa hiçbir şey uygulanmaz, açılan belge kopya değilse durur, sadece çıktı klasöründeki belgeler tek tek
+  kaydedilir, sonunda master tarihleri kontrol edilir. **Her denemeden sonra master tarihlerini kontrol etmeye devam edin.**
+- `%TEMP%` altında kurulan kopyalarda SolidWorks sonekli alt montajları bulamayıp master'lara bağlanıyor: çalışma klasörünü
+  orada açmayın.
+- Dolap klasöründe 9 Ekim 14:28–16:09 tarihli değişmiş dosyalar bu oturumdan önce; dokunulmadı.
+
 ## Bilinen durum (10 Ekim 2026)
 
 - **Dolap gidiş-dönüş testi 4 varyantta temiz:** 0009, 0001, 0008, 0010; her birinde kalan 8 fark yalnızca OrderNo

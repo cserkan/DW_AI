@@ -68,7 +68,7 @@ Kullanım: ruleforge <komut> [seçenekler]
                 {
                     case "extract": return SolidWorksCommands.Extract(new Args(rest, "visible"));
                     case "extract-variants": return SolidWorksCommands.ExtractVariants(new Args(rest, "visible", "list"));
-                    case "generate": return SolidWorksCommands.Generate(new Args(rest, "pdf", "step", "include-proposed", "visible", "dry-run"));
+                    case "generate": return SolidWorksCommands.Generate(new Args(rest, "pdf", "step", "include-proposed", "visible", "dry-run", "no-library"));
                     case "infer": return InferCommand.Run(new Args(rest));
                     case "crossval": return InferCommand.CrossValidate(new Args(rest));
                     case "compare": return InferCommand.Compare(new Args(rest));

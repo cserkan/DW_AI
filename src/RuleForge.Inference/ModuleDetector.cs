@@ -322,6 +322,11 @@ namespace RuleForge.Inference
 
         public static string Normalize(string s) => s.Replace('İ', 'I').Replace('ı', 'i').ToLowerInvariant();
 
+        private static readonly Regex TrailingNumbers = new Regex(@"(\s*-\d+)+$", RegexOptions.Compiled);
+
+        /// <summary>Uzantısız, sondaki "-N" numaraları atılmış, normalize ad.</summary>
+        private static string BareName(string key) => Normalize(TrailingNumbers.Replace(Path.GetFileNameWithoutExtension(key), string.Empty)).Trim();
+
         private static string? Match(ModelSnapshot reference, DocumentInfo doc)
         {
             var exact = reference.FindDocument(doc.Key);
@@ -334,6 +339,16 @@ namespace RuleForge.Inference
 
             var decoded = DriveWorksNaming.DecodeFile(doc.Key);
             if (decoded != null && reference.FindDocument(decoded) is DocumentInfo dw) return dw.Key;
+
+            // Sondaki kopya/kütüphane numarası atılınca adı aynı olan tek dosya: "Shelf Peg1-0002" ↔ "Shelf Peg1".
+            // Birden çok aday varsa (ör. satır kopyaları "Frame-1", "Frame-2") karar yapı eşlemesine bırakılır.
+            foreach (var name in new[] { decoded, doc.Key }.Where(n => n != null))
+            {
+                var bare = BareName(name!);
+                var sameBare = reference.Documents.Where(r => string.Equals(Path.GetExtension(r.Key), Path.GetExtension(doc.Key), StringComparison.OrdinalIgnoreCase) &&
+                                                              BareName(r.Key) == bare).ToList();
+                if (sameBare.Count == 1) return sameBare[0].Key;
+            }
 
             // En uzun master adı öneki: "Roller Assembly ROLLER ASSEMBLY-1-0007" → "Roller Assembly" ("Roller" değil).
             var ext = Path.GetExtension(doc.Key);

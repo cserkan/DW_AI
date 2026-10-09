@@ -1,0 +1,14 @@
+Üretilen: uretim\kut-S0008.json
+Beklenen: C:\Users\pc\Documents\DW_AI\varyantlar\Cupboard Assy 0008__Cupboard Assy Cupboard Assy8.json
+
+KARŞILAŞTIRMA: 1130/1138 değer aynı, 8 fark.
+
+ÖZEL ÖZELLİKLER (8)
+  Cupboard Assy S0008.SLDASM › özellik 'OrderNo': üretilen 1234, beklenen MF0008
+  Cupboard Base-0003.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0008
+  Cupboard LeftEnd-0003.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0008
+  Cupboard Plinth-0003.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0008
+  Cupboard Post-0003.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0008
+  Cupboard RightEnd-0003.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0008
+  Cupboard Shelf-0003.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0008
+  Cupboard Top-0003.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0008

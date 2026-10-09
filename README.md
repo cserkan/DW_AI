@@ -157,7 +157,17 @@ Kuralları onaylama yetkisi sadece kullanıcıdadır.
 & $rf generate --rules kurallar.json --master C:\Master\Konveyor\Konveyor.SLDASM --out C:\Siparisler\S1234 Boy=5000 Genislik=700 Motor=Sol --pdf --step
 ```
 
-`generate` master dosyaları asla değiştirmez. Adımlar sırasıyla:
+**Benzersiz dosya adları ve kütüphane.** Parçalar ve alt montajlar ortak bir kütüphane klasörüne benzersiz adlarla
+yazılır (`Frame-0003.SLDPRT`); sipariş klasörüne sadece ana montaj ve teknik resmi konur (`Cupboard Assy S1234.SLDASM`).
+Aynı içerikte bir dosya daha önce üretildiyse yenisi yazılmaz, kütüphanedeki kullanılır. İçerik, dosyanın son hâlinden
+hesaplanan parmak iziyle tanınır: ölçüler, özellik bastırmaları, özel özellikler, alt bileşenler ve master dosyanın kendisi
+(master değişirse eski kopyalar kullanılmaz). Liste `Kutuphane\kutuphane.json` dosyasındadır (dosya, master, ilk sipariş,
+açıklama). Varsayılan kütüphane sipariş klasörünün yanındaki `Kutuphane` klasörüdür; `--library <klasör>` ile değiştirilir,
+`--no-library` eski davranıştır (her şey sipariş klasörüne master adlarıyla).
+
+`generate` master dosyaları asla değiştirmez: üretim boyunca master klasöründeki SolidWorks dosyaları salt-okunur yapılır,
+sadece çıktı klasöründeki belgeler tek tek kaydedilir ve kopya başka bir dosyaya bağlı açılırsa hiçbir şey uygulanmaz.
+Adımlar sırasıyla:
 1. Pack and Go ile master'ı (teknik resimler dahil) sipariş klasörüne kopyalar.
 2. Kopyayı açar.
 3. Konfigürasyon, bastırma ve değiştirme işlemlerini, ardından ölçüleri ve özellikleri uygular.

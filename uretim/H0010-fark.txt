@@ -1,0 +1,5 @@
+Üretilen: uretim\H0010.json
+Beklenen: C:\Users\pc\Documents\DW_AI\konveyor\varyantlar\Conveyor assembly 0010__CONVEYOR LİNE 0010.json
+
+KARŞILAŞTIRMA: 710/710 değer aynı, 0 fark.
+Not: İki model karşılaştırılan tüm değerlerde aynı.

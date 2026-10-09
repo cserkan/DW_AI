@@ -150,55 +150,27 @@ namespace RuleForge.Cli
             Program.Print(result);
             if (!result.Success) return 1;
             if (args.Flag("dry-run")) return 0;
-            bool line = result.Actions.Any(a => a.Instance.HasValue);
-            var lineTables = rules.Tables.Where(t => string.IsNullOrEmpty(t.ModuleComponent)).ToList();
-            if (line && (lineTables.Count != 1 || rules.Tables.Count != 1))
-            {
-                Console.Error.WriteLine("Şimdilik yalnızca tek tablolu ve modülü master'ın kendisi olan kural setleri üretilebilir " +
-                                        "(ör. konveyör hattı). Değerleri görmek için --dry-run kullanın.");
-                return 1;
-            }
-
 #if SOLIDWORKS
-            var master = args.Get("master") ?? rules.MasterAssembly;
-            if (string.IsNullOrEmpty(master)) throw new UsageException("--master gerekli.");
             var outDir = args.Require("out");
-            var rootAssembly = args.Get("root");
-            if (line && string.IsNullOrEmpty(rootAssembly))
-                throw new UsageException("Bu kural seti tekrarlanan modül içeriyor: kopyaları toplayan montajı --root ile verin " +
-                                         "(ör. --root \"...\\Conveyor Line.SLDASM\"). --master modülün kendisidir.");
+            var request = new OrderRequest
+            {
+                Rules = rules,
+                Evaluation = result,
+                MasterAssembly = args.Get("master") ?? rules.MasterAssembly,
+                RootAssembly = args.Get("root"),
+                OutputFolder = outDir,
+                LibraryFolder = args.Flag("no-library") ? null : args.Get("library") ?? OrderRequest.DefaultLibrary(outDir),
+                Slots = args.Get("slots")?.Split(';').Select(s => s.Trim()).Where(s => s.Length > 0).ToList(),
+                ExportPdf = args.Flag("pdf"),
+                ExportStep = args.Flag("step"),
+            };
+            if (string.IsNullOrEmpty(request.MasterAssembly)) throw new UsageException("--master gerekli.");
+            if (OrderBuilder.Problem(request) is string problem)
+                throw new UsageException(problem + " Kopyaları toplayan montajı --root ile verin; --master modülün kendisidir.");
             using (var session = SwSession.Connect(visible: args.Flag("visible")))
             {
                 Console.WriteLine("Bağlandı: " + session.VersionLabel);
-                GenerationResult gen;
-                if (line)
-                {
-                    var rowCount = result.Rows.TryGetValue(lineTables[0].Name, out var rows) ? rows.Count : 0;
-                    gen = new ModelGenerator(session).GenerateLine(new LineGenerationRequest
-                    {
-                        RootAssemblyPath = rootAssembly!,
-                        ModuleAssemblyPath = master,
-                        OutputFolder = outDir,
-                        Rows = Enumerable.Range(1, rowCount)
-                            .Select(i => (System.Collections.Generic.IList<ModelAction>)result.Actions.Where(a => a.Instance == i).ToList()).ToList(),
-                        RootActions = result.Actions.Where(a => !a.Instance.HasValue).ToList(),
-                        SharedDocuments = lineTables[0].SharedDocuments,
-                        Slots = args.Get("slots")?.Split(';').Select(s => s.Trim()).Where(s => s.Length > 0).ToList(),
-                        ExportPdf = args.Flag("pdf"),
-                        ExportStep = args.Flag("step"),
-                    });
-                }
-                else
-                {
-                    gen = new ModelGenerator(session).Generate(new GenerationRequest
-                    {
-                        MasterAssemblyPath = master,
-                        OutputFolder = outDir,
-                        Actions = result.Actions,
-                        ExportPdf = args.Flag("pdf"),
-                        ExportStep = args.Flag("step"),
-                    });
-                }
+                var gen = new OrderBuilder(session).Build(request);
                 foreach (var l in gen.Log) Console.WriteLine("  " + l);
                 if (gen.Skipped.Count > 0)
                 {

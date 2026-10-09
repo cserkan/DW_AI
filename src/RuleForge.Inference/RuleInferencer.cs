@@ -36,6 +36,10 @@ namespace RuleForge.Inference
         public int ConstantCount { get; set; }
 
         public List<InputDefinition> Inputs { get; set; } = new List<InputDefinition>();
+
+        /// <summary>Ortak eşikler ve ara değerler için çıkarılan değişkenler.</summary>
+        public List<VariableDefinition> Variables { get; set; } = new List<VariableDefinition>();
+
         public List<Rule> Rules { get; set; } = new List<Rule>();
         public List<UnexplainedObservation> Unexplained { get; set; } = new List<UnexplainedObservation>();
 
@@ -58,6 +62,7 @@ namespace RuleForge.Inference
                 MasterAssembly = masterAssembly,
                 Description = $"{SampleCount} varyanttan otomatik çıkarıldı.",
                 Inputs = Inputs,
+                Variables = Variables,
                 Rules = Rules,
             };
         }
@@ -85,6 +90,16 @@ namespace RuleForge.Inference
                 var range = i.Type == InputType.Number ? $" [{Fmt(i.Min)} … {Fmt(i.Max)}]" :
                     i.Type == InputType.Choice ? $" {{{string.Join(", ", i.Options)}}}" : string.Empty;
                 sb.AppendLine($"  {i.Name} ({i.Type}){range}");
+            }
+            if (Variables.Count > 0)
+            {
+                sb.AppendLine();
+                sb.AppendLine("DEĞİŞKENLER");
+                foreach (var v in Variables)
+                {
+                    sb.AppendLine($"  {v.Name} = {v.Expression}");
+                    if (!string.IsNullOrEmpty(v.Description)) sb.AppendLine($"         ({v.Description})");
+                }
             }
             sb.AppendLine();
             sb.AppendLine("ÖNERİLEN KURALLAR");
@@ -145,9 +160,12 @@ namespace RuleForge.Inference
             }
             var observations = extractor.Extract(samples);
             report.ObservationCount = observations.Count;
+            if (extractor.SkippedCalculated.Count > 0)
+                report.Notes.Add($"SolidWorks'ün hesapladığı özellikler kural dışı bırakıldı: {string.Join(", ", extractor.SkippedCalculated)}.");
 
             // Girdi tablosu yoksa modeldeki gözlemleri girdi olarak kullan.
             var inputObsKeys = new HashSet<string>(options.InputObservations.Values, StringComparer.OrdinalIgnoreCase);
+            var inputSources = new Dictionary<string, string>(options.InputObservations, StringComparer.OrdinalIgnoreCase);
             foreach (var kv in options.InputObservations)
             {
                 var obs = observations.FirstOrDefault(o => string.Equals(o.Key, kv.Value, StringComparison.OrdinalIgnoreCase));
@@ -173,6 +191,7 @@ namespace RuleForge.Inference
                 foreach (var d in report.Drivers)
                 {
                     inputObsKeys.Add(d.ObservationKey);
+                    inputSources[d.Name] = d.ObservationKey;
                     var obs = observations.First(o => o.Key == d.ObservationKey);
                     foreach (var s in samples) s.Inputs[d.Name] = obs.Values[s.Name];
                 }
@@ -190,6 +209,7 @@ namespace RuleForge.Inference
 
             var finder = new RelationFinder(columns, options.Tolerance);
             var usedIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var chosen = new List<(Observation obs, Rule rule, RelationCandidate candidate)>();
             foreach (var obs in observations)
             {
                 if (inputObsKeys.Contains(obs.Key)) continue;
@@ -231,12 +251,291 @@ namespace RuleForge.Inference
                         : string.Empty),
                 };
                 report.Rules.Add(rule);
-                if (best.Question != null) report.Questions.Add($"{rule.Id}: {best.Question}");
+                chosen.Add((obs, rule, best));
             }
+
+            // Girdi olarak seçilen model değerlerinin kendisi de üretimde yazılmalı (ör. kapak dosyası seçimi,
+            // "Assembly Height" özelliği). Girdi tablosu verildiğinde bu değerler zaten ayrı gözlemdir.
+            foreach (var kv in inputSources)
+            {
+                var obs = observations.FirstOrDefault(o => string.Equals(o.Key, kv.Value, StringComparison.OrdinalIgnoreCase));
+                if (obs == null) continue;
+                var target = MapToMaster(obs.Target, master, extractor);
+                report.Rules.Add(new Rule
+                {
+                    Id = UniqueId(MakeId(target), usedIds),
+                    Description = obs.Label,
+                    Target = target,
+                    Expression = SanitizeName(kv.Key),
+                    Status = RuleStatus.Proposed,
+                    Source = RuleSource.Inference,
+                    Confidence = 0.99,
+                    Evidence = "Bu değer girdinin kendisi.",
+                });
+            }
+            foreach (var d in report.Drivers.Where(d => d.Question != null))
+                report.Questions.Add(d.Question!);
+
+            var questionRules = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+            var handled = ShareThresholds(chosen, report, usedIds);
+            DeriveFromOtherValues(observations, chosen, report, samples, options.Tolerance, master, extractor, usedIds, handled);
+            DerivePitches(observations, chosen, report, columns, master, extractor, usedIds, handled);
+
+            foreach (var (_, rule, candidate) in chosen)
+            {
+                if (candidate.Question == null || handled.Contains(rule.Id)) continue;
+                if (!questionRules.TryGetValue(candidate.Question, out var ids)) questionRules[candidate.Question] = ids = new List<string>();
+                ids.Add(rule.Id);
+            }
+            foreach (var q in questionRules)
+                report.Questions.Add(q.Value.Count <= 3
+                    ? $"{string.Join(", ", q.Value)}: {q.Key}"
+                    : $"{q.Value.Count} kural ({string.Join(", ", q.Value.Take(2))} …): {q.Key}");
 
             if (samples.Count < 6)
                 report.Notes.Add($"Sadece {samples.Count} varyant var; güven düşük. Girdi aralığının uçlarını kapsayan 8–15 varyant önerilir.");
             return report;
+        }
+
+        /// <summary>
+        /// Aynı girdiye ve örtüşen aralığa sahip eşikli kuralları tek bir eşik değişkenine bağlar
+        /// (DriveWorks'teki ShelfQty değişkeni gibi). Kullanıcı eşiği tek yerden düzeltir.
+        /// Dönüş: sorusu ortak soruya taşınan kural kimlikleri.
+        /// </summary>
+        private static HashSet<string> ShareThresholds(List<(Observation obs, Rule rule, RelationCandidate candidate)> chosen,
+            InferenceReport report, HashSet<string> usedIds)
+        {
+            var handled = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var withThreshold = chosen.Where(c => c.candidate.ThresholdInput != null && c.candidate.Template != null).ToList();
+            foreach (var byInput in withThreshold.GroupBy(c => c.candidate.ThresholdInput!))
+            {
+                // Örtüşen aralıkları kümele
+                var clusters = new List<(double lo, double hi, List<(Observation obs, Rule rule, RelationCandidate candidate)> items)>();
+                foreach (var item in byInput.OrderBy(c => c.candidate.ThresholdLo))
+                {
+                    var c = item.candidate;
+                    int idx = clusters.FindIndex(k => c.ThresholdLo < k.hi && c.ThresholdHi > k.lo);
+                    if (idx < 0) clusters.Add((c.ThresholdLo, c.ThresholdHi, new List<(Observation, Rule, RelationCandidate)> { item }));
+                    else
+                    {
+                        var k = clusters[idx];
+                        k.items.Add(item);
+                        clusters[idx] = (Math.Max(k.lo, c.ThresholdLo), Math.Min(k.hi, c.ThresholdHi), k.items);
+                    }
+                }
+
+                foreach (var cluster in clusters.Where(k => k.items.Count >= 2))
+                {
+                    var t = NumberUtil.RoundestBetween(cluster.lo, cluster.hi);
+                    var name = UniqueId(SanitizeName(byInput.Key + "_Esigi"), usedIds);
+                    report.Variables.Add(new VariableDefinition
+                    {
+                        Name = name,
+                        Expression = NumberUtil.Fmt(t),
+                        Description = $"{byInput.Key} eşiği. Veriler {NumberUtil.Fmt(cluster.lo)} ile {NumberUtil.Fmt(cluster.hi)} " +
+                                      $"arasındaki her değeri destekliyor; {cluster.items.Count} kural bu değişkeni kullanıyor.",
+                    });
+                    foreach (var item in cluster.items)
+                    {
+                        item.rule.Expression = item.candidate.Template!.Replace("{T}", name);
+                        handled.Add(item.rule.Id);
+                    }
+                    report.Questions.Add(
+                        $"{byInput.Key} için {cluster.items.Count} kural aynı eşiği kullanıyor ({string.Join(", ", cluster.items.Take(4).Select(i => i.rule.Id))}" +
+                        $"{(cluster.items.Count > 4 ? " …" : "")}). Veriler {NumberUtil.Fmt(cluster.lo)} ile {NumberUtil.Fmt(cluster.hi)} arasındaki her değeri " +
+                        $"destekliyor; şimdilik {NumberUtil.Fmt(t)} seçildi. Gerçek eşik nedir? ('{name}' değişkenini değiştirmek hepsini düzeltir.)");
+                }
+            }
+            return handled;
+        }
+
+        /// <summary>
+        /// Girdilerle açıklanamayan (ya da zayıf açıklanan) bir değer, kuralı bilinen başka bir değerle doğrusal
+        /// ilişkili olabilir (ör. ikinci pim deliği = 2 × birinci pim deliği − 35). Bu durumda bilinen değerin
+        /// formülü bir ara değişken yapılır ve yeni kural onu kullanır.
+        /// </summary>
+        private static void DeriveFromOtherValues(List<Observation> observations,
+            List<(Observation obs, Rule rule, RelationCandidate candidate)> chosen, InferenceReport report,
+            IReadOnlyList<VariantSample> samples, double tolerance, ModelSnapshot? master, ObservationExtractor extractor,
+            HashSet<string> usedIds, HashSet<string> handled)
+        {
+            var anchors = chosen
+                .Where(c => c.candidate.Confidence >= 0.9 && c.obs.Values.Values.All(v => v.Kind == ValueKind.Number) &&
+                            c.obs.Values.Count == samples.Count && c.rule.Expression.IndexOf('(') >= 0) // basit "Boy - 40" zaten girdiye bağlı
+                .ToList();
+            if (anchors.Count == 0) return;
+
+            var weak = new List<(Observation obs, int ruleIndex)>();
+            foreach (var u in report.Unexplained.ToList())
+            {
+                var obs = observations.FirstOrDefault(o => o.Key == u.Key);
+                if (obs != null) weak.Add((obs, -1));
+            }
+            for (int i = 0; i < chosen.Count; i++)
+                if (chosen[i].candidate.Confidence < 0.5) weak.Add((chosen[i].obs, i));
+
+            var variableFor = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var (obs, ruleIndex) in weak)
+            {
+                if (!obs.Values.Values.All(v => v.Kind == ValueKind.Number)) continue;
+                var names = obs.Values.Keys.ToList();
+                var ys = names.Select(n => obs.Values[n].AsNumber()).ToArray();
+                foreach (var anchor in anchors)
+                {
+                    if (anchor.obs.Key == obs.Key) continue;
+                    var xs = names.Select(n => anchor.obs.Values[n].AsNumber()).ToArray();
+                    if (xs.Distinct().Count() < 4) continue;
+                    var fit = RelationFinder.ExactLinear(xs, ys, tolerance);
+                    if (fit == null || Math.Abs(fit.Value.a) < 1e-9) continue;
+
+                    if (!variableFor.TryGetValue(anchor.rule.Id, out var varName))
+                    {
+                        varName = UniqueId(DriverDetector.DriverName(anchor.obs), usedIds);
+                        variableFor[anchor.rule.Id] = varName;
+                        report.Variables.Add(new VariableDefinition
+                        {
+                            Name = varName,
+                            Expression = anchor.rule.Expression,
+                            Description = $"Ara değer: {anchor.obs.Label} (başka bir değer buna bağlı).",
+                        });
+                    }
+
+                    var expression = NumberUtil.Linear(new[] { (fit.Value.a, varName) }, fit.Value.b);
+                    var evidence = $"{xs.Length} varyantta {anchor.obs.Label} değeriyle doğrusal ilişki tam uyuyor.";
+                    if (ruleIndex >= 0)
+                    {
+                        var rule = chosen[ruleIndex].rule;
+                        rule.Expression = expression;
+                        rule.Confidence = NumberUtil.Confidence(xs.Distinct().Count(), 2);
+                        rule.Evidence = evidence;
+                        handled.Add(rule.Id);
+                    }
+                    else
+                    {
+                        var target = MapToMaster(obs.Target, master, extractor);
+                        report.Rules.Add(new Rule
+                        {
+                            Id = UniqueId(MakeId(target), usedIds),
+                            Description = obs.Label,
+                            Target = target,
+                            Expression = expression,
+                            Status = RuleStatus.Proposed,
+                            Source = RuleSource.Inference,
+                            Confidence = NumberUtil.Confidence(xs.Distinct().Count(), 2),
+                            Evidence = evidence,
+                        });
+                        report.Unexplained.RemoveAll(u => u.Key == obs.Key);
+                    }
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Eşit aralık formülü: aralık = ROUND((uzunluk + b) / (adet + c), basamak). Desen/delik aralıklarında çok yaygındır
+        /// (ör. çivi aralığı = (Genişlik − 18) / (çivi adedi − 1)). Adet, kuralı bulunmuş başka bir değerdir.
+        /// </summary>
+        private static void DerivePitches(List<Observation> observations,
+            List<(Observation obs, Rule rule, RelationCandidate candidate)> chosen, InferenceReport report,
+            List<InputColumn> columns, ModelSnapshot? master, ObservationExtractor extractor, HashSet<string> usedIds,
+            HashSet<string> handled)
+        {
+            var counts = chosen
+                .Where(c => c.candidate.Confidence >= 0.5 && c.obs.Values.Values.All(v => v.Kind == ValueKind.Number &&
+                            Math.Abs(v.AsNumber() - Math.Round(v.AsNumber())) < 1e-9))
+                .ToList();
+            var numericInputs = columns.Where(c => c.Kind == ColumnKind.Number).ToList();
+            if (counts.Count == 0 || numericInputs.Count == 0) return;
+
+            foreach (var u in report.Unexplained.ToList())
+            {
+                var obs = observations.FirstOrDefault(o => o.Key == u.Key);
+                if (obs == null || !obs.Values.Values.All(v => v.Kind == ValueKind.Number)) continue;
+                bool done = false;
+                foreach (var count in counts)
+                {
+                    if (done) break;
+                    // Her adet adayı için ortak varyantlar ayrı hesaplanır (bazı değerler sadece bazı varyantlarda var).
+                    var names = obs.Values.Keys.Where(n => count.obs.Values.ContainsKey(n) && numericInputs.All(x => x.Values.ContainsKey(n))).ToList();
+                    var ys = names.Select(n => obs.Values[n].AsNumber()).ToArray();
+                    if (ys.Distinct().Count() < 4) continue;
+                    int digits = ys.Max(v => Decimals(v));
+                    foreach (var c in new[] { -1.0, 0.0, 1.0 })
+                    {
+                        if (done) break;
+                        var zs = names.Select(n => count.obs.Values[n].AsNumber() + c).ToArray();
+                        if (zs.Any(z => Math.Abs(z) < 1e-9)) continue;
+                        var ks = ys.Select((v, i) => v * zs[i]).ToArray();
+                        // y yuvarlanmış olduğu için tolerans adet ile büyür
+                        double tol = 0.5 * Math.Pow(10, -digits) * zs.Max(Math.Abs) + 1e-6;
+                        foreach (var x in numericInputs)
+                        {
+                            var xs = names.Select(n => x.Values[n].AsNumber()).ToArray();
+                            var fit = RelationFinder.ExactLinear(xs, ks, tol);
+                            if (fit == null || Math.Abs(fit.Value.a) < 1e-9) continue;
+                            // Kontrol: formül her varyantta y'yi aynı basamağa yuvarlanmış olarak vermeli.
+                            bool ok = true;
+                            for (int i = 0; i < ys.Length && ok; i++)
+                                ok = Math.Abs(Math.Round((fit.Value.a * xs[i] + fit.Value.b) / zs[i], digits, MidpointRounding.AwayFromZero) - ys[i]) < 1e-6;
+                            if (!ok) continue;
+
+                            // Çapraz kanıt: aralık formülündeki uzunluk (ör. Genişlik - 18) adet formülünde belirsiz kalan
+                            // sabiti belirler, çünkü ikisi aynı uzunluğu böler.
+                            var cand = count.candidate;
+                            if (cand.WithOffset != null && cand.OffsetInput == x.Name && Math.Abs(fit.Value.a - 1) < 1e-9 &&
+                                fit.Value.b >= cand.OffsetLo - 1e-9 && fit.Value.b <= cand.OffsetHi + 1e-9)
+                            {
+                                var oldExpr = count.rule.Expression;
+                                var newExpr = cand.WithOffset(fit.Value.b);
+                                foreach (var other in chosen.Where(o => o.rule.Expression == oldExpr))
+                                {
+                                    other.rule.Expression = newExpr;
+                                    other.rule.Evidence += $" Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti ({NumberUtil.Linear(new[] { (1.0, x.Name) }, fit.Value.b)}).";
+                                    other.rule.Confidence = Math.Max(other.rule.Confidence ?? 0, 0.9);
+                                    handled.Add(other.rule.Id);
+                                }
+                                foreach (var v in report.Variables.Where(v => v.Expression == oldExpr)) v.Expression = newExpr;
+                            }
+
+                            var varName = report.Variables.FirstOrDefault(v => v.Expression == count.rule.Expression)?.Name;
+                            if (varName == null)
+                            {
+                                varName = UniqueId(DriverDetector.DriverName(count.obs), usedIds);
+                                report.Variables.Add(new VariableDefinition
+                                {
+                                    Name = varName,
+                                    Expression = count.rule.Expression,
+                                    Description = $"Adet: {count.obs.Label} (aralık formülleri buna bağlı).",
+                                });
+                            }
+                            var denominator = Math.Abs(c) < 1e-9 ? varName : $"({varName} {(c < 0 ? "-" : "+")} {NumberUtil.Fmt(Math.Abs(c))})";
+                            var numerator = NumberUtil.Linear(new[] { (fit.Value.a, x.Name) }, fit.Value.b);
+                            var target = MapToMaster(obs.Target, master, extractor);
+                            report.Rules.Add(new Rule
+                            {
+                                Id = UniqueId(MakeId(target), usedIds),
+                                Description = obs.Label,
+                                Target = target,
+                                Expression = $"ROUND(({numerator}) / {denominator}, {digits})",
+                                Status = RuleStatus.Proposed,
+                                Source = RuleSource.Inference,
+                                Confidence = NumberUtil.Confidence(xs.Distinct().Count(), 3),
+                                Evidence = $"{ys.Length} varyantta eşit aralık formülü tam uyuyor: aralık = ({numerator}) / ({count.obs.Label} {(c < 0 ? "-" : "+")} {NumberUtil.Fmt(Math.Abs(c))}).",
+                            });
+                            report.Unexplained.RemoveAll(e => e.Key == obs.Key);
+                            done = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private static int Decimals(double v)
+        {
+            for (int d = 0; d <= 6; d++)
+                if (Math.Abs(v - Math.Round(v, d)) < 1e-9) return d;
+            return 6;
         }
 
         private static string Summarize(Observation o, int sampleCount)

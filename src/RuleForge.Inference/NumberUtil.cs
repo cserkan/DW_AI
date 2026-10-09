@@ -38,6 +38,14 @@ namespace RuleForge.Inference
 
         public static string Fmt(double d) => Value.FormatNumber(d);
 
+        /// <summary>1, 2, 1/2, 1/4, 3/4, 0.1 gibi insan eliyle yazılmış görünen katsayılar.</summary>
+        public static bool IsNiceCoefficient(double a)
+        {
+            foreach (var d in new[] { 1, 2, 3, 4, 5, 10 })
+                if (Math.Abs(a * d - Math.Round(a * d)) < 1e-9 && Math.Abs(Math.Round(a * d)) <= 20) return true;
+            return false;
+        }
+
         /// <summary>a1*x1 + a2*x2 + b ifadesini okunur biçimde yazar.</summary>
         public static string Linear(IList<(double coef, string name)> terms, double constant)
         {

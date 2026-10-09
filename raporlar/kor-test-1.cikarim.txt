@@ -1,35 +1,46 @@
-Varyant: 9, gözlem: 1267, sabit: 991, kural önerisi: 79, açıklanamayan: 18
+Varyant: 9, gözlem: 1370, sabit: 945, kural önerisi: 92, açıklanamayan: 8
 
 TAHMİNİ GİRDİLER (kör test: girdi tablosu verilmedi, modelden bulundu)
-  Assembly_Height  ←  Cupboard Assy.SLDASM › özellik 'Assembly Height'   (8 değeri açıklıyor)
+  Assembly_Height  ←  Cupboard Assy.SLDASM › özellik 'Assembly Height'   (6 değeri açıklıyor)
       birebir aynı değişenler: Cupboard Assy.SLDASM › D1@Bottom Plane, Cupboard LeftEnd.SLDPRT › D1@Bottom Plane, Cupboard LeftEnd.SLDPRT › D1@Left Hand End, Cupboard LeftEnd.SLDPRT › D1@Sketch1, Cupboard RightEnd.SLDPRT › D1@Bottom Plane … (+2)
   Assembly_Width  ←  Cupboard Assy.SLDASM › özellik 'Assembly Width'   (5 değeri açıklıyor)
       birebir aynı değişenler: Cupboard Assy.SLDASM › D1@Left Plane, Cupboard Back.SLDPRT › D1@Left Plane
   Assembly_Depth  ←  Cupboard Assy.SLDASM › özellik 'Assembly Depth'   (4 değeri açıklıyor)
       birebir aynı değişenler: Cupboard Assy.SLDASM › D1@Back Plane
-  Material  ←  Cupboard Assy.SLDASM › özellik 'Material'   (1 değeri açıklıyor)
-      birebir aynı değişenler: Cupboard Back.SLDPRT › özellik 'DWMaterial', Cupboard Base.SLDPRT › özellik 'DWMaterial', Cupboard LeftDoor Shaker Style.SLDPRT › özellik 'DWMaterial', Cupboard LeftEnd.SLDPRT › özellik 'DWMaterial', Cupboard Plinth.SLDPRT › özellik 'DWMaterial' … (+5)
-  Description  ←  Cupboard RightDoor Shaker Style.SLDPRT › özellik 'Description'   (1 değeri açıklıyor)
+  Cupboard_LeftDoor_Shaker_Style_1_Dosyasi  ←  Cupboard LeftDoor Assy-1/Cupboard LeftDoor Shaker Style-1 (kullanılan dosya)   (1 değeri açıklıyor)
+      birebir aynı değişenler: Cupboard RightDoor Assy-1/Cupboard RightDoor Shaker Style-1 (kullanılan dosya)
+  Material  ←  Cupboard Assy.SLDASM › özellik 'Material'   (0 değeri açıklıyor)
+      birebir aynı değişenler: Cupboard Back.SLDPRT › özellik 'DWMaterial', Cupboard Base.SLDPRT › özellik 'DWMaterial', Cupboard LeftEnd.SLDPRT › özellik 'DWMaterial', Cupboard Plinth.SLDPRT › özellik 'DWMaterial', Cupboard Post.SLDPRT › özellik 'DWMaterial' … (+5)
 
 GİRDİLER
   Assembly_Height (Number) [458 … 950]
   Assembly_Width (Number) [759 … 1500]
   Assembly_Depth (Number) [300 … 888]
+  Cupboard_LeftDoor_Shaker_Style_1_Dosyasi (Choice) {Cupboard LeftDoor Framed.SLDPRT, Cupboard LeftDoor Shaker Style.SLDPRT, Cupboard LeftDoor.SLDPRT}
   Material (Choice) {Mahogany, Maple, Oak}
-  Description (Choice) {Flat Right Door, Framed Right Door, Shaker Style Right Door}
+
+DEĞİŞKENLER
+  Assembly_Height_Esigi = 750
+         (Assembly_Height eşiği. Veriler 569 ile 800 arasındaki her değeri destekliyor; 7 kural bu değişkeni kullanıyor.)
+  Cupboard_LeftEnd_D1_Sketch3 = IF(Assembly_Height <= Assembly_Height_Esigi, Assembly_Height / 2 - 25, FLOOR((Assembly_Height + 20) / 3))
+         (Ara değer: Cupboard LeftEnd.SLDPRT › D1@Sketch3 (başka bir değer buna bağlı).)
+  Cupboard_Assy_D1_Nail_Pattern_1 = FLOOR((Assembly_Height - 68) / 50) + 1
+         (Adet: Cupboard Assy.SLDASM › D1@Nail Pattern 1 (aralık formülleri buna bağlı).)
+  Cupboard_Assy_D1_Nail_Pattern_2 = FLOOR((Assembly_Width - 18) / 50) + 1
+         (Adet: Cupboard Assy.SLDASM › D1@Nail Pattern 2 (aralık formülleri buna bağlı).)
 
 ÖNERİLEN KURALLAR
   [99 %] ComponentSuppression [Cupboard Left End Assy-1/Shelf Peg1-3]
-         = Assembly_Height <= 750
+         = Assembly_Height <= Assembly_Height_Esigi
          (Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750)
   [99 %] ComponentSuppression [Cupboard Left End Assy-1/Shelf Peg1-4]
-         = Assembly_Height <= 750
+         = Assembly_Height <= Assembly_Height_Esigi
          (Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750)
   [99 %] ComponentSuppression [Cupboard Right End Assy-1/Shelf Peg1-3]
-         = Assembly_Height <= 750
+         = Assembly_Height <= Assembly_Height_Esigi
          (Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750)
   [99 %] ComponentSuppression [Cupboard Right End Assy-1/Shelf Peg1-4]
-         = Assembly_Height <= 750
+         = Assembly_Height <= Assembly_Height_Esigi
          (Assembly_Height 569 ile 800 arasında bir eşikte değişiyor. Diğer aday: Assembly_Depth > 750)
   [99 %] Dimension [Cupboard Assy.SLDASM :: D1@Back Plane]
          = Assembly_Depth
@@ -71,12 +82,6 @@ GİRDİLER
          = Assembly_Height - 4
          (9 varyantta tam uyum (9 farklı Assembly_Height değeri).)
   [99 %] Dimension [Cupboard LeftDoor Assy.SLDASM :: D1@Left Plane]
-         = Assembly_Width / 2 - 4
-         (9 varyantta tam uyum (9 farklı Assembly_Width değeri).)
-  [99 %] Dimension [Cupboard LeftDoor Shaker Style.SLDPRT :: D1@Bottom Plane]
-         = Assembly_Height - 54
-         (9 varyantta tam uyum (9 farklı Assembly_Height değeri).)
-  [99 %] Dimension [Cupboard LeftDoor Shaker Style.SLDPRT :: D1@Left Plane]
          = Assembly_Width / 2 - 4
          (9 varyantta tam uyum (9 farklı Assembly_Width değeri).)
   [99 %] Dimension [Cupboard LeftEnd.SLDPRT :: D1@Back Plane]
@@ -121,12 +126,6 @@ GİRDİLER
   [99 %] Dimension [Cupboard RightDoor Assy.SLDASM :: D1@Left Plane]
          = Assembly_Width / 2 - 4
          (9 varyantta tam uyum (9 farklı Assembly_Width değeri).)
-  [99 %] Dimension [Cupboard RightDoor Shaker Style.SLDPRT :: D1@Bottom Plane]
-         = Assembly_Height - 54
-         (9 varyantta tam uyum (9 farklı Assembly_Height değeri).)
-  [99 %] Dimension [Cupboard RightDoor Shaker Style.SLDPRT :: D1@Left Plane]
-         = Assembly_Width / 2 - 4
-         (9 varyantta tam uyum (9 farklı Assembly_Width değeri).)
   [99 %] Dimension [Cupboard RightEnd.SLDPRT :: D1@Back Plane]
          = Assembly_Depth - 4
          (9 varyantta tam uyum (9 farklı Assembly_Depth değeri).)
@@ -169,9 +168,6 @@ GİRDİLER
   [99 %] CustomProperty [Cupboard Base.SLDPRT :: DWMaterial]
          = Material
          (Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, "Mahogany", "Mahogany", "Maple", "Maple", "Oak", "Oak"))
-  [99 %] CustomProperty [Cupboard LeftDoor Shaker Style.SLDPRT :: DWMaterial]
-         = Material
-         (Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, "Mahogany", "Mahogany", "Maple", "Maple", "Oak", "Oak"))
   [99 %] CustomProperty [Cupboard LeftEnd.SLDPRT :: DWMaterial]
          = Material
          (Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, "Mahogany", "Mahogany", "Maple", "Maple", "Oak", "Oak"))
@@ -179,12 +175,6 @@ GİRDİLER
          = Material
          (Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, "Mahogany", "Mahogany", "Maple", "Maple", "Oak", "Oak"))
   [99 %] CustomProperty [Cupboard Post.SLDPRT :: DWMaterial]
-         = Material
-         (Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, "Mahogany", "Mahogany", "Maple", "Maple", "Oak", "Oak"))
-  [99 %] CustomProperty [Cupboard Post.SLDPRT :: Weight]
-         = 0.0025961481 * Assembly_Height - 0.23
-         (9 varyantta tam uyum (9 farklı Assembly_Height değeri). Diğer aday: 0.0025965053 * Assembly_Height - 0.23)
-  [99 %] CustomProperty [Cupboard RightDoor Shaker Style.SLDPRT :: DWMaterial]
          = Material
          (Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, "Mahogany", "Mahogany", "Maple", "Maple", "Oak", "Oak"))
   [99 %] CustomProperty [Cupboard RightEnd.SLDPRT :: DWMaterial]
@@ -196,11 +186,26 @@ GİRDİLER
   [99 %] CustomProperty [Cupboard Top.SLDPRT :: DWMaterial]
          = Material
          (Material girdisiyle aynı metin. Diğer aday: Material | SWITCH(Material, "Mahogany", "Mahogany", "Maple", "Maple", "Oak", "Oak"))
+  [99 %] CustomProperty [<ana montaj> :: Assembly Height]
+         = Assembly_Height
+         (Bu değer girdinin kendisi.)
+  [99 %] CustomProperty [<ana montaj> :: Assembly Width]
+         = Assembly_Width
+         (Bu değer girdinin kendisi.)
+  [99 %] CustomProperty [<ana montaj> :: Assembly Depth]
+         = Assembly_Depth
+         (Bu değer girdinin kendisi.)
+  [99 %] ComponentReplace [Cupboard LeftDoor Assy-1/Cupboard LeftDoor Shaker Style-1]
+         = Cupboard_LeftDoor_Shaker_Style_1_Dosyasi
+         (Bu değer girdinin kendisi.)
+  [99 %] CustomProperty [<ana montaj> :: Material]
+         = Material
+         (Bu değer girdinin kendisi.)
   [98 %] Configuration [Cupboard LeftDoor Assy-1/Cupboard LeftDoor Shaker Style-1]
-         = SWITCH(Description, "Flat Right Door", "Default", "Framed Right Door", "Default", "Shaker Style Right Door", "Base Single")
-         (Description değerine göre belirleniyor (3 seçenek, 9 varyant).)
+         = SWITCH(Cupboard_LeftDoor_Shaker_Style_1_Dosyasi, "Cupboard LeftDoor Framed.SLDPRT", "Default", "Cupboard LeftDoor Shaker Style.SLDPRT", "Base Single", "Cupboard LeftDoor.SLDPRT", "Default")
+         (Cupboard_LeftDoor_Shaker_Style_1_Dosyasi değerine göre belirleniyor (3 seçenek, 9 varyant).)
   [98 %] Dimension [Cupboard Assy.SLDASM :: D1@Adj Shelf Pattern]
-         = RANGELOOKUP(Assembly_Height, 750, 1, 2)
+         = RANGELOOKUP(Assembly_Height, Assembly_Height_Esigi, 1, 2)
          (Assembly_Height aralıklarına göre 2 farklı değer. Diğer aday: RANGELOOKUP(Assembly_Depth, 750, 2, 1) | RANGELOOKUP(Assembly_Width, 800, 1, 875, 2, 1000, 1, 2))
   [98 %] ComponentReplace [Cupboard LeftDoor Assy-1/Bedroom Knob Oak-6]
          = SWITCH(Material, "Mahogany", "Bedroom Knob Oak.SLDPRT", "Maple", "D Handle Chrome Small.SLDPRT", "Oak", "Shaker Knob Large Steel.SLDPRT")
@@ -208,93 +213,118 @@ GİRDİLER
   [98 %] ComponentReplace [Cupboard RightDoor Assy-1/Bedroom Knob Oak-1]
          = SWITCH(Material, "Mahogany", "Bedroom Knob Oak.SLDPRT", "Maple", "D Handle Chrome Small.SLDPRT", "Oak", "Shaker Knob Large Steel.SLDPRT")
          (Material değerine göre belirleniyor (3 seçenek, 9 varyant).)
-  [94 %] Dimension [Cupboard LeftEnd.SLDPRT :: D1@Sketch3]
-         = IF(Assembly_Height <= 750, Assembly_Height / 2 - 25, FLOOR((Assembly_Height + 20) / 3))
+  [98 %] ComponentReplace [Cupboard RightDoor Assy-1/Cupboard RightDoor Shaker Style-1]
+         = SWITCH(Cupboard_LeftDoor_Shaker_Style_1_Dosyasi, "Cupboard LeftDoor Framed.SLDPRT", "Cupboard RightDoor Framed.SLDPRT", "Cupboard LeftDoor Shaker Style.SLDPRT", "Cupboard RightDoor Shaker Style.SLDPRT", "Cupboard LeftDoor.SLDPRT", "Cupboard RightDoor.SLDPRT")
+         (Cupboard_LeftDoor_Shaker_Style_1_Dosyasi değerine göre belirleniyor (3 seçenek, 9 varyant).)
+  [98 %] Dimension [Cupboard Assy.SLDASM :: D3@Nail Pattern 1]
+         = ROUND((Assembly_Height - 68) / (Cupboard_Assy_D1_Nail_Pattern_1 - 1), 2)
+         (9 varyantta eşit aralık formülü tam uyuyor: aralık = (Assembly_Height - 68) / (Cupboard Assy.SLDASM › D1@Nail Pattern 1 - 1).)
+  [98 %] Dimension [Cupboard Assy.SLDASM :: D3@Nail Pattern 2]
+         = ROUND((Assembly_Width - 18) / (Cupboard_Assy_D1_Nail_Pattern_2 - 1), 2)
+         (9 varyantta eşit aralık formülü tam uyuyor: aralık = (Assembly_Width - 18) / (Cupboard Assy.SLDASM › D1@Nail Pattern 2 - 1).)
+  [98 %] Dimension [Cupboard Assy.SLDASM :: D4@Nail Pattern 1]
+         = ROUND((Assembly_Width - 18) / (Cupboard_Assy_D1_Nail_Pattern_2 - 1), 2)
+         (9 varyantta eşit aralık formülü tam uyuyor: aralık = (Assembly_Width - 18) / (Cupboard Assy.SLDASM › D1@Nail Pattern 2 - 1).)
+  [98 %] Dimension [Cupboard Assy.SLDASM :: D4@Nail Pattern 2]
+         = ROUND((Assembly_Height - 68) / (Cupboard_Assy_D1_Nail_Pattern_1 - 1), 2)
+         (9 varyantta eşit aralık formülü tam uyuyor: aralık = (Assembly_Height - 68) / (Cupboard Assy.SLDASM › D1@Nail Pattern 1 - 1).)
+  [97 %] Dimension [Cupboard LeftEnd.SLDPRT :: D1@Sketch5]
+         = 2 * Cupboard_LeftEnd_D1_Sketch3 - 35
+         (7 varyantta Cupboard LeftEnd.SLDPRT › D1@Sketch3 değeriyle doğrusal ilişki tam uyuyor.)
+  [97 %] Dimension [Cupboard RightEnd.SLDPRT :: D1@Sketch5]
+         = 2 * Cupboard_LeftEnd_D1_Sketch3 - 35
+         (7 varyantta Cupboard LeftEnd.SLDPRT › D1@Sketch3 değeriyle doğrusal ilişki tam uyuyor.)
+  [94 %] Dimension [Cupboard Assy.SLDASM :: D1@Adj Shelf Plane]
+         = IF(Assembly_Height <= Assembly_Height_Esigi, Assembly_Height / 2 - 42.5, ROUND((Assembly_Height - 34) / 3))
          (Assembly_Height 569 ile 800 arasındaki bir eşikte formül değişiyor (altında 2, üstünde 7 varyant).)
-  [94 %] CustomProperty [Cupboard Plinth.SLDPRT :: Weight]
-         = IF(Assembly_Width <= 1310, 0.0011081634 * Assembly_Width - 0.04, 0.0010796545 * Assembly_Width)
-         (Assembly_Width 1310 ile 1324 arasındaki bir eşikte formül değişiyor (altında 5, üstünde 4 varyant).)
-  [88 %] Dimension [Cupboard LeftDoor Shaker Style.SLDPRT :: D1@Cut-Extrude1]
-         = SWITCH(Description, "Framed Right Door", 110, "Shaker Style Right Door", 5)
-         (Description değerine göre belirleniyor (2 seçenek, 5 varyant). Diğer aday: RANGELOOKUP(Assembly_Width, 1000, 5, 110) | SWITCH(Description, "Framed Right Door", 110, "Shaker Style Right Door", 5))
-  [88 %] Dimension [Cupboard LeftDoor Shaker Style.SLDPRT :: D1@Sketch7]
-         = SWITCH(Description, "Framed Right Door", 110, "Shaker Style Right Door", 70)
-         (Description değerine göre belirleniyor (2 seçenek, 5 varyant). Diğer aday: RANGELOOKUP(Assembly_Width, 1000, 70, 110) | SWITCH(Description, "Framed Right Door", 110, "Shaker Style Right Door", 70))
-  [88 %] Dimension [Cupboard RightDoor Shaker Style.SLDPRT :: D1@Cut-Extrude1]
-         = SWITCH(Description, "Framed Right Door", 110, "Shaker Style Right Door", 5)
-         (Description değerine göre belirleniyor (2 seçenek, 5 varyant). Diğer aday: RANGELOOKUP(Assembly_Width, 1000, 5, 110) | SWITCH(Description, "Framed Right Door", 110, "Shaker Style Right Door", 5))
-  [88 %] Dimension [Cupboard RightDoor Shaker Style.SLDPRT :: D1@Sketch7]
-         = SWITCH(Description, "Framed Right Door", 110, "Shaker Style Right Door", 70)
-         (Description değerine göre belirleniyor (2 seçenek, 5 varyant). Diğer aday: RANGELOOKUP(Assembly_Width, 1000, 70, 110) | SWITCH(Description, "Framed Right Door", 110, "Shaker Style Right Door", 70))
+  [94 %] Dimension [Cupboard LeftEnd.SLDPRT :: D1@Sketch3]
+         = IF(Assembly_Height <= Assembly_Height_Esigi, Assembly_Height / 2 - 25, FLOOR((Assembly_Height + 20) / 3))
+         (Assembly_Height 569 ile 800 arasındaki bir eşikte formül değişiyor (altında 2, üstünde 7 varyant).)
+  [90 %] Dimension [Cupboard Assy.SLDASM :: D1@Nail Pattern 1]
+         = FLOOR((Assembly_Height - 68) / 50) + 1
+         (9 varyantta basamak (adet) fonksiyonu uyuyor; 12 farklı biçim de veriyle uyumlu. Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Height - 68). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Height - 68).)
+  [90 %] Dimension [Cupboard Assy.SLDASM :: D1@Nail Pattern 2]
+         = FLOOR((Assembly_Width - 18) / 50) + 1
+         (9 varyantta basamak (adet) fonksiyonu uyuyor; 12 farklı biçim de veriyle uyumlu. Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Width - 18). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Width - 18).)
+  [90 %] Dimension [Cupboard Assy.SLDASM :: D2@Nail Pattern 1]
+         = FLOOR((Assembly_Width - 18) / 50) + 1
+         (9 varyantta basamak (adet) fonksiyonu uyuyor; 12 farklı biçim de veriyle uyumlu. Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Width - 18). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Width - 18).)
+  [90 %] Dimension [Cupboard Assy.SLDASM :: D2@Nail Pattern 2]
+         = FLOOR((Assembly_Height - 68) / 50) + 1
+         (9 varyantta basamak (adet) fonksiyonu uyuyor; 12 farklı biçim de veriyle uyumlu. Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Height - 68). Sabit, aynı uzunluğu bölen aralık formülüyle kesinleşti (Assembly_Height - 68).)
   [88 %] CustomProperty [<ana montaj> :: Assembly Name]
          = "-" & Assembly_Height & " x " & Assembly_Width & " x " & Assembly_Depth & " Cupboard"
          (9 varyantta metin iskeleti aynı, içindeki sayılar girdilerle doğrusal ilişkili.)
-  [88 %] CustomProperty [Cupboard LeftDoor Shaker Style.SLDPRT :: Description]
-         = SWITCH(Description, "Framed Right Door", "Framed Left Door", "Shaker Style Right Door", "Shaker Style Left Door")
-         (Description değerine göre belirleniyor (2 seçenek, 5 varyant).)
+  [88 %] CustomProperty [Cupboard LeftDoor.SLDPRT :: DWMaterial]
+         = Material
+         (Material girdisiyle aynı metin. Diğer aday: SWITCH(Material, "Mahogany", "Mahogany", "Oak", "Oak") | Material)
+  [88 %] CustomProperty [Cupboard RightDoor.SLDPRT :: DWMaterial]
+         = Material
+         (Material girdisiyle aynı metin. Diğer aday: SWITCH(Material, "Mahogany", "Mahogany", "Oak", "Oak") | Material)
   [75 %] Dimension [Cupboard Assy.SLDASM :: D3@Adj Shelf Pattern]
          = ROUND((Assembly_Height - 86) / 3)
          (9 varyantta tam sayıya yuvarlanmış doğrusal ilişki uyuyor; 3 benzer formül de uyumlu.)
-  [59 %] Dimension [Cupboard Assy.SLDASM :: D1@Nail Pattern 1]
-         = ROUND((Assembly_Height - 42.5) / 50)
-         (9 varyantta basamak (adet) fonksiyonu uyuyor; 8 alternatif formül de veriyle uyumlu.)
-  [59 %] Dimension [Cupboard Assy.SLDASM :: D2@Nail Pattern 2]
-         = ROUND((Assembly_Height - 42.5) / 50)
-         (9 varyantta basamak (adet) fonksiyonu uyuyor; 8 alternatif formül de veriyle uyumlu.)
-  [44 %] Dimension [Cupboard Assy.SLDASM :: D1@Nail Pattern 2]
-         = CEILING((Assembly_Width - 20) / 50)
-         (9 varyantta basamak (adet) fonksiyonu uyuyor; 26 alternatif formül de veriyle uyumlu.)
-  [44 %] Dimension [Cupboard Assy.SLDASM :: D2@Nail Pattern 1]
-         = CEILING((Assembly_Width - 20) / 50)
-         (9 varyantta basamak (adet) fonksiyonu uyuyor; 26 alternatif formül de veriyle uyumlu.)
-  [20 %] Dimension [Cupboard Assy.SLDASM :: D1@Adj Shelf Plane]
-         = RANGELOOKUP(Assembly_Height, 500, 186.5, 750, 242, 800, 255, 825, 259, 850, 264, 860, 274, 900, 277, 305)
-         (Assembly_Height aralıklarına göre 8 farklı değer.)
-  [20 %] Dimension [Cupboard LeftEnd.SLDPRT :: D1@Sketch5]
-         = RANGELOOKUP(Assembly_Height, 800, 511, 825, 517, 850, 529, 860, 547, 864, 553, 900, 555, 611)
-         (Assembly_Height aralıklarına göre 7 farklı değer.)
-  [20 %] Dimension [Cupboard RightEnd.SLDPRT :: D1@Sketch5]
-         = RANGELOOKUP(Assembly_Height, 800, 511, 825, 517, 850, 529, 860, 547, 864, 553, 900, 555, 611)
-         (Assembly_Height aralıklarına göre 7 farklı değer.)
+  [75 %] Dimension [Cupboard LeftDoor.SLDPRT :: D1@Bottom Plane]
+         = Assembly_Height - 54
+         (4 varyantta tam uyum (4 farklı Assembly_Height değeri).)
+  [75 %] Dimension [Cupboard LeftDoor.SLDPRT :: D1@Left Plane]
+         = Assembly_Width / 2 - 4
+         (4 varyantta tam uyum (4 farklı Assembly_Width değeri).)
+  [75 %] Dimension [Cupboard RightDoor.SLDPRT :: D1@Bottom Plane]
+         = Assembly_Height - 54
+         (4 varyantta tam uyum (4 farklı Assembly_Height değeri).)
+  [75 %] Dimension [Cupboard RightDoor.SLDPRT :: D1@Left Plane]
+         = Assembly_Width / 2 - 4
+         (4 varyantta tam uyum (4 farklı Assembly_Width değeri).)
+  [50 %] Dimension [Cupboard LeftDoor Framed.SLDPRT :: D1@Bottom Plane]
+         = Assembly_Height - 54
+         (3 varyantta tam uyum (3 farklı Assembly_Height değeri).)
+  [50 %] Dimension [Cupboard LeftDoor Framed.SLDPRT :: D1@Left Plane]
+         = Assembly_Width / 2 - 4
+         (3 varyantta tam uyum (3 farklı Assembly_Width değeri).)
+  [50 %] Dimension [Cupboard RightDoor Framed.SLDPRT :: D1@Bottom Plane]
+         = Assembly_Height - 54
+         (3 varyantta tam uyum (3 farklı Assembly_Height değeri).)
+  [50 %] Dimension [Cupboard RightDoor Framed.SLDPRT :: D1@Left Plane]
+         = Assembly_Width / 2 - 4
+         (3 varyantta tam uyum (3 farklı Assembly_Width değeri).)
+  [50 %] CustomProperty [Cupboard LeftDoor Shaker Style.SLDPRT :: DWMaterial]
+         = Material
+         (Material girdisiyle aynı metin. Diğer aday: Material)
+  [50 %] CustomProperty [Cupboard RightDoor Shaker Style.SLDPRT :: DWMaterial]
+         = Material
+         (Material girdisiyle aynı metin. Diğer aday: Material)
+  [20 %] Dimension [Cupboard LeftDoor Shaker Style.SLDPRT :: D1@Bottom Plane]
+         = Assembly_Height - 54
+         (2 varyantta tam uyum (2 farklı Assembly_Height değeri).)
+  [20 %] Dimension [Cupboard LeftDoor Shaker Style.SLDPRT :: D1@Left Plane]
+         = Assembly_Width / 2 - 4
+         (2 varyantta tam uyum (2 farklı Assembly_Width değeri).)
+  [20 %] Dimension [Cupboard RightDoor Shaker Style.SLDPRT :: D1@Bottom Plane]
+         = Assembly_Height - 54
+         (2 varyantta tam uyum (2 farklı Assembly_Height değeri).)
+  [20 %] Dimension [Cupboard RightDoor Shaker Style.SLDPRT :: D1@Left Plane]
+         = Assembly_Width / 2 - 4
+         (2 varyantta tam uyum (2 farklı Assembly_Width değeri).)
 
 AÇIKLANAMAYAN DEĞİŞİMLER
-  Cupboard Assy.SLDASM › D3@Nail Pattern 1: Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=52.29, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=51.88, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=53.13, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=53.07, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=52.47, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=50.6, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=55.71, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=50.1, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=53
-  Cupboard Assy.SLDASM › D3@Nail Pattern 2: Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=51.28, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=51.23, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=50.14, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=50.23, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=51.1, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=52.44, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=50.59, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=52.93, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=51.68
-  Cupboard Assy.SLDASM › D4@Nail Pattern 1: Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=51.28, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=51.23, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=50.14, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=50.23, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=51.1, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=52.44, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=50.59, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=52.93, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=51.68
-  Cupboard Assy.SLDASM › D4@Nail Pattern 2: Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=52.29, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=51.88, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=53.13, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=53.07, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=52.47, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=50.6, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=55.71, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=50.1, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=53
   Cupboard Assy.SLDASM › özellik 'OrderNo': Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=MF0001, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=MF0002, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=MF0003, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=MF0004, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=MF0006, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=MF0007, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=MF0008, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=MF0009, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=MF0010
-  Cupboard Assy.SLDASM › özellik 'Weight': Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=98.23, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=123.15, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=114.7, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=107.71, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=72.98, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=49.99, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=73.82, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=67.2, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=101.76
   Cupboard Base.SLDPRT › özellik 'OrderNo': Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=MF0001, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=MF0002, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=MF0003, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=MF0004, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=MF0006, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=MF0007, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=MF0008, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=MF0009, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=MF0010
-  Cupboard Base.SLDPRT › özellik 'Weight': Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=16.69, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=20.27, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=19.6, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=17.69, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=11.37, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=5.35, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=16.49, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=12.08, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=17.1
   Cupboard LeftEnd.SLDPRT › özellik 'OrderNo': Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=MF0001, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=MF0002, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=MF0003, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=MF0004, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=MF0006, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=MF0007, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=MF0008, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=MF0009, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=MF0010
-  Cupboard LeftEnd.SLDPRT › özellik 'Weight': Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=10.56, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=14.66, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=12.23, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=11.87, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=6.63, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=5.4, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=8.96, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=9.51, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=10.87
   Cupboard Plinth.SLDPRT › özellik 'OrderNo': Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=MF0001, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=MF0002, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=MF0003, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=MF0004, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=MF0006, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=MF0007, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=MF0008, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=MF0009, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=MF0010
   Cupboard Post.SLDPRT › özellik 'OrderNo': Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=MF0001, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=MF0002, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=MF0003, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=MF0004, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=MF0006, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=MF0007, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=MF0008, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=MF0009, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=MF0010
   Cupboard RightEnd.SLDPRT › özellik 'OrderNo': Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=MF0001, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=MF0002, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=MF0003, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=MF0004, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=MF0006, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=MF0007, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=MF0008, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=MF0009, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=MF0010
-  Cupboard RightEnd.SLDPRT › özellik 'Weight': Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=4791.42, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=6650.17, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=5548.13, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=5384.93, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=3010.34, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=2452.78, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=4066.88, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=4316.09, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=4933.15
   Cupboard Shelf.SLDPRT › özellik 'OrderNo': Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=MF0001, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=MF0002, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=MF0003, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=MF0004, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=MF0006, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=MF0007, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=MF0008, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=MF0009, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=MF0010
-  Cupboard Shelf.SLDPRT › özellik 'Weight': Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=14.52, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=18.02, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=17.22, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=15.49, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=8.87, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=3.97, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=15.04, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=10.84, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=14.92
   Cupboard Top.SLDPRT › özellik 'OrderNo': Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=MF0001, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=MF0002, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=MF0003, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=MF0004, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=MF0006, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=MF0007, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=MF0008, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=MF0009, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=MF0010
-  Cupboard Top.SLDPRT › özellik 'Weight': Cupboard Assy 0001__Cupboard Assy Cupboard Assy1=16.68, Cupboard Assy 0002__Cupboard Assy Cupboard Assy2=20.26, Cupboard Assy 0003__Cupboard Assy Cupboard Assy3=19.59, Cupboard Assy 0004__Cupboard Assy Cupboard Assy4=17.68, Cupboard Assy 0006__Cupboard Assy Cupboard Assy6=11.36, Cupboard Assy 0007__Cupboard Assy Cupboard Assy7=5.34, Cupboard Assy 0008__Cupboard Assy Cupboard Assy8=16.48, Cupboard Assy 0009__Cupboard Assy Cupboard Assy9=12.07, Cupboard Assy 0010__Cupboard Assy Cupboard Assy10=17.1
 
 SORULAR
-  - sup_Cupboard_Left_End_Assy_1_Shelf_Peg1_3: Assembly_Height için eşik 569 ile 800 arasında. Kesin değer ve sınır dahil mi?
-  - sup_Cupboard_Left_End_Assy_1_Shelf_Peg1_4: Assembly_Height için eşik 569 ile 800 arasında. Kesin değer ve sınır dahil mi?
-  - sup_Cupboard_Right_End_Assy_1_Shelf_Peg1_3: Assembly_Height için eşik 569 ile 800 arasında. Kesin değer ve sınır dahil mi?
-  - sup_Cupboard_Right_End_Assy_1_Shelf_Peg1_4: Assembly_Height için eşik 569 ile 800 arasında. Kesin değer ve sınır dahil mi?
-  - dim_Cupboard_Assy_D1_Adj_Shelf_Pattern: Assembly_Height için geçiş sınırları şu aralıklarda bir yerde: 569–800. Kesin sınırlar nedir?
-  - dim_Cupboard_Assy_D1_Adj_Shelf_Plane: Assembly_Height için geçiş sınırları şu aralıklarda bir yerde: 458–569, 569–800, 800–810, 810–827, 827–855, 855–864, 865–950. Kesin sınırlar nedir?
-  - dim_Cupboard_Assy_D1_Nail_Pattern_1: Adet kuralı için birden fazla formül veriyle uyumlu (ör. ROUND((Assembly_Height - 42.5) / 50)). Gerçek kural nedir? (ör. 'her 1000 mm'de bir ayak')
-  - dim_Cupboard_Assy_D1_Nail_Pattern_2: Adet kuralı için birden fazla formül veriyle uyumlu (ör. CEILING((Assembly_Width - 20) / 50)). Gerçek kural nedir? (ör. 'her 1000 mm'de bir ayak')
-  - dim_Cupboard_Assy_D2_Nail_Pattern_1: Adet kuralı için birden fazla formül veriyle uyumlu (ör. CEILING((Assembly_Width - 20) / 50)). Gerçek kural nedir? (ör. 'her 1000 mm'de bir ayak')
-  - dim_Cupboard_Assy_D2_Nail_Pattern_2: Adet kuralı için birden fazla formül veriyle uyumlu (ör. ROUND((Assembly_Height - 42.5) / 50)). Gerçek kural nedir? (ör. 'her 1000 mm'de bir ayak')
+  - "Cupboard Assy.SLDASM › özellik 'Material'" ile "Cupboard LeftDoor Assy-1/Bedroom Knob Oak-6 (kullanılan dosya)" varyantlarda hep birlikte değişti. İkisi aynı girdiden mi geliyor, yoksa ayrı girdiler mi (ör. ayrı bir seçim alanı)? Veriler bunu ayırt etmiyor; ayırt etmek için birini değiştirip diğerini sabit tutan bir varyant ekleyin.
+  - Assembly_Height için 7 kural aynı eşiği kullanıyor (sup_Cupboard_Left_End_Assy_1_Shelf_Peg1_3, sup_Cupboard_Left_End_Assy_1_Shelf_Peg1_4, sup_Cupboard_Right_End_Assy_1_Shelf_Peg1_3, sup_Cupboard_Right_End_Assy_1_Shelf_Peg1_4 …). Veriler 569 ile 800 arasındaki her değeri destekliyor; şimdilik 750 seçildi. Gerçek eşik nedir? ('Assembly_Height_Esigi' değişkenini değiştirmek hepsini düzeltir.)
   - dim_Cupboard_Assy_D3_Adj_Shelf_Pattern: Yuvarlama formülü kesin mi? Veriyle uyumlu diğerleri de var (ör. ROUND((Assembly_Height - 86) / 3)).
-  - dim_Cupboard_LeftEnd_D1_Sketch3: Assembly_Height için formülün değiştiği eşik 569 ile 800 arasında. Kesin değer nedir? Bir tarafta sadece 2 varyant var; o taraftaki formül daha fazla varyantla doğrulanmalı.
-  - dim_Cupboard_LeftEnd_D1_Sketch5: Assembly_Height için geçiş sınırları şu aralıklarda bir yerde: 800–810, 810–827, 827–855, 855–864, 864–865, 865–950. Kesin sınırlar nedir?
-  - dim_Cupboard_RightEnd_D1_Sketch5: Assembly_Height için geçiş sınırları şu aralıklarda bir yerde: 800–810, 810–827, 827–855, 855–864, 864–865, 865–950. Kesin sınırlar nedir?
-  - prop_Cupboard_Plinth_Weight: Assembly_Width için formülün değiştiği eşik 1310 ile 1324 arasında. Kesin değer nedir?
+  - dim_Cupboard_LeftDoor_Shaker_Style_D1_Bottom_Plane, dim_Cupboard_RightDoor_Shaker_Style_D1_Bottom_Plane: Sadece 2 farklı Assembly_Height değeri var; iki noktadan her zaman bir doğru geçer, daha fazla varyantla doğrulanmalı.
+  - dim_Cupboard_LeftDoor_Shaker_Style_D1_Left_Plane, dim_Cupboard_RightDoor_Shaker_Style_D1_Left_Plane: Sadece 2 farklı Assembly_Width değeri var; iki noktadan her zaman bir doğru geçer, daha fazla varyantla doğrulanmalı.
 
-DEĞİŞEN DEĞERLER (102)
+DEĞİŞEN DEĞERLER (100)
   Cupboard LeftDoor Assy-1/Cupboard LeftDoor Shaker Style-1 (konfigürasyon): "Default" / "Base Single"
   Cupboard Left End Assy-1/Shelf Peg1-3 (bastırılmış mı): 2 varyantta evet, 7 varyantta hayır
   Cupboard Left End Assy-1/Shelf Peg1-4 (bastırılmış mı): 2 varyantta evet, 7 varyantta hayır
@@ -325,10 +355,12 @@ DEĞİŞEN DEĞERLER (102)
   Cupboard Base.SLDPRT › D1@Sketch2: 723 … 1464 (9 farklı değer)
   Cupboard LeftDoor Assy.SLDASM › D1@Bottom Plane: 454 … 946 (9 farklı değer)
   Cupboard LeftDoor Assy.SLDASM › D1@Left Plane: 375.5 … 746 (9 farklı değer)
-  Cupboard LeftDoor Shaker Style.SLDPRT › D1@Bottom Plane: 404 … 896 (9 farklı değer)
-  Cupboard LeftDoor Shaker Style.SLDPRT › D1@Cut-Extrude1: 5 … 110 (2 farklı değer) (4 varyantta yok)
-  Cupboard LeftDoor Shaker Style.SLDPRT › D1@Left Plane: 375.5 … 746 (9 farklı değer)
-  Cupboard LeftDoor Shaker Style.SLDPRT › D1@Sketch7: 70 … 110 (2 farklı değer) (4 varyantta yok)
+  Cupboard LeftDoor Framed.SLDPRT › D1@Bottom Plane: 746 … 896 (3 farklı değer) (6 varyantta yok)
+  Cupboard LeftDoor Framed.SLDPRT › D1@Left Plane: 646 … 707 (3 farklı değer) (6 varyantta yok)
+  Cupboard LeftDoor Shaker Style.SLDPRT › D1@Bottom Plane: 515 … 773 (2 farklı değer) (7 varyantta yok)
+  Cupboard LeftDoor Shaker Style.SLDPRT › D1@Left Plane: 375.5 … 424.5 (2 farklı değer) (7 varyantta yok)
+  Cupboard LeftDoor.SLDPRT › D1@Bottom Plane: 404 … 810 (4 farklı değer) (5 varyantta yok)
+  Cupboard LeftDoor.SLDPRT › D1@Left Plane: 435 … 746 (4 farklı değer) (5 varyantta yok)
   Cupboard LeftEnd.SLDPRT › D1@Back Plane: 296 … 884 (9 farklı değer)
   Cupboard LeftEnd.SLDPRT › D1@Bottom Plane: 458 … 950 (9 farklı değer)
   Cupboard LeftEnd.SLDPRT › D1@Left Hand End: 458 … 950 (9 farklı değer)
@@ -345,10 +377,12 @@ DEĞİŞEN DEĞERLER (102)
   Cupboard Post.SLDPRT › D1@Sketch3: 372 … 864 (9 farklı değer)
   Cupboard RightDoor Assy.SLDASM › D1@Bottom Plane: 454 … 946 (9 farklı değer)
   Cupboard RightDoor Assy.SLDASM › D1@Left Plane: 375.5 … 746 (9 farklı değer)
-  Cupboard RightDoor Shaker Style.SLDPRT › D1@Bottom Plane: 404 … 896 (9 farklı değer)
-  Cupboard RightDoor Shaker Style.SLDPRT › D1@Cut-Extrude1: 5 … 110 (2 farklı değer) (4 varyantta yok)
-  Cupboard RightDoor Shaker Style.SLDPRT › D1@Left Plane: 375.5 … 746 (9 farklı değer)
-  Cupboard RightDoor Shaker Style.SLDPRT › D1@Sketch7: 70 … 110 (2 farklı değer) (4 varyantta yok)
+  Cupboard RightDoor Framed.SLDPRT › D1@Bottom Plane: 746 … 896 (3 farklı değer) (6 varyantta yok)
+  Cupboard RightDoor Framed.SLDPRT › D1@Left Plane: 646 … 707 (3 farklı değer) (6 varyantta yok)
+  Cupboard RightDoor Shaker Style.SLDPRT › D1@Bottom Plane: 515 … 773 (2 farklı değer) (7 varyantta yok)
+  Cupboard RightDoor Shaker Style.SLDPRT › D1@Left Plane: 375.5 … 424.5 (2 farklı değer) (7 varyantta yok)
+  Cupboard RightDoor.SLDPRT › D1@Bottom Plane: 404 … 810 (4 farklı değer) (5 varyantta yok)
+  Cupboard RightDoor.SLDPRT › D1@Left Plane: 435 … 746 (4 farklı değer) (5 varyantta yok)
   Cupboard RightEnd.SLDPRT › D1@Back Plane: 296 … 884 (9 farklı değer)
   Cupboard RightEnd.SLDPRT › D1@Bottom Plane: 458 … 950 (9 farklı değer)
   Cupboard RightEnd.SLDPRT › D1@Right Hand End: 458 … 950 (9 farklı değer)
@@ -363,39 +397,34 @@ DEĞİŞEN DEĞERLER (102)
   Cupboard Top.SLDPRT › D1@Left Plane: 723 … 1464 (9 farklı değer)
   Cupboard Top.SLDPRT › D1@Sketch4: 723 … 1464 (9 farklı değer)
   Cupboard LeftDoor Assy-1/Bedroom Knob Oak-6 (kullanılan dosya): "Shaker Knob Large Steel.SLDPRT" / "D Handle Chrome Small.SLDPRT" / "Bedroom Knob Oak.SLDPRT"
+  Cupboard LeftDoor Assy-1/Cupboard LeftDoor Shaker Style-1 (kullanılan dosya): "Cupboard LeftDoor Framed.SLDPRT" / "Cupboard LeftDoor.SLDPRT" / "Cupboard LeftDoor Shaker Style.SLDPRT"
   Cupboard RightDoor Assy-1/Bedroom Knob Oak-1 (kullanılan dosya): "Shaker Knob Large Steel.SLDPRT" / "D Handle Chrome Small.SLDPRT" / "Bedroom Knob Oak.SLDPRT"
+  Cupboard RightDoor Assy-1/Cupboard RightDoor Shaker Style-1 (kullanılan dosya): "Cupboard RightDoor Framed.SLDPRT" / "Cupboard RightDoor.SLDPRT" / "Cupboard RightDoor Shaker Style.SLDPRT"
   Cupboard Assy.SLDASM › özellik 'Assembly Depth': 300 … 888 (9 farklı değer)
   Cupboard Assy.SLDASM › özellik 'Assembly Height': 458 … 950 (9 farklı değer)
   Cupboard Assy.SLDASM › özellik 'Assembly Name': 9 farklı metin, ör. "-800 x 1300 x 600 Cupboard"
   Cupboard Assy.SLDASM › özellik 'Assembly Width': 759 … 1500 (9 farklı değer)
   Cupboard Assy.SLDASM › özellik 'Material': "Oak" / "Maple" / "Mahogany"
   Cupboard Assy.SLDASM › özellik 'OrderNo': 9 farklı metin, ör. "MF0001"
-  Cupboard Assy.SLDASM › özellik 'Weight': 49.99 … 123.15 (9 farklı değer)
   Cupboard Back.SLDPRT › özellik 'DWMaterial': "Oak" / "Maple" / "Mahogany"
   Cupboard Base.SLDPRT › özellik 'DWMaterial': "Oak" / "Maple" / "Mahogany"
   Cupboard Base.SLDPRT › özellik 'OrderNo': 9 farklı metin, ör. "MF0001"
-  Cupboard Base.SLDPRT › özellik 'Weight': 5.35 … 20.27 (9 farklı değer)
-  Cupboard LeftDoor Shaker Style.SLDPRT › özellik 'Description': "Framed Left Door" / "Shaker Style Left Door" (4 varyantta yok)
-  Cupboard LeftDoor Shaker Style.SLDPRT › özellik 'DWMaterial': "Oak" / "Maple" / "Mahogany"
+  Cupboard LeftDoor Shaker Style.SLDPRT › özellik 'DWMaterial': "Oak" / "Maple" (7 varyantta yok)
+  Cupboard LeftDoor.SLDPRT › özellik 'DWMaterial': "Oak" / "Mahogany" (5 varyantta yok)
   Cupboard LeftEnd.SLDPRT › özellik 'DWMaterial': "Oak" / "Maple" / "Mahogany"
   Cupboard LeftEnd.SLDPRT › özellik 'OrderNo': 9 farklı metin, ör. "MF0001"
-  Cupboard LeftEnd.SLDPRT › özellik 'Weight': 5.4 … 14.66 (9 farklı değer)
   Cupboard Plinth.SLDPRT › özellik 'DWMaterial': "Oak" / "Maple" / "Mahogany"
   Cupboard Plinth.SLDPRT › özellik 'OrderNo': 9 farklı metin, ör. "MF0001"
-  Cupboard Plinth.SLDPRT › özellik 'Weight': 0.8 … 1.62 (9 farklı değer)
   Cupboard Post.SLDPRT › özellik 'DWMaterial': "Oak" / "Maple" / "Mahogany"
   Cupboard Post.SLDPRT › özellik 'OrderNo': 9 farklı metin, ör. "MF0001"
-  Cupboard Post.SLDPRT › özellik 'Weight': 0.96 … 2.24 (9 farklı değer)
-  Cupboard RightDoor Shaker Style.SLDPRT › özellik 'Description': "Framed Right Door" / "Flat Right Door" / "Shaker Style Right Door"
-  Cupboard RightDoor Shaker Style.SLDPRT › özellik 'DWMaterial': "Oak" / "Maple" / "Mahogany"
+  Cupboard RightDoor Shaker Style.SLDPRT › özellik 'DWMaterial': "Oak" / "Maple" (7 varyantta yok)
+  Cupboard RightDoor.SLDPRT › özellik 'DWMaterial': "Oak" / "Mahogany" (5 varyantta yok)
   Cupboard RightEnd.SLDPRT › özellik 'DWMaterial': "Oak" / "Maple" / "Mahogany"
   Cupboard RightEnd.SLDPRT › özellik 'OrderNo': 9 farklı metin, ör. "MF0001"
-  Cupboard RightEnd.SLDPRT › özellik 'Weight': 2452.78 … 6650.17 (9 farklı değer)
   Cupboard Shelf.SLDPRT › özellik 'DWMaterial': "Oak" / "Maple" / "Mahogany"
   Cupboard Shelf.SLDPRT › özellik 'OrderNo': 9 farklı metin, ör. "MF0001"
-  Cupboard Shelf.SLDPRT › özellik 'Weight': 3.97 … 18.02 (9 farklı değer)
   Cupboard Top.SLDPRT › özellik 'DWMaterial': "Oak" / "Maple" / "Mahogany"
   Cupboard Top.SLDPRT › özellik 'OrderNo': 9 farklı metin, ör. "MF0001"
-  Cupboard Top.SLDPRT › özellik 'Weight': 5.34 … 20.26 (9 farklı değer)
 Not: Dosya adları varyantlar arasında farklı; parçalar montaj yapısına göre eşleştirildi. Adlar master modelden alındı.
+Not: SolidWorks'ün hesapladığı özellikler kural dışı bırakıldı: Weight.
 Not: Girdi tablosu verilmediği için girdiler modelden tahmin edildi. Adlar modeldeki ölçü/özellik adlarıdır; DriveWorks'teki gerçek girdilerle karşılaştırın.

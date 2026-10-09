@@ -80,3 +80,26 @@ namespace RuleForge.Tests
         }
     }
 }
+
+namespace RuleForge.Tests
+{
+    public class DriveWorksNamingTests
+    {
+        [Theory]
+        [InlineData("Cupboard RightDoor Framed Cupboard RightDoor Framed1.SLDPRT", "Cupboard RightDoor Framed.SLDPRT")]
+        [InlineData("Cupboard Assy Cupboard Assy10.SLDASM", "Cupboard Assy.SLDASM")]
+        [InlineData("Shaker Knob Large Steel.SLDPRT", null)]
+        [InlineData("100234.SLDPRT", null)]
+        public void DecodesDefaultDriveWorksFileNames(string file, string? master)
+        {
+            Assert.Equal(master, RuleForge.Inference.DriveWorksNaming.DecodeFile(file));
+        }
+
+        [Fact]
+        public void DecodesComponentNames()
+        {
+            Assert.Equal("Cupboard RightDoor-1", RuleForge.Inference.DriveWorksNaming.DecodeComponentName("Cupboard RightDoor Cupboard RightDoor4-1"));
+            Assert.Null(RuleForge.Inference.DriveWorksNaming.DecodeComponentName("Shelf Peg1-3"));
+        }
+    }
+}

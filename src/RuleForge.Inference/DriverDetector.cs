@@ -20,6 +20,9 @@ namespace RuleForge.Inference
 
         /// <summary>Tüm varyantlarda birebir aynı değeri taşıyan diğer gözlemler (hangisi "asıl" girdi, veriden ayırt edilemez).</summary>
         public List<string> Equivalents { get; set; } = new List<string>();
+
+        /// <summary>Farklı türden değerler hep birlikte değiştiyse (ör. malzeme ve kulp dosyası) kullanıcıya sorulacak belirsizlik.</summary>
+        public string? Question { get; set; }
     }
 
     /// <summary>
@@ -38,7 +41,7 @@ namespace RuleForge.Inference
             // Tüm varyantlarda bulunan ve değişen gözlemler; aynı değer dizisine sahip olanlar tek grupta.
             var groups = observations
                 .Where(o => o.Values.Count == samples.Count && o.Values.Values.Distinct().Count() > 1)
-                .GroupBy(o => string.Join("\u0001", names.Select(n => o.Values[n].Kind + ":" + o.Values[n].AsText())))
+                .GroupBy(o => GroupKey(o, names))
                 .Select(g => g.OrderBy(Priority).ThenBy(o => o.Key, StringComparer.OrdinalIgnoreCase).ToList())
                 .ToList();
 
@@ -95,8 +98,38 @@ namespace RuleForge.Inference
                     Explains = groups.Count(g => g != group &&
                                                  finder.Find(g[0], g[0].Target.ExpectedType, fast: true).Any(x => x.Confidence >= 0.7)),
                     Equivalents = group.Skip(1).Select(o => o.Label).ToList(),
+                    Question = AmbiguityQuestion(group),
                 };
             }).ToList();
+        }
+
+        /// <summary>
+        /// Sayısal değerler birebir aynıysa, seçim/mantıksal değerler ise varyantları aynı biçimde
+        /// gruplandırıyorsa (ör. Malzeme "Oak/Maple" ↔ kulp dosyası) aynı girdinin yansımalarıdır.
+        /// </summary>
+        private static string GroupKey(Observation o, List<string> names)
+        {
+            if (o.Values.Values.All(v => v.Kind == ValueKind.Number))
+                return "n:" + string.Join("\u0001", names.Select(n => o.Values[n].AsText()));
+            var labels = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            var parts = names.Select(n =>
+            {
+                var t = o.Values[n].AsText();
+                if (!labels.TryGetValue(t, out var i)) labels[t] = i = labels.Count;
+                return i;
+            });
+            return "c:" + string.Join(",", parts);
+        }
+
+        private static string? AmbiguityQuestion(List<Observation> group)
+        {
+            var rep = group[0];
+            var other = group.Skip(1).FirstOrDefault(o => o.Target.Kind != rep.Target.Kind &&
+                (o.Target.Kind == TargetKind.ComponentReplace || rep.Target.Kind == TargetKind.ComponentReplace ||
+                 o.Target.Kind == TargetKind.Configuration || rep.Target.Kind == TargetKind.Configuration));
+            if (other == null) return null;
+            return $"\"{rep.Label}\" ile \"{other.Label}\" varyantlarda hep birlikte değişti. İkisi aynı girdiden mi geliyor, " +
+                   "yoksa ayrı girdiler mi (ör. ayrı bir seçim alanı)? Veriler bunu ayırt etmiyor; ayırt etmek için birini değiştirip diğerini sabit tutan bir varyant ekleyin.";
         }
 
         /// <summary>Daha çok açıklayan kazanır; eşitlikte "yuvarlak" değerli olan (DriveWorks girdileri genelde yuvarlaktır).</summary>
@@ -171,6 +204,9 @@ namespace RuleForge.Inference
                     break;
                 case TargetKind.ComponentSuppression:
                     raw = t.Component + "_Bastirilmis";
+                    break;
+                case TargetKind.ComponentReplace:
+                    raw = t.Component!.Split('/').Last() + "_Dosyasi";
                     break;
                 case TargetKind.Configuration:
                     raw = (t.Component ?? t.Document) + "_Konfig";

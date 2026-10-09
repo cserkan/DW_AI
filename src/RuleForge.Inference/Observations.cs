@@ -38,6 +38,7 @@ namespace RuleForge.Inference
         public ObservationExtractor(InferenceOptions options)
         {
             _options = options;
+            _calculated = new Regex(options.CalculatedPropertyPattern ?? "^$", RegexOptions.IgnoreCase);
             if (!string.IsNullOrWhiteSpace(options.NamePattern))
                 _namePattern = new Regex(options.NamePattern!, RegexOptions.IgnoreCase);
         }
@@ -45,7 +46,7 @@ namespace RuleForge.Inference
         /// <summary>"Govde_SP0012.SLDPRT" → "Govde.SLDPRT" (NamePattern varsa).</summary>
         public string NormalizeDocumentKey(string key)
         {
-            if (_namePattern == null) return key;
+            if (_namePattern == null) return DriveWorksNaming.DecodeFile(key) ?? key;
             var ext = Path.GetExtension(key);
             var stem = Path.GetFileNameWithoutExtension(key);
             var m = _namePattern.Match(stem);
@@ -55,7 +56,8 @@ namespace RuleForge.Inference
         /// <summary>"Alt_SP12-1/Ayak_SP12-3" → "Alt-1/Ayak-3".</summary>
         public string NormalizeComponentPath(string path)
         {
-            if (_namePattern == null) return path;
+            if (_namePattern == null)
+                return string.Join("/", path.Split('/').Select(seg => DriveWorksNaming.DecodeComponentName(seg) ?? seg));
             var parts = path.Split('/');
             for (int i = 0; i < parts.Length; i++)
             {
@@ -70,6 +72,10 @@ namespace RuleForge.Inference
         }
 
         private Dictionary<string, NameMap>? _maps;
+        private readonly Regex _calculated;
+
+        /// <summary>SolidWorks'ün hesapladığı için atlanan özellik adları (ör. Weight).</summary>
+        public HashSet<string> SkippedCalculated { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>Yapısal eşlemeyi aç. Dönüş: referansla eşlenemeyen bileşen sayısı (tüm varyantlarda toplam).</summary>
         public int UseStructure(ModelSnapshot reference, IReadOnlyList<VariantSample> samples)
@@ -87,13 +93,13 @@ namespace RuleForge.Inference
 
         private string DocKey(VariantSample sample, string key)
         {
-            if (_maps != null) return _maps[sample.Name].Documents.TryGetValue(key, out var m) ? m : key;
+            if (_maps != null && _maps[sample.Name].Documents.TryGetValue(key, out var m)) key = m;
             return NormalizeDocumentKey(key);
         }
 
         private string ComponentPath(VariantSample sample, string path)
         {
-            if (_maps != null) return _maps[sample.Name].Components.TryGetValue(path, out var m) ? m : path;
+            if (_maps != null && _maps[sample.Name].Components.TryGetValue(path, out var m)) path = m;
             return NormalizeComponentPath(path);
         }
 
@@ -151,6 +157,11 @@ namespace RuleForge.Inference
                     {
                         foreach (var kv in doc.CustomProperties)
                         {
+                            if (_calculated.IsMatch(kv.Key.Trim()))
+                            {
+                                SkippedCalculated.Add(kv.Key);
+                                continue;
+                            }
                             Get($"prop:{docKey}:{kv.Key}",
                                     () => new RuleTarget
                                     {

@@ -45,6 +45,12 @@ namespace RuleForge.Inference
         public bool? MatchByStructure { get; set; }
 
         public bool IncludeCustomProperties { get; set; } = true;
+
+        /// <summary>
+        /// SolidWorks'ün kendisinin hesapladığı (kütle özelliklerine bağlı) özel özellikler: kural hedefi olmaz.
+        /// </summary>
+        public string CalculatedPropertyPattern { get; set; } =
+            @"^(weight|mass|ağırlık|agirlik|kütle|kutle|volume|hacim|density|yoğunluk|yogunluk|surface ?area|yüzey ?alanı)$";
         public bool IncludeFeatureSuppression { get; set; } = true;
     }
 }

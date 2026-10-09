@@ -95,14 +95,22 @@ namespace RuleForge.Inference
             else score += 0.3 * (1 - Math.Abs((double)ri / Math.Max(1, rn - 1) - (double)vi / Math.Max(1, vn - 1)));
             if (InstanceNumber(rc.Name) == InstanceNumber(vc.Name)) score += 0.2;
 
-            // Dosya adı da aynıysa (kodlanmamış parçalar, ör. kütüphane parçaları) kesin eşleşme.
-            if (string.Equals(rc.DocumentKey, vc.DocumentKey, StringComparison.OrdinalIgnoreCase)) score += 1.0;
+            // Dosya adı (ya da DriveWorks adından çözülen master adı) aynıysa kesin eşleşme.
+            if (string.Equals(MasterName(rc.DocumentKey), MasterName(vc.DocumentKey), StringComparison.OrdinalIgnoreCase)) score += 1.0;
             return score;
         }
 
+        private static string MasterName(string key) => DriveWorksNaming.DecodeFile(key) ?? key;
+
         private static bool IsReplacement(ModelSnapshot reference, ComponentInfo rc, ModelSnapshot variant, ComponentInfo vc)
         {
-            if (string.Equals(rc.DocumentKey, vc.DocumentKey, StringComparison.OrdinalIgnoreCase)) return false;
+            var rName = MasterName(rc.DocumentKey);
+            var vName = MasterName(vc.DocumentKey);
+            if (string.Equals(rName, vName, StringComparison.OrdinalIgnoreCase)) return false;
+            // Taraflardan biri DriveWorks adıyla çözülebiliyorsa master adları gerçekten farklıdır: kesin değişim
+            // (ör. kapak tipine göre başka kapak parçası). İkisi de çözülemiyorsa (rastgele kodlar) yapıya bak.
+            if (DriveWorksNaming.DecodeFile(rc.DocumentKey) != null || DriveWorksNaming.DecodeFile(vc.DocumentKey) != null)
+                return true;
             var rdoc = reference.FindDocument(rc.DocumentKey);
             var vdoc = variant.FindDocument(vc.DocumentKey);
             if (rdoc == null || vdoc == null) return false; // bastırılmış: bilinmiyor

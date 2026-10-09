@@ -39,6 +39,26 @@ namespace RuleForge.Inference
 
         /// <summary>Kullanıcıya sorulması gereken belirsizlik (ör. eşik aralığı).</summary>
         public string? Question { get; set; }
+
+        /// <summary>Eşikli formüllerde eşiğin bağlı olduğu girdi (ör. raf sayısı → Yükseklik).</summary>
+        public string? ThresholdInput { get; set; }
+
+        /// <summary>Veriyle uyumlu eşik aralığı: [ThresholdLo, ThresholdHi).</summary>
+        public double ThresholdLo { get; set; }
+
+        public double ThresholdHi { get; set; }
+
+        /// <summary>Eşik yerine "{T}" yazılmış ifade; ortak eşik değişkeni oluşturulurken kullanılır.</summary>
+        public string? Template { get; set; }
+
+        /// <summary>Adet formüllerinde: parantez içindeki sabit veriyle tam belirlenemediyse uyumlu aralık.</summary>
+        public string? OffsetInput { get; set; }
+
+        public double OffsetLo { get; set; }
+        public double OffsetHi { get; set; }
+
+        /// <summary>Verilen sabitle aynı formülü yeniden yazar (başka bir kuraldan kanıt gelince).</summary>
+        public Func<double, string>? WithOffset { get; set; }
     }
 
     /// <summary>
@@ -80,7 +100,7 @@ namespace RuleForge.Inference
                     Add(found, LinearTwo(samples, yn));
                     Add(found, StepFunction(samples, yn));
                     Add(found, PerCategoryLinear(samples, yn));
-                    if (found.Count == 0) Add(found, Piecewise(samples, yn));
+                    if (!found.Any(c => c.Confidence >= 0.7)) Add(found, Piecewise(samples, yn));
                 }
             }
             if (allBool)
@@ -227,6 +247,10 @@ namespace RuleForge.Inference
                     best = new RelationCandidate
                     {
                         Expression = $"IF({x.Name} <= {NumberUtil.Fmt(t)}, {left}, {right})",
+                        Template = $"IF({x.Name} <= {{T}}, {left}, {right})",
+                        ThresholdInput = x.Name,
+                        ThresholdLo = lo,
+                        ThresholdHi = hi,
                         Complexity = 6,
                         Confidence = NumberUtil.Confidence(pts.Count, 5),
                         Evidence = $"{x.Name} {NumberUtil.Fmt(lo)} ile {NumberUtil.Fmt(hi)} arasındaki bir eşikte formül değişiyor " +
@@ -253,6 +277,14 @@ namespace RuleForge.Inference
             return RoundedLinear(name, xs, ys, fit.Value.a, fit.Value.b)?.Expression;
         }
 
+        /// <summary>ys = a·xs + b tam uyumu (yuvarlak katsayılarla); yoksa null.</summary>
+        internal static (double a, double b)? ExactLinear(double[] xs, double[] ys, double tolerance)
+        {
+            var finder = new RelationFinder(new List<InputColumn>(), tolerance);
+            var fit = finder.FitLine(xs, ys);
+            return fit == null ? null : finder.SnapLine(xs, ys, fit.Value.a, fit.Value.b);
+        }
+
         private (double a, double b)? FitLine(double[] xs, double[] ys)
         {
             int n = xs.Length;
@@ -270,8 +302,11 @@ namespace RuleForge.Inference
 
         private (double a, double b)? SnapLine(double[] xs, double[] ys, double a, double b)
         {
+            // İki noktadan her doğru geçer: az veride sadece "yuvarlak" katsayılar (1, 1/2, 1/4 …) kabul edilir.
+            bool fewPoints = xs.Distinct().Count() < 3;
             foreach (var ca in NumberUtil.CoefficientCandidates(a))
             {
+                if (fewPoints && !NumberUtil.IsNiceCoefficient(ca)) continue;
                 var cb = NumberUtil.Nice(Enumerable.Range(0, xs.Length).Average(i => ys[i] - ca * xs[i]), _tol);
                 bool ok = true;
                 for (int i = 0; i < xs.Length && ok; i++)
@@ -352,13 +387,17 @@ namespace RuleForge.Inference
             {
                 var xs = samples.Select(s => x.Values[s].AsNumber()).ToArray();
                 if (xs.Distinct().Count() <= ys.Distinct().Count()) continue;
-                var fits = new List<(string expr, int score)>();
+
+                // (biçim, adım, sabit) → veriyle uyumlu ofsetler
+                var groups = new Dictionary<(string form, double step, double c), List<double>>();
                 foreach (var step in StepCandidates)
                 {
-                    double grid = Math.Max(1, step / 20);
-                    for (int k = -20; k <= 20; k++)
+                    // Küçük adımlarda (çivi aralığı gibi) tam sayı ofsetler, ±2 adım; büyüklerde kaba ızgara.
+                    var offsets = step <= 200
+                        ? Enumerable.Range((int)(-2 * step), (int)(4 * step) + 1).Select(o => (double)o)
+                        : Enumerable.Range(-20, 41).Select(k => k * Math.Max(1, step / 20));
+                    foreach (var off in offsets)
                     {
-                        double off = k * grid;
                         foreach (var (name, f) in forms)
                         {
                             double c = ys[0] - f(Math.Round((xs[0] + off) / step, 9));
@@ -366,32 +405,66 @@ namespace RuleForge.Inference
                             for (int i = 1; i < xs.Length && ok; i++)
                                 ok = Math.Abs(f(Math.Round((xs[i] + off) / step, 9)) + c - ys[i]) < 1e-6;
                             if (!ok) continue;
-
-                            var inner = Math.Abs(off) < 1e-9
-                                ? $"{x.Name} / {NumberUtil.Fmt(step)}"
-                                : $"({NumberUtil.Linear(new[] { (1.0, x.Name) }, off)}) / {NumberUtil.Fmt(step)}";
-                            var expr = $"{name}({inner})";
-                            if (Math.Abs(c) > 1e-9) expr += c > 0 ? $" + {NumberUtil.Fmt(c)}" : $" - {NumberUtil.Fmt(-c)}";
-                            // Basitlik puanı: ofset yok, sabit yok, yuvarlak adım tercih edilir.
-                            int score = (Math.Abs(off) < 1e-9 ? 0 : 2) + (Math.Abs(c) < 1e-9 ? 0 : 1) + (step % 100 == 0 ? 0 : 1);
-                            fits.Add((expr, score));
+                            var key = (name, step, c);
+                            if (!groups.TryGetValue(key, out var list)) groups[key] = list = new List<double>();
+                            list.Add(off);
                         }
                     }
                 }
-                if (fits.Count == 0) continue;
+                if (groups.Count == 0) continue;
 
-                var best = fits.OrderBy(f => f.score).First();
-                int alternatives = fits.Select(f => f.expr).Distinct().Count();
+                // Her grup için veriyle uyumlu ofset aralığının ortasını seç (gerçek değere beklenen en yakın tahmin).
+                var scored = groups.Select(g =>
+                {
+                    var lo = g.Value.Min();
+                    var hi = g.Value.Max();
+                    // Ofsetsiz formül uyuyorsa en basiti odur; uymuyorsa uyumlu aralığın ortası en iyi tahmindir.
+                    var off = g.Value.Contains(0) ? 0 : Math.Round((lo + hi) / 2, MidpointRounding.AwayFromZero);
+                    if (!g.Value.Contains(off)) off = g.Value.OrderBy(o => Math.Abs(o - (lo + hi) / 2)).First();
+                    bool fencepost = g.Key.form == "FLOOR" && Math.Abs(g.Key.c - 1) < 1e-9; // ROUNDDOWN(L / adım) + 1
+                    int score = (Math.Abs(off) < 1e-9 ? 0 : 2)
+                                + (Math.Abs(g.Key.c) < 1e-9 || fencepost ? 0 : 1)
+                                + (g.Key.step % 50 == 0 ? 0 : 1)
+                                + (g.Key.form == "ROUND" ? 1 : 0);
+                    return (g.Key.form, g.Key.step, g.Key.c, off, lo, hi, score, fencepost);
+                })
+                .OrderBy(g => g.score).ThenByDescending(g => g.fencepost).ThenBy(g => Math.Abs(g.off))
+                .ToList();
+
+                var best = scored[0];
+                var inputName = x.Name;
+                Func<double, string> format = off =>
+                {
+                    var inner = Math.Abs(off) < 1e-9
+                        ? $"{inputName} / {NumberUtil.Fmt(best.step)}"
+                        : $"({NumberUtil.Linear(new[] { (1.0, inputName) }, off)}) / {NumberUtil.Fmt(best.step)}";
+                    var e = $"{best.form}({inner})";
+                    if (Math.Abs(best.c) > 1e-9) e += best.c > 0 ? $" + {NumberUtil.Fmt(best.c)}" : $" - {NumberUtil.Fmt(-best.c)}";
+                    return e;
+                };
+                var expr = format(best.off);
+
+                int alternatives = scored.Count;
                 int distinct = xs.Distinct().Count();
+                string? question = null;
+                if (best.hi - best.lo > 1e-9)
+                    question = $"{expr}: parantez içindeki sabit veriyle ayırt edilemiyor; " +
+                               $"{NumberUtil.Linear(new[] { (1.0, x.Name) }, best.lo)} ile {NumberUtil.Linear(new[] { (1.0, x.Name) }, best.hi)} arasındaki her değer 9 varyantla da uyumlu. Gerçek değer nedir?"
+                               .Replace("9 varyant", $"{samples.Count} varyant");
+                else if (alternatives > 1)
+                    question = $"Adet kuralı için başka formüller de veriyle uyumlu (ör. {expr}). Gerçek kural nedir?";
+
                 yield return new RelationCandidate
                 {
-                    Expression = best.expr,
+                    Expression = expr,
+                    OffsetInput = best.hi - best.lo > 1e-9 ? x.Name : null,
+                    OffsetLo = best.lo,
+                    OffsetHi = best.hi,
+                    WithOffset = format,
                     Confidence = NumberUtil.Confidence(distinct, 2, Math.Min(alternatives, 25)),
                     Complexity = 4,
-                    Evidence = $"{samples.Count} varyantta basamak (adet) fonksiyonu uyuyor; {alternatives} alternatif formül de veriyle uyumlu.",
-                    Question = alternatives > 1
-                        ? $"Adet kuralı için birden fazla formül veriyle uyumlu (ör. {best.expr}). Gerçek kural nedir? (ör. 'her 1000 mm'de bir ayak')"
-                        : null,
+                    Evidence = $"{samples.Count} varyantta basamak (adet) fonksiyonu uyuyor; {alternatives} farklı biçim de veriyle uyumlu.",
+                    Question = question,
                 };
             }
         }
@@ -477,6 +550,10 @@ namespace RuleForge.Inference
                 yield return new RelationCandidate
                 {
                     Expression = $"RANGELOOKUP({x.Name}, {string.Join(", ", parts)})",
+                    Template = runs.Count == 2 ? $"RANGELOOKUP({x.Name}, {{T}}, {parts[1]}, {parts[2]})" : null,
+                    ThresholdInput = runs.Count == 2 ? x.Name : null,
+                    ThresholdLo = runs[0].hi,
+                    ThresholdHi = runs[runs.Count - 1].lo,
                     Confidence = NumberUtil.Confidence(pts.Count, 2 * runs.Count - 1),
                     Complexity = 6,
                     Evidence = $"{x.Name} aralıklarına göre {runs.Count} farklı değer.",
@@ -515,23 +592,22 @@ namespace RuleForge.Inference
                 if (trues.Count == 0 || falses.Count == 0) continue;
 
                 if (trues.Min() > falses.Max())
-                {
-                    var t = NumberUtil.RoundestBetween(falses.Max(), trues.Min());
-                    yield return ThresholdCandidate($"{x.Name} > {NumberUtil.Fmt(t)}", x.Name, falses.Max(), trues.Min(), samples.Count);
-                }
+                    yield return ThresholdCandidate($"{x.Name} > {{T}}", x.Name, falses.Max(), trues.Min(), samples.Count);
                 else if (trues.Max() < falses.Min())
-                {
-                    var t = NumberUtil.RoundestBetween(trues.Max(), falses.Min());
-                    yield return ThresholdCandidate($"{x.Name} <= {NumberUtil.Fmt(t)}", x.Name, trues.Max(), falses.Min(), samples.Count);
-                }
+                    yield return ThresholdCandidate($"{x.Name} <= {{T}}", x.Name, trues.Max(), falses.Min(), samples.Count);
             }
         }
 
-        private static RelationCandidate ThresholdCandidate(string expr, string name, double lo, double hi, int n)
+        private static RelationCandidate ThresholdCandidate(string template, string name, double lo, double hi, int n)
         {
+            var t = NumberUtil.RoundestBetween(lo, hi);
             return new RelationCandidate
             {
-                Expression = expr,
+                Expression = template.Replace("{T}", NumberUtil.Fmt(t)),
+                Template = template,
+                ThresholdInput = name,
+                ThresholdLo = lo,
+                ThresholdHi = hi,
                 Complexity = 2,
                 Confidence = NumberUtil.Confidence(n, 2),
                 Evidence = $"{name} {NumberUtil.Fmt(lo)} ile {NumberUtil.Fmt(hi)} arasında bir eşikte değişiyor.",

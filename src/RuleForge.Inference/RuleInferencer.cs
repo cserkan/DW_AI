@@ -58,6 +58,9 @@ namespace RuleForge.Inference
         /// <summary>Kullanıcıya sorulması gereken belirsizlikler (YZ sohbetinde kullanılır).</summary>
         public List<string> Questions { get; set; } = new List<string>();
 
+        /// <summary>Kullanıcının cevaplaması gereken sorular (cevapları kurallara uygulanabilir; bkz. <see cref="QuestionApplier"/>).</summary>
+        public List<OpenQuestion> OpenQuestions { get; set; } = new List<OpenQuestion>();
+
         public List<string> Notes { get; set; } = new List<string>();
 
         /// <summary>Çıkarımın belirsiz kaldığı noktalar (hangi girdi değeri denenirse çözülür).</summary>
@@ -242,6 +245,20 @@ namespace RuleForge.Inference
         public double Tolerance { get; set; }
         public HashSet<string> UsedIds { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
+        /// <summary>Kural → kaynak gözlemi ve veriye uyan diğer formüller (sorular için).</summary>
+        public Dictionary<string, Observation> RuleObservations { get; } = new Dictionary<string, Observation>(StringComparer.OrdinalIgnoreCase);
+        public Dictionary<string, List<string>> Alternatives { get; } = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>Gözlemin her varyanttaki değeri ve o varyantın girdileri: kullanıcının yazdığı formülü sınamak için.</summary>
+        public List<QuestionCheck> ChecksFor(Observation obs) =>
+            Samples.Where(s => obs.Values.ContainsKey(s.Name)).Select(s => new QuestionCheck
+            {
+                Variant = s.Name.Split(new[] { "__" }, StringSplitOptions.None)[0] + (s.Name.Contains("#") ? " " + s.Name.Substring(s.Name.LastIndexOf('#')) : ""),
+                Expected = obs.Values[s.Name].AsText(),
+                Inputs = Columns.Where(c => c.Values.ContainsKey(s.Name))
+                    .ToDictionary(c => c.Name, c => c.Values[s.Name].AsText(), StringComparer.OrdinalIgnoreCase),
+            }).ToList();
+
         /// <summary>
         /// Master modeldeki değerler (gözlem anahtarıyla). Tüm varyantlarda aynı ama master'dan farklı olan değerler
         /// (ör. DriveWorks'ün her seferinde boşalttığı bir özellik) sabit kural olur.
@@ -267,7 +284,63 @@ namespace RuleForge.Inference
             var split = options.DetectModules ? ModuleDetector.Detect(samples, master, options) : null;
             var report = split != null ? InferModules(split, options, master) : InferFlat(samples, options, master);
             ExtendSwitches(report);
+            CoupledInputQuestions(report);
+            TidyQuestions(report);
             return report;
+        }
+
+        /// <summary>
+        /// Sonradan açıklanan değerlerin sorularını atar (başka bir değerden ya da aralık formülünden kural bulundu) ve
+        /// varyantlarda aynı değerleri taşıyan açıklanamayan değerleri tek soruda birleştirir (ör. 8 parçadaki OrderNo).
+        /// </summary>
+        private static void TidyQuestions(InferenceReport report)
+        {
+            var stillUnexplained = new HashSet<string>(report.Unexplained.Select(u => "aciklanamayan:" + u.Key), StringComparer.OrdinalIgnoreCase);
+            report.OpenQuestions.RemoveAll(q => q.Kind == QuestionKind.Unexplained && !stillUnexplained.Contains(q.Id));
+            var merged = new List<OpenQuestion>();
+            foreach (var group in report.OpenQuestions.Where(q => q.Kind == QuestionKind.Unexplained)
+                         .GroupBy(q => string.Join("\u0001", q.Checks.Select(c => c.Variant + "=" + c.Expected))).Where(g => g.Count() > 1))
+            {
+                var first = group.First();
+                foreach (var other in group.Skip(1))
+                {
+                    first.Targets.AddRange(other.Targets);
+                    merged.Add(other);
+                }
+                first.Text = $"{first.Targets.Count} değer nasıl hesaplanıyor? ({string.Join(", ", first.Targets.Take(3).Select(t => t.Label))}" +
+                             (first.Targets.Count > 3 ? " …)" : ")");
+                first.Detail = first.Detail?.Replace("Bu değer varyantlarda", "Bu değerler varyantlarda hep aynı biçimde");
+            }
+            report.OpenQuestions.RemoveAll(merged.Contains);
+        }
+
+        /// <summary>
+        /// Girdiyle hep birlikte değişen seçim değerleri (ör. malzeme ve kulp dosyası): aynı girdiden mi geliyor, yoksa formda
+        /// ayrı bir seçim mi olmalı? Aynı formülü paylaşan kardeş kurallar (sol ve sağ kapağın kulpu) birlikte sorulur.
+        /// </summary>
+        private static void CoupledInputQuestions(InferenceReport report)
+        {
+            foreach (var d in report.Drivers.Where(d => d.Question != null && d.CoupledLabel != null))
+            {
+                var main = report.Rules.FirstOrDefault(r => string.Equals(r.Description, d.CoupledLabel, StringComparison.Ordinal));
+                if (main == null) continue;
+                var rules = report.Rules.Where(r => r == main || (r.Target.Kind == main.Target.Kind && r.Expression == main.Expression)).ToList();
+                report.OpenQuestions.Add(new OpenQuestion
+                {
+                    Id = "ayri:" + d.Name + ":" + main.Id,
+                    Kind = QuestionKind.SeparateInput,
+                    Text = $"{main.Description}: her zaman {d.Name} seçimine göre mi belirleniyor?",
+                    Detail = $"Varyantlarda bu seçim ile {d.Label} hep birlikte değişti ({main.Expression}). Siparişte ayrı seçilebiliyorsa formda ayrı bir alan olmalı.",
+                    RuleIds = rules.Select(r => r.Id).ToList(),
+                    Input = d.Name,
+                    Label = main.Description,
+                    Options =
+                    {
+                        new QuestionOption { Label = $"Evet, her zaman {d.Name} seçimine göre", Value = "ayni" },
+                        new QuestionOption { Label = "Hayır, ayrı seçilebilmeli (formda ayrı alan olsun)", Value = "ayri" },
+                    },
+                });
+            }
         }
 
         private static readonly System.Text.RegularExpressions.Regex SwitchCall = new System.Text.RegularExpressions.Regex(
@@ -468,6 +541,20 @@ namespace RuleForge.Inference
                         Scope = ctx.ScopeOf(obs),
                         Values = obs.Values.ToDictionary(kv => kv.Key, kv => kv.Value.AsText()),
                     });
+                    var seen = obs.Values.Values.Select(v => v.AsText()).Distinct().Take(6).ToList();
+                    report.OpenQuestions.Add(new OpenQuestion
+                    {
+                        Id = "aciklanamayan:" + obs.Key,
+                        Kind = QuestionKind.Unexplained,
+                        Text = $"{obs.Label} nasıl hesaplanıyor?",
+                        Detail = $"Bu değer varyantlarda değişiyor ama hiçbir girdiyle açıklanamadı. Görülen değerler: {string.Join(", ", seen)}" +
+                                 (obs.Values.Values.Distinct().Count() > seen.Count ? " …" : "") + ". Formülünü yazarsanız varyantlarla sınanır.",
+                        Options = { new QuestionOption { Label = "Önemli değil (kural yazılmasın)", Value = "onemsiz" } },
+                        AllowFormula = true,
+                        Targets = { new NewRuleTarget { Target = ctx.TargetOf(obs), Scope = ctx.ScopeOf(obs), Label = obs.Label } },
+                        Label = obs.Label,
+                        Checks = ctx.ChecksFor(obs),
+                    });
                     continue;
                 }
 
@@ -493,6 +580,9 @@ namespace RuleForge.Inference
                 };
                 report.Rules.Add(rule);
                 chosen.Add((obs, rule, best));
+                ctx.RuleObservations[rule.Id] = obs;
+                ctx.Alternatives[rule.Id] = candidates.Skip(1).Where(c => c.Confidence >= 0.5).Select(c => c.Expression)
+                    .Where(e => e != best.Expression).Distinct().Take(3).ToList();
             }
 
             // Girdi olarak seçilen model değerlerinin kendisi de üretimde yazılmalı (ör. kapak dosyası seçimi,
@@ -523,7 +613,7 @@ namespace RuleForge.Inference
             var handled = ShareThresholds(chosen, report, ctx, needs);
             DeriveFromOtherValues(chosen, report, ctx, handled);
             DerivePitches(chosen, report, ctx, handled);
-            CollectNeeds(chosen, columns, report, needs, handled);
+            CollectNeeds(chosen, columns, report, needs, handled, ctx);
 
             foreach (var (_, rule, candidate) in chosen)
             {
@@ -532,9 +622,46 @@ namespace RuleForge.Inference
                 ids.Add(rule.Id);
             }
             foreach (var q in questionRules)
+            {
                 report.Questions.Add(q.Value.Count <= 3
                     ? $"{string.Join(", ", q.Value)}: {q.Key}"
                     : $"{q.Value.Count} kural ({string.Join(", ", q.Value.Take(2))} …): {q.Key}");
+                // Veriye birden çok formül uyan her kural için ayrı seçim sorusu; diğerleri (az veri) birlikte doğrulanır.
+                var withAlternatives = q.Value.Where(id => ctx.Alternatives.TryGetValue(id, out var alt) && alt.Count > 0).ToList();
+                foreach (var id in withAlternatives)
+                {
+                    var rule = report.Rules.First(r => r.Id == id);
+                    var question = new OpenQuestion
+                    {
+                        Id = "formul:" + id,
+                        Kind = QuestionKind.ChooseFormula,
+                        Text = $"{rule.Description}: hangi formül doğru?",
+                        Detail = q.Key,
+                        RuleIds = { id },
+                        Options = { new QuestionOption { Label = rule.Expression + "   (şu an kullanılan)", Value = rule.Expression } },
+                        AllowFormula = true,
+                        Checks = ctx.RuleObservations.TryGetValue(id, out var o) ? ctx.ChecksFor(o) : new List<QuestionCheck>(),
+                    };
+                    question.Options.AddRange(ctx.Alternatives[id].Select(e => new QuestionOption { Label = e, Value = e }));
+                    report.OpenQuestions.Add(question);
+                }
+                var rest = q.Value.Except(withAlternatives).ToList();
+                if (rest.Count == 0) continue;
+                var first = report.Rules.First(r => r.Id == rest[0]);
+                report.OpenQuestions.Add(new OpenQuestion
+                {
+                    Id = "dogrula:" + string.Join(",", rest.OrderBy(x => x, StringComparer.Ordinal)),
+                    Kind = QuestionKind.Confirm,
+                    Text = rest.Count == 1 ? $"{first.Description} = {first.Expression}: doğru mu?"
+                                           : $"{rest.Count} kural doğru mu? (ör. {first.Description} = {first.Expression})",
+                    Detail = q.Key,
+                    RuleIds = rest,
+                    Options = { new QuestionOption { Label = "Evet, doğru", Value = "dogru" } },
+                    // Birden çok kural genelde simetrik kardeşlerdir (sol/sağ kapak): yazılan formül hepsine uygulanır, ilkiyle sınanır.
+                    AllowFormula = true,
+                    Checks = ctx.RuleObservations.TryGetValue(rest[0], out var ob) ? ctx.ChecksFor(ob) : new List<QuestionCheck>(),
+                });
+            }
             return needs;
         }
 
@@ -616,7 +743,27 @@ namespace RuleForge.Inference
                         handled.Add(item.rule.Id);
                     }
                     var training = columns.First(c => c.Name == byInput.Key).Values.Values.Select(v => v.AsNumber()).ToList();
-                    needs.Add(VariantPlanner.ThresholdNeed(byInput.Key, cluster.lo, cluster.hi, training, $"{cluster.items.Count} kural: {name}"));
+                    var need = VariantPlanner.ThresholdNeed(byInput.Key, cluster.lo, cluster.hi, training, $"{cluster.items.Count} kural: {name}");
+                    needs.Add(need);
+                    var examples = cluster.items.Take(3).Select(i => i.rule.Description).ToList();
+                    // Tam sayı girdide (ör. konveyör adedi) arada başka değer yoksa eşik belirsiz değildir: sorulmaz.
+                    bool integerGap = training.All(v => Math.Abs(v - Math.Round(v)) < 1e-9) && cluster.hi - cluster.lo <= 1 + 1e-9;
+                    if (!integerGap) report.OpenQuestions.Add(new OpenQuestion
+                    {
+                        Id = "esik:" + name,
+                        Kind = QuestionKind.Threshold,
+                        Text = $"{byInput.Key} hangi değeri geçince değişiyor?",
+                        Detail = $"{cluster.items.Count} kural {byInput.Key} küçükken bir, büyükken başka sonuç veriyor (ör. {string.Join("; ", examples)}). " +
+                                 $"Varyantlarda {NumberUtil.Fmt(cluster.lo)} ile {NumberUtil.Fmt(cluster.hi)} farklı sonuç verdi; aradaki gerçek sınır nedir? " +
+                                 $"Şimdilik {NumberUtil.Fmt(t)} kullanılıyor.",
+                        RuleIds = cluster.items.Select(i => i.rule.Id).ToList(),
+                        Variable = name,
+                        Input = byInput.Key,
+                        Min = cluster.lo,
+                        Max = cluster.hi,
+                        Current = t,
+                        TryValues = need.Values.Select(v => v.AsText()).ToList(),
+                    });
                     report.Questions.Add(
                         $"{byInput.Key} için {cluster.items.Count} kural aynı eşiği kullanıyor ({string.Join(", ", cluster.items.Take(4).Select(i => i.rule.Id))}" +
                         $"{(cluster.items.Count > 4 ? " …" : "")}). Veriler {NumberUtil.Fmt(cluster.lo)} ile {NumberUtil.Fmt(cluster.hi)} arasındaki her değeri " +
@@ -628,29 +775,51 @@ namespace RuleForge.Inference
 
         /// <summary>Kesinleşmemiş kuralların (tek başına eşik, belirsiz sabit, az veri) çözülmesi için gereken değerleri toplar.</summary>
         private static void CollectNeeds(List<(Observation obs, Rule rule, RelationCandidate candidate)> chosen,
-            List<InputColumn> columns, InferenceReport report, List<ProbeNeed> needs, HashSet<string> handled)
+            List<InputColumn> columns, InferenceReport report, List<ProbeNeed> needs, HashSet<string> handled, RuleContext ctx)
         {
             List<double> Training(string input) =>
                 columns.First(c => c.Name == input).Values.Values.Select(v => v.AsNumber()).ToList();
 
             // Eşik hangi girdiye bağlı belirsizse (birden çok girdi veriyi ayırıyorsa) onları ayıracak varyantlar.
             var competing = new Dictionary<string, (string a, RelationCandidate ca, string b, RelationCandidate cb, List<string> rules)>();
+            // Girdi → (kural → o girdiyle formül): kullanıcı girdiyi seçince kurallar ona göre yazılır.
+            var choices = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
             foreach (var (_, rule, c) in chosen.Where(x => x.candidate.ThresholdInput != null && x.candidate.Competitors.Count > 0))
             foreach (var other in c.Competitors)
             {
                 var pair = new[] { c.ThresholdInput!, other.ThresholdInput! }.OrderBy(x => x, StringComparer.Ordinal).ToArray();
                 var key = pair[0] + "|" + pair[1];
                 if (!competing.TryGetValue(key, out var entry))
+                {
                     competing[key] = entry = (c.ThresholdInput!, c, other.ThresholdInput!, other, new List<string>());
+                    choices[key] = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
+                }
                 entry.rules.Add(rule.Id);
+                Dictionary<string, string> For(string input) =>
+                    choices[key].TryGetValue(input, out var m) ? m : choices[key][input] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                For(c.ThresholdInput!)[rule.Id] = rule.Expression;
+                For(other.ThresholdInput!)[rule.Id] = other.Expression;
             }
-            foreach (var e in competing.Values)
+            foreach (var kv in competing)
             {
+                var e = kv.Value;
                 var colA = columns.First(x => x.Name == e.a);
                 var colB = columns.First(x => x.Name == e.b);
                 needs.Add(VariantPlanner.CompetingThresholdNeed(colA, e.ca.ThresholdLo, e.ca.ThresholdHi, colB, e.cb.ThresholdLo, e.cb.ThresholdHi,
                     e.rules.Count <= 2 ? string.Join(", ", e.rules) : $"{e.rules.Count} kural"));
                 report.Questions.Add($"{e.rules.Count} kuralın eşiğini hangi girdi belirliyor: {e.a} / {e.b}? Mevcut varyantlarda ikisi de veriyi aynı şekilde ayırıyor.");
+                var example = report.Rules.FirstOrDefault(r => r.Id == e.rules[0])?.Description;
+                report.OpenQuestions.Add(new OpenQuestion
+                {
+                    Id = "girdi:" + kv.Key,
+                    Kind = QuestionKind.ChooseInput,
+                    Text = $"{e.rules.Count} kural {e.a} değerine mi, {e.b} değerine mi bağlı?",
+                    Detail = $"Bu kurallar (ör. {example}) bir sınırda değişiyor. Mevcut varyantlarda {e.a} ve {e.b} aynı ayrımı yapıyor; " +
+                             "hangisinin belirlediği veriden anlaşılamıyor.",
+                    RuleIds = e.rules.Distinct().ToList(),
+                    Options = { new QuestionOption { Label = e.a, Value = e.a }, new QuestionOption { Label = e.b, Value = e.b } },
+                    Choices = choices[kv.Key],
+                });
             }
 
             foreach (var (_, rule, c) in chosen.Where(x => !handled.Contains(x.rule.Id)))

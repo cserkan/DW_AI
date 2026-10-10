@@ -65,6 +65,13 @@ $t = "C:\Users\pc\Downloads\ConveryoSoloTemplate\SOLIDWORKS Files"
 - Uçtan uca denendi (yalnızca API ile, tarayıcının yaptığı istekler): yeni ürün → özgün dolap şablonu (45 dosya) ve
   DriveWorks Results klasörü (169 dosya) yüklendi → 9 varyant okundu → 109 kural → S0001 üretildi → DriveWorks 0009 ile
   1152/1160 aynı (sadece OrderNo). Ekran görüntüleri görünmez (headless) Chrome ile alındı.
+- **"Sizin cevaplamanız gerekenler"** (kullanıcı: "o kısım aslında önemli"; eski "Notlar ve sorular" listesini beğenmedi).
+  Çıkarım artık yapılandırılmış sorular üretir (`OpenQuestion`, `src\RuleForge.Inference\OpenQuestions.cs`): eşik değeri,
+  hangi girdi, formül seçimi, doğrula, ayrı seçim mi, açıklanamayan değer. Her sorunun altında cevap alanı ve not; cevap
+  `QuestionApplier` ile kurallara uygulanır, elle yazılan formül varyantların gerçek değerleriyle sınanır (hiçbirinde
+  tutmuyorsa reddedilir), veriyle çelişen eşik reddedilir. Cevaplar `cevaplar.json`'da; kurallar yeniden çıkarılınca
+  kararlı soru kimlikleriyle yeniden uygulanır. Dolapta 7, konveyörde 2 soru. Sıradaki doğal adım: notlar (cevaplardaki
+  "neden") şirket bilgisinin ilk parçası.
 - **Kullanıcının ekranına fare tıklaması göndermeyin**: bir kez tıklama, kullanıcının önde açık Gezgin penceresine gitti.
   Görüntü için headless Chrome kullanın (`chrome --headless=new --screenshot ... http://127.0.0.1:5050/#<ürün>/<adım>`).
 - Sıradaki (kullanıcı onaylı): **şirket bilgisi** özelliği (aşağıda "Sıradaki özellikler"); arayüzde "Şirket kuralları"

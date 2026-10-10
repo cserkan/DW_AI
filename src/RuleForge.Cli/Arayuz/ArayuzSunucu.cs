@@ -204,6 +204,8 @@ namespace RuleForge.Cli.Arayuz
                 case "POST /api/cikar": return IsBaslat(ProjeBul(Q("id")), "cikar", false, KurallariCikar);
                 case "GET /api/kurallar": return Kurallar(ProjeBul(Q("id")));
                 case "POST /api/kural-durum": return KuralDurum(ProjeBul(Q("id")), Oku<DurumIstegi>(body));
+                case "GET /api/sorular": return Sorular(ProjeBul(Q("id")));
+                case "POST /api/cevap": return Cevapla(ProjeBul(Q("id")), Oku<CevapIstegi>(body));
                 case "GET /api/form": return Form(ProjeBul(Q("id")));
                 case "POST /api/form-etiket": return FormEtiket(ProjeBul(Q("id")), Oku<EtiketIstegi>(body));
                 case "POST /api/hesapla": return Hesapla(ProjeBul(Q("id")), Oku<HesapIstegi>(body));
@@ -220,6 +222,15 @@ namespace RuleForge.Cli.Arayuz
         private sealed class DurumIstegi { public List<string> Kurallar { get; set; } = new List<string>(); public string Durum { get; set; } = "proposed"; }
         private sealed class EtiketIstegi { public string? Tablo { get; set; } public string Ad { get; set; } = string.Empty; public string? Etiket { get; set; } public string? Birim { get; set; } }
         private sealed class AcIstegi { public string Yol { get; set; } = string.Empty; public bool SolidWorks { get; set; } }
+
+        private sealed class CevapIstegi
+        {
+            public string Soru { get; set; } = string.Empty;
+            public string? Secim { get; set; }
+            public double? Sayi { get; set; }
+            public string? Formul { get; set; }
+            public string? Not { get; set; }
+        }
 
         private sealed class HesapIstegi
         {
@@ -279,6 +290,7 @@ namespace RuleForge.Cli.Arayuz
                 KuralSayisi = rules?.Rules.Count ?? 0,
                 OnayliKural = rules?.Rules.Count(r => r.Status == RuleStatus.Approved) ?? 0,
                 ReddedilenKural = rules?.Rules.Count(r => r.Status == RuleStatus.Rejected) ?? 0,
+                AcikSoru = AcikSoruSayisi(p, rules),
                 SiparisSayisi = Directory.Exists(p.Siparisler) ? Directory.GetDirectories(p.Siparisler).Count(d => !d.EndsWith(".calisma")) : 0,
                 CalisanIs = _calisan != null && _calisan.Durum == "calisiyor" ? new { _calisan.Id, _calisan.Tur, _calisan.Proje } : null,
             };
@@ -438,6 +450,19 @@ namespace RuleForge.Cli.Arayuz
                     if (eski.TryGetValue(r.Target.Key + "|" + r.Scope, out var e))
                         r.Status = e.Status == RuleStatus.Approved && e.Expression != r.Expression ? RuleStatus.Proposed : e.Status;
             }
+            // Daha önce verilen cevaplar yeni kurallara yeniden uygulanır (soru kimlikleri kararlı).
+            var cevaplar = Cevaplar(p);
+            int yeniden = 0;
+            foreach (var q in report.OpenQuestions)
+            {
+                if (!cevaplar.TryGetValue(q.Id, out var kayit)) continue;
+                var sonuc = QuestionApplier.Apply(rules, q, kayit.Cevap);
+                kayit.Uygulandi = sonuc.Ok;
+                kayit.Sonuc = sonuc.Ok ? sonuc.Message : "Yeni kurallara uygulanamadı: " + sonuc.Message;
+                if (sonuc.Ok) yeniden++;
+            }
+            if (yeniden > 0) job.Yaz($"Önceki {yeniden} cevabınız yeni kurallara uygulandı.");
+            JsonStore.Save(cevaplar, p.Cevaplar);
             JsonStore.Save(rules, p.Kurallar);
             File.WriteAllText(Path.ChangeExtension(p.Kurallar, ".cikarim.txt"), report.ToText());
             if (report.InputValues.Count > 0)
@@ -449,6 +474,7 @@ namespace RuleForge.Cli.Arayuz
                 Sorular = report.Questions,
                 Aciklanamayan = report.Unexplained.Select(u => u.Label).ToList(),
                 OnerilenVaryant = report.SuggestedVariants.Count,
+                AcikSorular = report.OpenQuestions,
             }, p.Notlar);
             job.Yaz($"{rules.Rules.Count} kural, {rules.Inputs.Count} girdi" + (rules.Tables.Count > 0 ? $", {rules.Tables.Count} tablo" : "") + " bulundu.");
         }
@@ -528,6 +554,108 @@ namespace RuleForge.Cli.Arayuz
             }
             JsonStore.Save(rules, p.Kurallar);
             return new { Degisen = n };
+        }
+
+        // ---------------------------------------------------------------- Sorular
+
+        private static int AcikSoruSayisi(Proje p, RuleSet? rules)
+        {
+            if (rules == null || !File.Exists(p.Notlar)) return 0;
+            var cevaplar = Cevaplar(p);
+            return JsonStore.Load<CikarimNotlari>(p.Notlar).AcikSorular.Count(q =>
+                !(cevaplar.TryGetValue(q.Id, out var c) && c.Uygulandi) &&
+                !(q.Kind == QuestionKind.Threshold && q.Variable != null &&
+                  !rules.Rules.Any(r => Regex.IsMatch(r.Expression ?? string.Empty, @"\b" + Regex.Escape(q.Variable) + @"\b"))));
+        }
+
+        private static Dictionary<string, KayitliCevap> Cevaplar(Proje p) =>
+            File.Exists(p.Cevaplar) ? JsonStore.Load<Dictionary<string, KayitliCevap>>(p.Cevaplar) : new Dictionary<string, KayitliCevap>();
+
+        /// <summary>Girdi adı → formdaki etiket (soru metinlerinde okunur ad göstermek için).</summary>
+        private Dictionary<string, string> Etiketler(Proje p, RuleSet rules)
+        {
+            var form = FormAyari(p);
+            var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var i in rules.Inputs) map[i.Name] = Ayar(form.Girdiler, i.Name)?.Etiket ?? (i.Label == i.Name ? Okunur(i.Name) : i.Label);
+            foreach (var t in rules.Tables)
+            {
+                map[t.Name + "_Adet"] = (Ayar(form.Tablolar, t.Name)?.Etiket ?? Okunur(t.Name)) + " sayısı";
+                foreach (var c in t.Columns) map[c.Name] = Ayar(Ayar(form.Tablolar, t.Name)?.Sutunlar, c.Name)?.Etiket ?? Okunur(c.Name);
+            }
+            return map;
+        }
+
+        private static string Okunurlastir(string text, Dictionary<string, string> etiketler) =>
+            etiketler.OrderByDescending(kv => kv.Key.Length).Aggregate(text, (s, kv) =>
+                Regex.Replace(s, @"(?<![A-Za-z0-9_])" + Regex.Escape(kv.Key) + @"(?![A-Za-z0-9_])", "«" + kv.Value + "»"));
+
+        private object Sorular(Proje p)
+        {
+            if (!File.Exists(p.Kurallar) || !File.Exists(p.Notlar)) return new { Var = false };
+            var rules = JsonStore.Load<RuleSet>(p.Kurallar);
+            var sorular = JsonStore.Load<CikarimNotlari>(p.Notlar).AcikSorular;
+            var cevaplar = Cevaplar(p);
+            var etiketler = Etiketler(p, rules);
+            return new
+            {
+                Var = true,
+                Girdiler = etiketler.Select(kv => new { Ad = kv.Key, Etiket = kv.Value }).ToList(),
+                // Sıra: önce başka soruları etkileyenler (hangi girdi, ayrı seçim), sonra eşikler ve formüller, en sonda açıklanamayanlar.
+                Sorular = sorular.OrderBy(q => Array.IndexOf(new[] { QuestionKind.ChooseInput, QuestionKind.SeparateInput, QuestionKind.Threshold,
+                    QuestionKind.ChooseFormula, QuestionKind.Confirm, QuestionKind.Unexplained }, q.Kind)).Select(q =>
+                {
+                    cevaplar.TryGetValue(q.Id, out var c);
+                    // Eşik sorusu: kurallar artık o değişkeni kullanmıyorsa (ör. başka girdi seçildi) geçersizdir.
+                    bool gecersiz = q.Kind == QuestionKind.Threshold && q.Variable != null &&
+                                    !rules.Rules.Any(r => Regex.IsMatch(r.Expression ?? string.Empty, @"\b" + Regex.Escape(q.Variable) + @"\b"));
+                    return new
+                    {
+                        q.Id,
+                        Tur = q.Kind,
+                        Metin = Okunurlastir(q.Text, etiketler),
+                        Aciklama = q.Detail == null ? null : Okunurlastir(q.Detail, etiketler).Replace("«", "").Replace("»", ""),
+                        KuralSayisi = q.RuleIds.Count + q.Targets.Count,
+                        Kurallar = q.RuleIds.Select(id => rules.FindRule(id)).Where(r => r != null).Take(30)
+                            .Select(r => new { r!.Id, Hedef = r.Description, Formul = r.Expression }).ToList(),
+                        Secenekler = q.Options.Select(o => new { Etiket = q.Kind == QuestionKind.ChooseInput ? Okunurlastir(o.Label, etiketler).Trim('«', '»') : o.Label, Deger = o.Value }).ToList(),
+                        FormulYazilabilir = q.AllowFormula,
+                        q.Min,
+                        q.Max,
+                        Simdiki = q.Current,
+                        Dene = q.TryValues,
+                        GirdiEtiketi = q.Input != null && etiketler.TryGetValue(q.Input, out var ge) ? ge : q.Input,
+                        VaryantSayisi = q.Checks.Count,
+                        Durum = gecersiz ? "gecersiz" : c != null && c.Uygulandi ? "cevaplandi" : "acik",
+                        Cevap = c?.Cevap,
+                        Sonuc = c?.Sonuc,
+                    };
+                }).ToList(),
+            };
+        }
+
+        private object Cevapla(Proje p, CevapIstegi istek)
+        {
+            if (!File.Exists(p.Kurallar) || !File.Exists(p.Notlar)) throw new KullaniciHatasi("Önce kuralları çıkarın.");
+            var q = JsonStore.Load<CikarimNotlari>(p.Notlar).AcikSorular.FirstOrDefault(x => x.Id == istek.Soru)
+                    ?? throw new KullaniciHatasi("Soru bulunamadı; kuralları yeniden çıkarın.");
+            var rules = JsonStore.Load<RuleSet>(p.Kurallar);
+            var cevap = new QuestionAnswer
+            {
+                Choice = istek.Secim,
+                Number = istek.Sayi,
+                Formula = string.IsNullOrWhiteSpace(istek.Formul) ? null : istek.Formul!.Trim(),
+                Note = string.IsNullOrWhiteSpace(istek.Not) ? null : istek.Not!.Trim(),
+                By = Environment.UserName,
+            };
+            var sonuc = QuestionApplier.Apply(rules, q, cevap);
+            if (!sonuc.Ok) return new { Tamam = false, Mesaj = sonuc.Message };
+            var errors = RuleSetValidator.Validate(rules).Where(i => i.Severity == IssueSeverity.Error).ToList();
+            if (errors.Count > 0) return new { Tamam = false, Mesaj = "Kurallar bu cevapla geçersiz oluyor: " + string.Join("; ", errors.Take(3).Select(e => e.ToString())) };
+            JsonStore.Save(rules, p.Kurallar);
+            var cevaplar = Cevaplar(p);
+            cevaplar[q.Id] = new KayitliCevap { Cevap = cevap, Sonuc = sonuc.Message, Uygulandi = true };
+            JsonStore.Save(cevaplar, p.Cevaplar);
+            return new { Tamam = true, Mesaj = sonuc.Message };
         }
 
         // ---------------------------------------------------------------- 3) Form ve üretim

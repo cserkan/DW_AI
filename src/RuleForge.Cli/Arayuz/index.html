@@ -125,6 +125,28 @@ th { color: var(--muted); font-weight: 600; font-size: 12.5px; }
 td.v { font-family: var(--mono); font-size: 12.5px; word-break: break-word; }
 .scroll { max-height: 360px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; margin-top: 8px; }
 .path { font-family: var(--mono); font-size: 12.5px; word-break: break-all; color: var(--muted); }
+.ask { border-color: var(--warn); box-shadow: 0 0 0 1px var(--warn) inset; }
+.ask.done { border-color: var(--ok); box-shadow: 0 0 0 1px var(--ok) inset; }
+.badge { display: inline-block; min-width: 24px; padding: 1px 8px; border-radius: 999px; background: var(--warn); color: #fff; font-size: 13px; text-align: center; vertical-align: 2px; }
+.ask.done .badge { background: var(--ok); }
+.q { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; background: var(--bg); }
+.q .qt { font-weight: 600; font-size: 15.5px; }
+.q .qt b { color: var(--accent); }
+.q .qd { color: var(--muted); font-size: 13.5px; margin: 4px 0 8px; }
+.q .rel summary { color: var(--muted); font-size: 13px; cursor: pointer; }
+.q .rel li { font-size: 13px; }
+.q .rel code { font-family: var(--mono); font-size: 12px; }
+.ans { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); }
+.ans label.opt { display: flex; gap: 8px; align-items: flex-start; padding: 5px 0; cursor: pointer; }
+.ans label.opt input { margin-top: 4px; }
+.ans .mono, .ans input.mono { font-family: var(--mono); font-size: 13px; }
+.ans textarea { width: 100%; min-height: 54px; margin-top: 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font: inherit; font-size: 14px; color: inherit; resize: vertical; }
+.ans .names { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.ans .names button { border: 1px solid var(--line); background: var(--panel); border-radius: 6px; font-family: var(--mono); font-size: 12px; padding: 2px 6px; cursor: pointer; }
+.ans .row { display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+.ans .row .primary { padding: 8px 18px; }
+.answered { border-bottom: 1px solid var(--soft); padding: 10px 0; font-size: 14px; }
+.answered .r { color: var(--ok); font-size: 13px; }
 .empty { text-align: center; padding: 40px 20px; }
 .empty h2 { margin-bottom: 8px; }
 .newform { display: flex; gap: 10px; max-width: 460px; margin: 18px auto 0; }
@@ -208,8 +230,13 @@ td.v { font-family: var(--mono); font-size: 12.5px; word-break: break-word; }
           <div class="summary" id="ozet" style="margin-top:18px"></div>
           <h3>Bulunan girdiler</h3>
           <div class="chips" id="girdiler"></div>
-          <details id="notlarKutu" class="hidden" style="margin-top:12px"><summary class="small" style="cursor:pointer"></summary><ul class="small muted" id="notlar"></ul></details>
         </div>
+      </div>
+      <div class="card ask hidden" id="soruKart">
+        <h2>Sizin cevaplamanız gerekenler <span class="badge" id="soruSay"></span></h2>
+        <p class="lead">Varyantlardan kesin olarak çıkarılamayan noktalar. Cevabınız kurallara hemen işlenir; kurallar yeniden çıkarılsa da korunur.</p>
+        <div id="sorular"></div>
+        <details id="cevaplananlar" class="hidden" style="margin-top:12px"><summary style="cursor:pointer;font-weight:600"></summary><div id="cevapListe"></div></details>
       </div>
       <div class="card hidden" id="kuralKart">
         <div class="toolbar">
@@ -317,7 +344,7 @@ async function durumYenile() {
   proje = await api("/api/proje?id=" + encodeURIComponent(pid));
   const okundu = proje.okunanVaryantlar.length;
   $("s1").textContent = okundu ? `${okundu} varyant okundu` : proje.masterYuklendi || proje.masterVar ? "Varyantları yükleyin" : "Master ve varyantları yükleyin";
-  $("s2").textContent = proje.kuralSayisi ? `${proje.kuralSayisi} kural · ${proje.onayliKural} onaylı` : "Henüz çıkarılmadı";
+  $("s2").textContent = proje.acikSoru ? `${proje.acikSoru} soru cevabınızı bekliyor` : proje.kuralSayisi ? `${proje.kuralSayisi} kural · ${proje.onayliKural} onaylı` : "Henüz çıkarılmadı";
   $("s3").textContent = proje.siparisSayisi ? `${proje.siparisSayisi} sipariş` : proje.kuralSayisi ? "Değerleri girin, üretin" : "Önce kurallar";
   document.querySelector('[data-step="1"]').classList.toggle("done", okundu > 1);
   document.querySelector('[data-step="2"]').classList.toggle("done", proje.kuralSayisi > 0);
@@ -457,12 +484,102 @@ async function kurallariYukle() {
     .map(([v, t]) => `<div><b>${v}</b><span>${t}</span></div>`).join("");
   $("girdiler").innerHTML = kurallar.girdiler.map(g => `<span class="chip" title="${esc(g.description || "")}">${esc(g.etiket)}</span>`).join("")
     + kurallar.tablolar.map(t => `<span class="chip" title="${esc(t.description || "")}">${esc(t.etiket)} (tablo: ${esc(t.sutunlar.join(", "))})</span>`).join("");
-  const notlar = [...kurallar.sorular.map(s => "Soru: " + s), ...kurallar.notlar, ...(kurallar.aciklanamayan.length ? [`Açıklanamayan ${kurallar.aciklanamayan.length} değer: ${kurallar.aciklanamayan.slice(0, 8).join(", ")}${kurallar.aciklanamayan.length > 8 ? "…" : ""}`] : []), ...(kurallar.onerilenVaryant ? [`Belirsiz noktaları çözmek için ${kurallar.onerilenVaryant} yeni varyant öneriliyor (kurallar.oneriler.csv).`] : [])];
-  $("notlarKutu").classList.toggle("hidden", !notlar.length);
-  $("notlarKutu").querySelector("summary").textContent = `Notlar ve sorular (${notlar.length})`;
-  $("notlar").innerHTML = notlar.map(n => `<li>${esc(n)}</li>`).join("");
+  sorulariYukle();
   $("degiskenler").innerHTML = kurallar.degiskenler.length ? `<h3>Değişkenler</h3><table><tbody>${kurallar.degiskenler.map(v => `<tr><td><b>${esc(v.name)}</b><div class="small muted">${esc(v.description || "")}</div></td><td class="v">${esc(v.formul)}</td></tr>`).join("")}</tbody></table>` : "";
   kurallariCiz();
+}
+
+// ---- Sizin cevaplamanız gerekenler
+let sorular = null, duzenle = new Set();
+const vurgula = (s) => esc(s).replace(/«(.+?)»/g, "<b>$1</b>");
+const sade = (s) => String(s ?? "").replace(/[«»]/g, "");
+async function sorulariYukle() {
+  sorular = await api("/api/sorular?id=" + pid).catch(() => ({ var: false }));
+  const kart = $("soruKart");
+  if (!sorular.var || !sorular.sorular.length) { kart.classList.add("hidden"); $("s2").textContent = proje.kuralSayisi ? `${proje.kuralSayisi} kural · ${proje.onayliKural} onaylı` : $("s2").textContent; return; }
+  kart.classList.remove("hidden");
+  const acik = sorular.sorular.filter(q => q.durum === "acik" || (q.durum === "cevaplandi" && duzenle.has(q.id)));
+  const biten = sorular.sorular.filter(q => q.durum === "cevaplandi" && !duzenle.has(q.id));
+  const gecersiz = sorular.sorular.filter(q => q.durum === "gecersiz").length;
+  kart.classList.toggle("done", !acik.length);
+  $("soruSay").textContent = acik.length || "✓";
+  $("s2").textContent = acik.length ? `${acik.length} soru cevabınızı bekliyor` : `${proje.kuralSayisi} kural · ${proje.onayliKural} onaylı`;
+  $("sorular").innerHTML = acik.length ? acik.map(soruCiz).join("") : `<div class="status ok">Bütün soruları cevapladınız.</div>`;
+  if (gecersiz) $("sorular").insertAdjacentHTML("beforeend", `<p class="small muted">${gecersiz} soru verdiğiniz bir cevap yüzünden gereksiz kaldı.</p>`);
+  $("cevaplananlar").classList.toggle("hidden", !biten.length);
+  $("cevaplananlar").querySelector("summary").textContent = `Cevapladıklarınız (${biten.length})`;
+  $("cevapListe").innerHTML = biten.map(q => `<div class="answered"><div>${vurgula(q.metin)}</div>
+      <div class="muted small">Cevabınız: <b>${esc(cevapMetni(q))}</b>${q.cevap?.note ? ` · Not: ${esc(q.cevap.note)}` : ""}</div>
+      <div class="r">${esc(q.sonuc || "")}</div><button class="link" data-degistir="${esc(q.id)}">Değiştir</button></div>`).join("");
+  $("cevapListe").querySelectorAll("[data-degistir]").forEach(b => b.onclick = () => { duzenle.add(b.dataset.degistir); sorulariYukle(); });
+  $("sorular").querySelectorAll(".q").forEach(baglaSoru);
+}
+
+function cevapMetni(q) {
+  const c = q.cevap || {};
+  if (c.number != null) return `${c.number} (${q.girdiEtiketi || ""})`;
+  if (c.choice === "formul") return c.formula;
+  const o = q.secenekler.find(x => x.deger === c.choice);
+  return o ? o.etiket : (c.formula || c.choice || "");
+}
+
+function soruCiz(q) {
+  const id = "q_" + q.id.replace(/[^A-Za-z0-9]/g, "_");
+  const ilgili = q.kurallar.length ? `<details class="rel"><summary>İlgili kurallar (${q.kuralSayisi})</summary><ul>${q.kurallar.map(r => `<li>${esc(r.hedef)} = <code>${esc(r.formul)}</code></li>`).join("")}</ul></details>` : "";
+  let ans = "";
+  if (q.tur === "esik") {
+    ans = `<label class="lbl" for="${id}_n" style="margin-top:0">Sınır değer</label>
+      <div class="inwrap" style="max-width:320px"><input type="number" step="any" id="${id}_n" value="${q.cevap?.number ?? q.simdiki ?? ""}"><span class="unit">${esc(q.girdiEtiketi || "")}</span></div>
+      <p class="small muted">Varyantlara göre ${q.min}'den büyük, en fazla ${q.max} olabilir. ${q.girdiEtiketi} bu değere eşit ya da küçükse birinci durum, büyükse ikinci durum uygulanır.</p>
+      ${q.dene?.length ? `<p class="small muted">Bilmiyorsanız: DriveWorks'te ${esc(q.girdiEtiketi)} = ${q.dene.map(esc).join(", ")} olan varyantlar üretip 1. adımda yükleyin; sınır kendiliğinden bulunur.</p>` : ""}`;
+  } else {
+    const secili = q.cevap?.choice;
+    ans = q.secenekler.map((o, i) => `<label class="opt"><input type="radio" name="${id}" value="${esc(o.deger)}"${secili === o.deger ? " checked" : ""}><span class="${q.tur === "formul-secimi" ? "mono" : ""}">${esc(o.etiket)}</span></label>`).join("");
+    if (q.formulYazilabilir) {
+      ans += `<label class="opt"><input type="radio" name="${id}" value="formul"${secili === "formul" ? " checked" : ""}><span>${q.tur === "aciklanamayan" ? "Formülü şöyle:" : "Hayır, doğrusu şu formül:"}</span></label>
+        <input type="text" class="mono" id="${id}_f" placeholder="ör. ${esc(sorular.girdiler[0]?.ad || "Girdi")} / 2 - 4" value="${esc(q.cevap?.formula || "")}">
+        <div class="names">${sorular.girdiler.map(g => `<button type="button" title="${esc(g.etiket)}" data-ekle="${esc(g.ad)}">${esc(g.ad)}</button>`).join("")}</div>
+        <p class="small muted">${q.varyantSayisi ? `Yazdığınız formül ${q.varyantSayisi} varyantın gerçek değerleriyle sınanır.` : ""} Excel gibi: + - * /, IF(...), ROUND(...), "metin" & Girdi.</p>`;
+    }
+  }
+  return `<div class="q" data-id="${esc(q.id)}" data-tur="${esc(q.tur)}" data-k="${id}">
+    <div class="qt">${vurgula(q.metin)}</div><div class="qd">${esc(q.aciklama || "")}</div>${ilgili}
+    <div class="ans">${ans}
+      <textarea id="${id}_not" placeholder="Not (isteğe bağlı): neden böyle? Bu bilgi ürünle birlikte saklanır.">${esc(q.cevap?.note || "")}</textarea>
+      <div class="row"><button class="primary" type="button" data-cevapla>Cevapla</button><span class="small" data-mesaj></span></div>
+    </div></div>`;
+}
+
+function baglaSoru(el) {
+  const k = el.dataset.k, tur = el.dataset.tur;
+  const f = $(k + "_f");
+  el.querySelectorAll(".names button").forEach(b => b.onclick = () => {
+    f.focus(); const s = f.selectionStart ?? f.value.length;
+    f.value = f.value.slice(0, s) + b.dataset.ekle + f.value.slice(f.selectionEnd ?? s);
+    el.querySelector('input[value="formul"]').checked = true;
+  });
+  if (f) f.addEventListener("input", () => { const r = el.querySelector('input[value="formul"]'); if (r) r.checked = true; });
+  el.querySelector("[data-cevapla]").onclick = async () => {
+    const msg = el.querySelector("[data-mesaj]");
+    const body = { soru: el.dataset.id, not: $(k + "_not").value };
+    if (tur === "esik") {
+      const v = parseFloat(String($(k + "_n").value).replace(",", "."));
+      if (isNaN(v)) { msg.innerHTML = `<span style="color:var(--err)">Bir sayı girin.</span>`; return; }
+      body.sayi = v;
+    } else {
+      const r = el.querySelector("input[type=radio]:checked");
+      if (!r) { msg.innerHTML = `<span style="color:var(--err)">Bir seçenek işaretleyin.</span>`; return; }
+      body.secim = r.value;
+      if (r.value === "formul") body.formul = f.value;
+    }
+    msg.innerHTML = `<span class="muted">Uygulanıyor…</span>`;
+    try {
+      const res = await api("/api/cevap?id=" + pid, body);
+      if (!res.tamam) { msg.innerHTML = `<span style="color:var(--err)">${esc(res.mesaj)}</span>`; return; }
+      duzenle.delete(el.dataset.id);
+      await durumYenile(); await kurallariYukle();
+    } catch (e) { msg.innerHTML = `<span style="color:var(--err)">${esc(e.message)}</span>`; }
+  };
 }
 
 function kurallariCiz() {

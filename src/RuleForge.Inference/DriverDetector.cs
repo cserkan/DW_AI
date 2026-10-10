@@ -23,6 +23,9 @@ namespace RuleForge.Inference
 
         /// <summary>Farklı türden değerler hep birlikte değiştiyse (ör. malzeme ve kulp dosyası) kullanıcıya sorulacak belirsizlik.</summary>
         public string? Question { get; set; }
+
+        /// <summary>Soru varsa: bu girdiyle hep birlikte değişen diğer değer (ör. kulp dosyası).</summary>
+        public string? CoupledLabel { get; set; }
     }
 
     /// <summary>
@@ -113,6 +116,7 @@ namespace RuleForge.Inference
                                                  finder.Find(g[0], g[0].Target.ExpectedType, fast: true).Any(x => x.Confidence >= 0.7)),
                     Equivalents = group.Skip(1).Select(o => o.Label).ToList(),
                     Question = AmbiguityQuestion(group),
+                    CoupledLabel = CoupledWith(group)?.Label,
                 };
             }).ToList();
         }
@@ -139,12 +143,18 @@ namespace RuleForge.Inference
             return "c:" + string.Join(",", parts);
         }
 
+        private static Observation? CoupledWith(List<Observation> group)
+        {
+            var rep = group[0];
+            return group.Skip(1).FirstOrDefault(o => o.Target.Kind != rep.Target.Kind &&
+                (o.Target.Kind == TargetKind.ComponentReplace || rep.Target.Kind == TargetKind.ComponentReplace ||
+                 o.Target.Kind == TargetKind.Configuration || rep.Target.Kind == TargetKind.Configuration));
+        }
+
         private static string? AmbiguityQuestion(List<Observation> group)
         {
             var rep = group[0];
-            var other = group.Skip(1).FirstOrDefault(o => o.Target.Kind != rep.Target.Kind &&
-                (o.Target.Kind == TargetKind.ComponentReplace || rep.Target.Kind == TargetKind.ComponentReplace ||
-                 o.Target.Kind == TargetKind.Configuration || rep.Target.Kind == TargetKind.Configuration));
+            var other = CoupledWith(group);
             if (other == null) return null;
             return $"\"{rep.Label}\" ile \"{other.Label}\" varyantlarda hep birlikte değişti. İkisi aynı girdiden mi geliyor, " +
                    "yoksa ayrı girdiler mi (ör. ayrı bir seçim alanı)? Veriler bunu ayırt etmiyor; ayırt etmek için birini değiştirip diğerini sabit tutan bir varyant ekleyin.";

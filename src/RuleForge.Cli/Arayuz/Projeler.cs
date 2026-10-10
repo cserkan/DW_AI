@@ -50,6 +50,7 @@ namespace RuleForge.Cli.Arayuz
         public string Kurallar => Yol("kurallar.json");
         public string Notlar => Yol("kurallar.notlar.json");
         public string FormDosyasi => Yol("form.json");
+        public string Cevaplar => Yol("cevaplar.json");
         public string GirdiTablosu => Yol("girdi-tablosu.csv");
         public string Siparisler => Yol("siparisler");
         public string Kutuphane => Yol("kutuphane");
@@ -66,6 +67,17 @@ namespace RuleForge.Cli.Arayuz
         public List<string> Sorular { get; set; } = new List<string>();
         public List<string> Aciklanamayan { get; set; } = new List<string>();
         public int OnerilenVaryant { get; set; }
+
+        /// <summary>Kullanıcının cevaplaması gereken sorular (yapılandırılmış; cevapları kurallara uygulanır).</summary>
+        public List<RuleForge.Inference.OpenQuestion> AcikSorular { get; set; } = new List<RuleForge.Inference.OpenQuestion>();
+    }
+
+    /// <summary>Bir soruya verilen cevap ve uygulamanın sonucu. Kurallar yeniden çıkarılınca cevaplar yeniden uygulanır.</summary>
+    internal sealed class KayitliCevap
+    {
+        public RuleForge.Inference.QuestionAnswer Cevap { get; set; } = new RuleForge.Inference.QuestionAnswer();
+        public string Sonuc { get; set; } = string.Empty;
+        public bool Uygulandi { get; set; }
     }
 
     /// <summary>Formun görünümü: girdi adı → etiket/birim/seçenek etiketleri (kural dosyasından bağımsız, kullanıcı düzenler).</summary>

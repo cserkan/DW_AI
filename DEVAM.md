@@ -162,3 +162,8 @@ kalır; kabuk yerel sunucuyu başlatıp pencerede gösterir. Çift tıklayınca 
 alır), kapatınca sunucu da kapanmalı; SolidWorks bağlantısı bu program içinde kalır. Kurulum paketi (installer)
 ya da tek dosya yayını yeterli. Sonucu kullanıcıya Türkçe ve sade anlatın; kullanıcı "nasıl olacak bakalım" dedi,
 önce çalışan bir ilk sürüm gösterin. Müşteriye açılacak web sürümü ayrı bir üründür, bununla karıştırmayın.
+
+**Durum (bulut oturumu yaptı):** `src/RuleForge.Masaustu` (WinForms + WebView2, çıktı `RuleForgeApp.exe`) ve yeni
+`RuleForge Arayuz.cmd` eklendi, Linux'ta derlendi, 90 test geçiyor. **Windows'ta henüz çalıştırılmadı**: ilk iş
+`RuleForge Arayuz.cmd` ile pencerenin açıldığını, kapatınca `ruleforge.exe` işleminin de bittiğini, SolidWorks üretiminin
+pencere içinden çalıştığını doğrulamak. Kurulum paketi (installer) yapılmadı.

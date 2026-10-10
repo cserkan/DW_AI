@@ -216,6 +216,13 @@ her varyant sırayla çıkarılır, kurallar kalanlardan öğrenilir, çıkarıl
 & $rf crossval varyantlar --master master.json -o capraz-dogrulama.txt
 ```
 
+## Masaüstü uygulaması
+
+`RuleForge Arayuz.cmd` dosyasına çift tıklayın (ilk seferde kendiliğinden derler). Arayüz kendi penceresinde açılır;
+bilgisayarınızda gizli bir yerel sunucu başlar, pencere kapanınca o da kapanır. Uzak sunucu gerekmez; sadece yapay zekâ
+sohbeti için internet lazım. Pencere için Microsoft WebView2 gerekir (Windows 10/11'de genelde kurulu; değilse program
+ücretsiz yükleyiciyi açmayı önerir). Tarayıcıda açmak isterseniz `RuleForge Arayuz (tarayici).cmd`.
+
 ## Tekrarlanan modüller (tablo girdileri)
 
 Bazı ürünlerde master'ın ya da bir alt montajının birden çok kopyası bulunur. Örnek: 2–5 bölümlük bir konveyör hattı,

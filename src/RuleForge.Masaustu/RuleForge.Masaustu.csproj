@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <AssemblyName>RuleForgeApp</AssemblyName>
+    <RootNamespace>RuleForge.Masaustu</RootNamespace>
+    <PackageId>RuleForge.Masaustu</PackageId>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Arayüz sunucusu (ruleforge.exe) ve bağımlılıkları bu klasöre kopyalanır; kabuk onu başlatır. -->
+    <ProjectReference Include="..\RuleForge.Cli\RuleForge.Cli.csproj" SetTargetFramework="TargetFramework=net48" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2792.45" />
+  </ItemGroup>
+</Project>

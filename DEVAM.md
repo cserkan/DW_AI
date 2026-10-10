@@ -55,13 +55,18 @@ $t = "C:\Users\pc\Downloads\ConveryoSoloTemplate\SOLIDWORKS Files"
 
 ## Arayüz (10 Ekim 2026)
 
-- `ruleforge arayuz` (ya da `RuleForge Arayuz.cmd`): yerel tarayıcı arayüzü, `src\RuleForge.Cli\Arayuz\`
-  (`ArayuzSunucu.cs` TcpListener tabanlı küçük HTTP sunucusu, `index.html` gömülü tek sayfa). Ürünler ve Türkçe etiketler
-  `urunler.json`'da. API: `/api/urunler`, `/api/urun`, `/api/hesapla`, `/api/uret`, `/api/is`, `/api/siparisler`,
-  `/api/kutuphane`, `/api/ac`. Üretim `OrderBuilder` ile STA iş parçacığında; aynı anda tek üretim.
-- Denendi: dolap ve konveyör formları, satır ekleme, anında hesaplama, arayüzden üretim (konveyör S0001 ve 3×1256 mm S0002:
-  8 yeni / 21 yeniden kullanılan dosya), Siparişler ve Kütüphane sekmeleri. Tıklamalar fareyle (Chrome araçları bu
-  oturumda kapalıydı; kullanıcı `/chrome` ile açabilir).
+- Kullanıcı geri bildirimi: ilk arayüz "çok karmaşık" ve ürüne özeldi (Dolap/Konveyör sekmeleri). İstenen: **genel ürün
+  arayüzü**, üç adım: 1) "Varyantlarınızı buraya yükleyin", 2) Kurallar (çıkarılan kurallar), 3) önerilen form + üret.
+  Böyle yeniden yapıldı; sade tutun, ürüne özel kod/ayar eklemeyin.
+- `ruleforge arayuz` (ya da `RuleForge Arayuz.cmd`): `src\RuleForge.Cli\Arayuz\` (`ArayuzSunucu.cs` TcpListener tabanlı
+  HTTP sunucusu, `Projeler.cs` ürün klasörleri, `index.html` gömülü tek sayfa). Ürünler `C:\RuleForge\Projeler\<id>`.
+  Örnek ürünler: `dolap`, `konveyor-hatti` (master yolları Downloads'u gösterir, okunmuş varyantlar kopyalandı).
+  Üretim/okuma STA iş parçacığında; aynı anda tek SolidWorks işi.
+- Uçtan uca denendi (yalnızca API ile, tarayıcının yaptığı istekler): yeni ürün → özgün dolap şablonu (45 dosya) ve
+  DriveWorks Results klasörü (169 dosya) yüklendi → 9 varyant okundu → 109 kural → S0001 üretildi → DriveWorks 0009 ile
+  1152/1160 aynı (sadece OrderNo). Ekran görüntüleri görünmez (headless) Chrome ile alındı.
+- **Kullanıcının ekranına fare tıklaması göndermeyin**: bir kez tıklama, kullanıcının önde açık Gezgin penceresine gitti.
+  Görüntü için headless Chrome kullanın (`chrome --headless=new --screenshot ... http://127.0.0.1:5050/#<ürün>/<adım>`).
 - Sıradaki (kullanıcı onaylı): **şirket bilgisi** özelliği (aşağıda "Sıradaki özellikler"); arayüzde "Şirket kuralları"
   bölümü olacak. Ayrıca arayüzde kural onaylama/reddetme henüz yok.
 

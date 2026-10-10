@@ -129,7 +129,7 @@ namespace RuleForge.Cli
         }
 
         /// <summary>Snapshot adını girdi tablosundaki satırla eşleştirir: tam eşleşme, sonra içerme.</summary>
-        private static Dictionary<string, Value>? Match(Dictionary<string, Dictionary<string, Value>> table, string name)
+        internal static Dictionary<string, Value>? Match(Dictionary<string, Dictionary<string, Value>> table, string name)
         {
             if (table.TryGetValue(name, out var row)) return row;
             var candidates = table.Where(kv => name.IndexOf(kv.Key, StringComparison.OrdinalIgnoreCase) >= 0 ||

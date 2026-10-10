@@ -1,0 +1,14 @@
+Üretilen: uretim\arayuz-dolap-S0001.json
+Beklenen: varyantlar\Cupboard Assy 0009__Cupboard Assy Cupboard Assy9.json
+
+KARŞILAŞTIRMA: 1152/1160 değer aynı, 8 fark.
+
+ÖZEL ÖZELLİKLER (8)
+  Cupboard Assy S0001.SLDASM › özellik 'OrderNo': üretilen 1234, beklenen MF0009
+  Cupboard Base-0001.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard LeftEnd-0001.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard Plinth-0001.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard Post-0001.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard RightEnd-0001.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard Shelf-0001.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009
+  Cupboard Top-0001.SLDPRT › özellik 'OrderNo': üretilen DW01, beklenen MF0009

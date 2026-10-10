@@ -315,12 +315,15 @@ $RF chat --rules kurallar.json --snapshot master.json --report kurallar.cikarim.
 ```
 
 Bilgisayarda küçük bir sunucu başlar (sadece bu bilgisayardan erişilir, `http://127.0.0.1:5050/`) ve tarayıcı açılır.
-Ürünler `urunler.json` dosyasındadır: kural dosyası, master montaj, kopyaları toplayan montaj (kök) ve formdaki Türkçe
-etiketler, birimler, seçenek listeleri. Sayfada:
+Her ürün aynı üç adımdan geçer; ürüne özel bir ayar gerekmez:
 
-- Ürün seçilir; form kural dosyasının girdilerinden oluşur. Tekrarlanan modüllerde (konveyörler) satır eklenip silinir.
-  Varyantlarda görülen aralığın dışındaki değerler işaretlenir.
-- Değer değiştikçe kurallar anında hesaplanır; modele uygulanacak tüm değişiklikler aranabilir bir listede görünür.
-- **Üret:** SolidWorks'te arka planda üretir, günlüğü canlı gösterir; sonunda "SolidWorks'te aç" ve "Klasörü aç".
-  Siparişler `SiparisKlasoru\<ürün>\<sipariş>`, parçalar `Kutuphane\<ürün>` altına yazılır.
-- **Siparişler** ve **Kütüphane** sekmeleri önceki siparişleri ve kütüphanedeki dosyaları (açıklama, ilk sipariş) listeler.
+1. **Varyantlar:** master modelin klasörü ve DriveWorks'ün ürettiği varyant klasörleri sürükle-bırak ile yüklenir
+   (dosyalar ürünün klasörüne kopyalanır, orijinallere dokunulmaz), ana montaj seçilir, "Varyantları oku" SolidWorks'te
+   okur. İsteğe bağlı: DriveWorks girdi tablosu (CSV).
+2. **Kurallar:** "Kuralları çıkar"; kurallar parça parça listelenir (hedef, formül, güven, kanıt). Her kural onaylanır ya da
+   reddedilir (reddedilen uygulanmaz); yeniden çıkarınca kararlar korunur.
+3. **Form:** kurallardan önerilen form; alan adları ✎ ile değiştirilir. Tekrarlanan modülde satır eklenip silinir ve kopyaları
+   toplayan montaj seçilir. "Üret" SolidWorks'te üretir, günlüğü canlı gösterir; sonunda "SolidWorks'te aç".
+
+Ürünler `C:\RuleForge\Projeler\<ürün>` altında tutulur (`--projeler` ile değiştirilir): `proje.json`, `master\`,
+`varyant-dosyalari\`, `varyantlar\` (okunmuş), `kurallar.json`, `form.json` (etiketler), `siparisler\`, `kutuphane\`.

@@ -6,411 +6,626 @@
 <title>RuleForge</title>
 <style>
 :root {
-  --bg: #f5f6f8; --panel: #ffffff; --ink: #1d2433; --muted: #5d6676; --line: #dfe3ea; --soft: #eef1f6;
-  --accent: #2357d8; --accent-ink: #ffffff; --accent-soft: #e6edfd;
-  --ok: #1f7a4d; --ok-soft: #e3f4ec; --warn: #9a6200; --warn-soft: #fdf3dc; --err: #b3261e; --err-soft: #fbe7e5;
-  --radius: 10px; --shadow: 0 1px 2px rgba(20,30,50,.06), 0 4px 16px rgba(20,30,50,.05);
-  --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --bg: #f4f5f7; --panel: #ffffff; --ink: #1c2230; --muted: #5f6878; --line: #dde1e8; --soft: #eff1f5;
+  --accent: #2357d8; --accent-ink: #ffffff; --accent-soft: #e7eefd;
+  --ok: #1d7a4b; --ok-soft: #e2f4ea; --warn: #965f00; --warn-soft: #fdf2d9; --err: #b3261e; --err-soft: #fbe6e4;
+  --radius: 12px; --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #12151b; --panel: #1a1f27; --ink: #e6e9ef; --muted: #9aa3b2; --line: #2c333f; --soft: #222833;
     --accent: #7ea2ff; --accent-ink: #0d1424; --accent-soft: #233150;
     --ok: #5fcf97; --ok-soft: #173326; --warn: #f0b85a; --warn-soft: #3a2e15; --err: #ff8a80; --err-soft: #3d1c1a;
-    --shadow: none;
   }
 }
 * { box-sizing: border-box; }
-html, body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 "Segoe UI", system-ui, -apple-system, sans-serif; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif; }
 button, input, select { font: inherit; color: inherit; }
-header { display: flex; align-items: center; gap: 16px; padding: 14px 24px; background: var(--panel); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; flex-wrap: wrap; }
-.brand { font-weight: 700; font-size: 18px; letter-spacing: .2px; }
+header { background: var(--panel); border-bottom: 1px solid var(--line); }
+.bar { max-width: 980px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.brand { font-weight: 700; font-size: 18px; margin-right: auto; }
 .brand span { color: var(--accent); }
-.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
-.tab { border: 1px solid var(--line); background: transparent; padding: 7px 14px; border-radius: 999px; cursor: pointer; }
-.tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.tab .sorun { color: var(--err); margin-left: 4px; }
-main { max-width: 1320px; margin: 0 auto; padding: 20px 24px 60px; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 20px; }
-@media (max-width: 960px) { main { grid-template-columns: 1fr; padding: 16px; } header { padding: 12px 16px; } }
-.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px 20px; min-width: 0; }
-.panel + .panel { margin-top: 20px; }
-h2 { font-size: 16px; margin: 0 0 4px; }
-.sub { color: var(--muted); font-size: 13.5px; margin: 0 0 14px; }
-.field { display: grid; grid-template-columns: minmax(130px, 2fr) minmax(0, 3fr); gap: 4px 14px; align-items: center; padding: 9px 0; border-top: 1px solid var(--soft); }
-.field:first-of-type { border-top: 0; }
-.field label { font-weight: 600; }
-.field .hint { grid-column: 2; color: var(--muted); font-size: 12.5px; }
-.field .hint.out { color: var(--warn); }
-@media (max-width: 520px) { .field { grid-template-columns: 1fr; } .field .hint { grid-column: 1; } }
-.inwrap { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.inwrap .unit { color: var(--muted); font-size: 13px; }
+.bar select { width: auto; min-width: 200px; }
+main { max-width: 980px; margin: 0 auto; padding: 20px 20px 80px; }
+@media (max-width: 600px) { main, .bar { padding-left: 16px; padding-right: 16px; } }
+
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+.step { display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); cursor: pointer; min-width: 0; }
+.step .num { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; background: var(--soft); color: var(--muted); }
+.step b { display: block; }
+.step small { color: var(--muted); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.step[aria-selected="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.step[aria-selected="true"] .num { background: var(--accent); color: var(--accent-ink); }
+.step.done .num { background: var(--ok-soft); color: var(--ok); }
+@media (max-width: 640px) { .steps { grid-template-columns: 1fr; } }
+
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; margin-bottom: 16px; }
+.card h2 { font-size: 17px; margin: 0 0 4px; }
+.card h3 { font-size: 15px; margin: 18px 0 6px; }
+.lead { color: var(--muted); margin: 0 0 16px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 760px) { .row2 { grid-template-columns: 1fr; } }
+
+.drop { border: 2px dashed var(--line); border-radius: var(--radius); padding: 22px 16px; text-align: center; cursor: pointer; transition: border-color .15s, background .15s; }
+.drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-soft); }
+.drop .big { font-size: 28px; line-height: 1; margin-bottom: 6px; color: var(--accent); }
+.drop b { display: block; }
+.drop small { color: var(--muted); }
+.drop.filled { border-style: solid; border-color: var(--ok); background: var(--ok-soft); cursor: default; text-align: left; }
+.drop.filled .big { display: none; }
+
 input[type=text], input[type=number], select { width: 100%; min-width: 0; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
 input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: var(--accent); }
 input.out { border-color: var(--warn); background: var(--warn-soft); }
-.rows { margin-top: 6px; }
-.row { display: grid; grid-template-columns: 110px minmax(0, 1fr) 36px; gap: 10px; align-items: center; padding: 6px 0; }
-.row .n { font-weight: 600; color: var(--muted); }
-.icon { border: 1px solid var(--line); background: transparent; border-radius: 8px; height: 34px; width: 34px; cursor: pointer; color: var(--muted); }
-.icon:hover { color: var(--err); border-color: var(--err); }
-.icon:disabled { opacity: .35; cursor: default; }
-.link { border: 0; background: transparent; color: var(--accent); cursor: pointer; padding: 6px 0; font-weight: 600; }
-.link:disabled { color: var(--muted); cursor: default; }
-.tableblock { padding: 12px 0 4px; border-top: 1px solid var(--soft); }
-.tableblock h3 { font-size: 14.5px; margin: 0; }
-.order { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: end; margin-top: 4px; }
-.order label { font-weight: 600; display: block; margin-bottom: 4px; }
-.checks { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0 0; color: var(--muted); font-size: 13.5px; }
-.checks label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
-.primary { background: var(--accent); color: var(--accent-ink); border: 0; padding: 10px 22px; border-radius: 8px; font-weight: 700; cursor: pointer; white-space: nowrap; }
-.primary:disabled { opacity: .5; cursor: default; }
-.secondary { background: transparent; border: 1px solid var(--line); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 13.5px; white-space: nowrap; }
+label.lbl { display: block; font-weight: 600; margin: 12px 0 4px; }
+
+.primary { background: var(--accent); color: var(--accent-ink); border: 0; padding: 11px 22px; border-radius: 9px; font-weight: 700; cursor: pointer; }
+.primary:disabled { opacity: .45; cursor: default; }
+.secondary { background: transparent; border: 1px solid var(--line); padding: 7px 13px; border-radius: 8px; cursor: pointer; font-size: 14px; }
 .secondary:hover { border-color: var(--accent); color: var(--accent); }
-.status { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; font-size: 14px; }
+.link { border: 0; background: none; color: var(--accent); cursor: pointer; padding: 0; font-weight: 600; font-size: 14px; }
+.link.danger { color: var(--err); }
+.actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 16px; }
+
+.status { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; margin: 12px 0; font-size: 14px; }
 .status.ok { background: var(--ok-soft); color: var(--ok); }
 .status.warn { background: var(--warn-soft); color: var(--warn); }
 .status.err { background: var(--err-soft); color: var(--err); }
 .status.info { background: var(--accent-soft); color: var(--accent); }
-.msgs { margin: 0 0 12px; padding: 0; list-style: none; font-size: 13.5px; }
-.msgs li { padding: 6px 10px; border-radius: 6px; margin-bottom: 4px; }
-.msgs li.err { background: var(--err-soft); color: var(--err); }
-.msgs li.warn { background: var(--warn-soft); color: var(--warn); }
-.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 14px; }
-.stat { background: var(--soft); border-radius: 8px; padding: 10px 12px; }
-.stat b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
-.stat span { color: var(--muted); font-size: 12.5px; }
-.toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
-.toolbar input { flex: 1 1 180px; }
-.toolbar select { flex: 0 1 200px; width: auto; }
-.list { max-height: 480px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; }
-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--soft); vertical-align: top; }
-th { position: sticky; top: 0; background: var(--panel); color: var(--muted); font-weight: 600; font-size: 12.5px; z-index: 1; }
-td.v { font-family: var(--mono); font-size: 12.5px; word-break: break-word; }
-td.f { font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
-td.t { color: var(--muted); white-space: nowrap; }
-td.h { word-break: break-word; }
-.pill { display: inline-block; padding: 1px 8px; border-radius: 999px; background: var(--soft); color: var(--muted); font-size: 12px; white-space: nowrap; }
-.empty { color: var(--muted); padding: 18px; text-align: center; font-size: 14px; }
-.log { font-family: var(--mono); font-size: 12.5px; background: var(--soft); border-radius: 8px; padding: 10px 12px; max-height: 280px; overflow: auto; white-space: pre-wrap; word-break: break-word; }
-.views { display: flex; gap: 6px; margin-bottom: 14px; border-bottom: 1px solid var(--line); }
-.view { border: 0; background: transparent; padding: 8px 12px; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 600; }
-.view[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
-.hidden { display: none !important; }
-.spin { width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: s 0.8s linear infinite; flex: none; }
+.log { font-family: var(--mono); font-size: 12.5px; background: var(--soft); border-radius: 8px; padding: 10px 12px; max-height: 220px; overflow: auto; white-space: pre-wrap; word-break: break-word; margin-top: 8px; }
+.spin { width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: s .8s linear infinite; flex: none; }
 @keyframes s { to { transform: rotate(360deg); } }
-.result { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { background: var(--soft); border-radius: 999px; padding: 3px 10px; font-size: 13px; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.hidden { display: none !important; }
+
+.summary { display: flex; gap: 22px; flex-wrap: wrap; margin: 4px 0 14px; }
+.summary div b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; }
+.summary div span { color: var(--muted); font-size: 13px; }
+.toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+.toolbar input { flex: 1 1 200px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: transparent; padding: 7px 12px; cursor: pointer; font-size: 13.5px; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.group { border: 1px solid var(--line); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
+.group > .gh { background: var(--soft); padding: 8px 12px; font-weight: 600; display: flex; justify-content: space-between; gap: 10px; }
+.rule { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) 64px 92px; gap: 10px; align-items: center; padding: 9px 12px; border-top: 1px solid var(--soft); cursor: pointer; }
+.rule:first-of-type { border-top: 0; }
+.rule .f { font-family: var(--mono); font-size: 12.5px; word-break: break-word; }
+.rule .t small { color: var(--muted); display: block; font-size: 12px; }
+.rule .g { font-variant-numeric: tabular-nums; font-size: 13px; color: var(--muted); }
+.rule .k { grid-column: 1 / -1; color: var(--muted); font-size: 13px; background: var(--soft); border-radius: 6px; padding: 8px 10px; }
+.rule.rejected .t, .rule.rejected .f { text-decoration: line-through; color: var(--muted); }
+.decide { display: flex; gap: 6px; justify-content: flex-end; }
+.decide button { width: 38px; height: 32px; border-radius: 8px; border: 1px solid var(--line); background: transparent; cursor: pointer; font-weight: 700; color: var(--muted); }
+.decide .yes[aria-pressed="true"] { background: var(--ok); border-color: var(--ok); color: #fff; }
+.decide .no[aria-pressed="true"] { background: var(--err); border-color: var(--err); color: #fff; }
+@media (max-width: 640px) { .rule { grid-template-columns: 1fr auto; } .rule .f { grid-column: 1 / -1; } .rule .g { display: none; } }
+
+.field { display: grid; grid-template-columns: minmax(150px, 2fr) minmax(0, 3fr); gap: 4px 16px; align-items: center; padding: 10px 0; border-top: 1px solid var(--soft); }
+.field:first-child { border-top: 0; }
+.field .name { font-weight: 600; display: flex; align-items: center; gap: 6px; min-width: 0; }
+.field .name .edit { border: 0; background: none; color: var(--muted); cursor: pointer; padding: 2px 4px; border-radius: 4px; font-size: 13px; }
+.field .name .edit:hover { color: var(--accent); background: var(--soft); }
+.field .name input { font-weight: 600; }
+.field .hint { grid-column: 2; color: var(--muted); font-size: 12.5px; }
+.field .hint.out { color: var(--warn); }
+.inwrap { display: flex; align-items: center; gap: 8px; }
+.inwrap .unit { color: var(--muted); font-size: 13px; min-width: 24px; }
+@media (max-width: 560px) { .field { grid-template-columns: 1fr; } .field .hint { grid-column: 1; } }
+.trow { display: grid; grid-template-columns: 110px minmax(0, 1fr) 36px; gap: 10px; align-items: center; padding: 5px 0; }
+.icon { border: 1px solid var(--line); background: transparent; border-radius: 8px; height: 34px; width: 34px; cursor: pointer; color: var(--muted); }
+.icon:hover { color: var(--err); border-color: var(--err); }
+.icon:disabled { opacity: .3; cursor: default; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--soft); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 12.5px; }
+td.v { font-family: var(--mono); font-size: 12.5px; word-break: break-word; }
+.scroll { max-height: 360px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; margin-top: 8px; }
 .path { font-family: var(--mono); font-size: 12.5px; word-break: break-all; color: var(--muted); }
+.empty { text-align: center; padding: 40px 20px; }
+.empty h2 { margin-bottom: 8px; }
+.newform { display: flex; gap: 10px; max-width: 460px; margin: 18px auto 0; }
 </style>
 </head>
 <body>
 <header>
-  <div class="brand">Rule<span>Forge</span></div>
-  <nav class="tabs" id="tabs" role="tablist" aria-label="Ürünler"></nav>
+  <div class="bar">
+    <div class="brand">Rule<span>Forge</span></div>
+    <select id="projeSec" aria-label="Ürün"></select>
+    <button class="secondary" id="yeniBtn" type="button">+ Yeni ürün</button>
+  </div>
 </header>
 
 <main>
-  <section>
-    <div class="panel" id="formPanel">
-      <h2 id="urunAd">Yükleniyor…</h2>
-      <p class="sub" id="urunAciklama"></p>
-      <div id="sorun"></div>
-      <form id="form" autocomplete="off" onsubmit="return false"></form>
-    </div>
-
-    <div class="panel">
-      <h2>Sipariş</h2>
-      <p class="sub">Parçalar ortak kütüphaneye benzersiz adlarla yazılır; aynısı daha önce üretildiyse yeniden kullanılır.</p>
-      <div class="order">
-        <div><label for="siparis">Sipariş adı</label><input type="text" id="siparis" maxlength="60"></div>
-        <button class="primary" id="uret" type="button">Üret</button>
-      </div>
-      <div class="checks">
-        <label><input type="checkbox" id="pdf"> Teknik resim PDF</label>
-        <label><input type="checkbox" id="step"> STEP</label>
-        <label title="Kurallar varyantlardan çıkarıldı ve henüz onaylanmadı. Kapatırsanız sadece onaylı kurallar uygulanır."><input type="checkbox" id="onerilen" checked> Önerilen kuralları uygula</label>
-      </div>
-      <div id="isPanel" class="hidden" style="margin-top:16px">
-        <div id="isDurum"></div>
-        <div class="log" id="isGunluk"></div>
-        <div class="result" id="isSonuc"></div>
-      </div>
-    </div>
+  <!-- Yeni ürün -->
+  <section id="yeni" class="card empty hidden">
+    <h2>Yeni bir ürün oluşturun</h2>
+    <p class="lead">Master modelinizi ve DriveWorks'ün ürettiği varyantları yükleyin; RuleForge kuralları çıkarır ve size bir sipariş formu önerir.</p>
+    <div class="newform"><input type="text" id="yeniAd" placeholder="Ürün adı (ör. Dolap, Konveyör hattı)"><button class="primary" id="olustur" type="button">Oluştur</button></div>
+    <p class="small muted" id="yeniIptal" style="margin-top:14px"><button class="link" type="button">Vazgeç</button></p>
   </section>
 
-  <section class="panel">
-    <div class="views" role="tablist">
-      <button class="view" data-view="hesap" aria-selected="true">Hesaplanan</button>
-      <button class="view" data-view="siparisler" aria-selected="false">Siparişler</button>
-      <button class="view" data-view="kutuphane" aria-selected="false">Kütüphane</button>
-    </div>
+  <div id="calisma" class="hidden">
+    <nav class="steps" role="tablist">
+      <button class="step" data-step="1" type="button"><span class="num">1</span><span><b>Varyantlar</b><small id="s1">Master ve varyantları yükleyin</small></span></button>
+      <button class="step" data-step="2" type="button"><span class="num">2</span><span><b>Kurallar</b><small id="s2">Çıkarılan kuralları inceleyin</small></span></button>
+      <button class="step" data-step="3" type="button"><span class="num">3</span><span><b>Form</b><small id="s3">Değerleri girin, üretin</small></span></button>
+    </nav>
 
-    <div data-pane="hesap">
-      <div id="hesapDurum"></div>
-      <ul class="msgs" id="mesajlar"></ul>
-      <div class="stats" id="istatistik"></div>
-      <div class="toolbar">
-        <input type="text" id="ara" placeholder="Eylemlerde ara (ör. Frame, Description)…">
-        <select id="tur"><option value="">Tüm türler</option></select>
+    <!-- 1) Varyantlar -->
+    <section data-pane="1">
+      <div class="card">
+        <h2>Varyantlarınızı buraya yükleyin</h2>
+        <p class="lead">Klasörleri sürükleyip bırakın ya da tıklayıp seçin. Dosyalar bu ürünün klasörüne kopyalanır; orijinallerinize dokunulmaz.</p>
+        <div class="row2">
+          <div>
+            <div class="drop" id="dropMaster" data-hedef="master" tabindex="0">
+              <div class="big">⬆</div>
+              <b>Master model</b>
+              <small>DriveWorks şablonunun SolidWorks klasörü (montaj + parçalar)</small>
+            </div>
+            <div id="masterBilgi"></div>
+          </div>
+          <div>
+            <div class="drop" id="dropVaryant" data-hedef="varyant" tabindex="0">
+              <div class="big">⬆</div>
+              <b>Varyantlar</b>
+              <small>DriveWorks'ün ürettiği sipariş klasörleri (her biri bir varyant)</small>
+            </div>
+            <div id="varyantBilgi"></div>
+          </div>
+        </div>
+        <details style="margin-top:14px">
+          <summary class="small muted" style="cursor:pointer">Girdi tablosu (isteğe bağlı)</summary>
+          <p class="small muted">Her varyantın DriveWorks'teki girdi değerlerini içeren bir CSV varsa yükleyin. Yoksa RuleForge girdileri modelden tahmin eder.</p>
+          <div id="girdiBilgi"></div>
+          <input type="file" id="girdiDosya" accept=".csv,text/csv">
+        </details>
+        <div id="yukleDurum"></div>
+        <div class="actions">
+          <button class="primary" id="okuBtn" type="button">Varyantları oku</button>
+          <span class="small muted" id="okuNot"></span>
+        </div>
+        <div id="okuIs"></div>
       </div>
-      <div class="list" id="eylemler"></div>
-    </div>
+      <input type="file" id="klasorSec" webkitdirectory directory multiple class="hidden">
+    </section>
 
-    <div data-pane="siparisler" class="hidden"><div class="list" id="siparisListe"></div></div>
-    <div data-pane="kutuphane" class="hidden">
-      <div class="toolbar"><input type="text" id="kutAra" placeholder="Kütüphanede ara…"><button class="secondary" id="kutAc" type="button">Klasörü aç</button></div>
-      <div class="list" id="kutListe"></div>
-    </div>
-  </section>
+    <!-- 2) Kurallar -->
+    <section data-pane="2" class="hidden">
+      <div class="card">
+        <h2>Kurallar</h2>
+        <p class="lead">Varyantlar karşılaştırılarak her ölçünün, özelliğin ve parça seçiminin hangi girdiye bağlı olduğu bulunur. Kuralları onaylayın ya da reddedin; reddedilen kural üretimde uygulanmaz.</p>
+        <div class="actions" style="margin-top:0">
+          <button class="primary" id="cikarBtn" type="button">Kuralları çıkar</button>
+          <span class="small muted" id="cikarNot"></span>
+        </div>
+        <div id="cikarIs"></div>
+        <div id="kuralOzet" class="hidden">
+          <div class="summary" id="ozet" style="margin-top:18px"></div>
+          <h3>Bulunan girdiler</h3>
+          <div class="chips" id="girdiler"></div>
+          <details id="notlarKutu" class="hidden" style="margin-top:12px"><summary class="small" style="cursor:pointer"></summary><ul class="small muted" id="notlar"></ul></details>
+        </div>
+      </div>
+      <div class="card hidden" id="kuralKart">
+        <div class="toolbar">
+          <input type="text" id="kuralAra" placeholder="Ara: parça, ölçü, formül…">
+          <div class="seg" id="durumFiltre">
+            <button type="button" data-d="" aria-pressed="true">Tümü</button>
+            <button type="button" data-d="proposed" aria-pressed="false">Önerilen</button>
+            <button type="button" data-d="approved" aria-pressed="false">Onaylı</button>
+            <button type="button" data-d="rejected" aria-pressed="false">Reddedilen</button>
+          </div>
+          <button class="secondary" id="topluOnay" type="button">Güveni %90+ olanları onayla</button>
+        </div>
+        <div id="kuralListe"></div>
+        <div id="degiskenler"></div>
+      </div>
+    </section>
+
+    <!-- 3) Form -->
+    <section data-pane="3" class="hidden">
+      <div class="card" id="formKart">
+        <h2>Sipariş formu</h2>
+        <p class="lead">Kurallardan önerilen form. Bir alanın adını değiştirmek için ✎'ye tıklayın.</p>
+        <div id="formSorun"></div>
+        <div id="kokSecim" class="hidden">
+          <label class="lbl" for="kokSec">Kopyaları toplayan montaj</label>
+          <select id="kokSec"></select>
+          <p class="small muted">Bu üründe aynı modülden birden çok kopya var (ör. konveyör hattındaki konveyörler). Kopyaların yerleşeceği montajı seçin.</p>
+        </div>
+        <div id="form"></div>
+        <div id="hesap"></div>
+      </div>
+      <div class="card">
+        <h2>Üret</h2>
+        <p class="lead">Parçalar ürünün kütüphanesine benzersiz adlarla yazılır; aynısı daha önce üretildiyse yeniden kullanılır.</p>
+        <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap">
+          <div style="flex:1 1 220px"><label class="lbl" for="siparis" style="margin-top:0">Sipariş adı</label><input type="text" id="siparis" maxlength="60"></div>
+          <button class="primary" id="uretBtn" type="button">Üret</button>
+        </div>
+        <div class="actions small muted" style="margin-top:12px;gap:18px">
+          <label><input type="checkbox" id="pdf"> Teknik resim PDF</label>
+          <label><input type="checkbox" id="step"> STEP</label>
+          <label title="Kapatırsanız sadece onayladığınız kurallar uygulanır."><input type="checkbox" id="onerilen" checked> Onaylanmamış kuralları da uygula</label>
+        </div>
+        <div id="uretIs"></div>
+        <h3>Önceki siparişler</h3>
+        <div id="siparisler" class="small muted">Henüz sipariş yok.</div>
+      </div>
+    </section>
+  </div>
 </main>
 
 <script>
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const store = {
-  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
-  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { } },
-};
+const store = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { } } };
+const MODEL = /\.(sldasm|sldprt|slddrw)$/i;
 
-async function api(path, body) {
-  const res = await fetch(path, body === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+async function api(path, body, raw) {
+  const opt = body === undefined ? {} : { method: "POST", headers: { "Content-Type": raw ? "application/octet-stream" : "application/json" }, body: raw ? body : JSON.stringify(body) };
+  const res = await fetch(path, opt);
   const data = await res.json().catch(() => ({ hata: "Sunucudan geçersiz yanıt." }));
   if (!res.ok) throw new Error(data.hata || res.statusText);
   return data;
 }
 
-let urunler = [], urun = null, durum = { girdiler: {}, tablolar: {} }, sonEylemler = [], kutuphane = null;
+let pid = null, proje = null, adim = 1;
 
-async function basla() {
-  try { urunler = await api("/api/urunler"); }
-  catch (e) { $("urunAd").textContent = "Sunucuya bağlanılamadı"; $("urunAciklama").textContent = e.message; return; }
-  const tabs = $("tabs");
-  tabs.innerHTML = urunler.map(u => `<button class="tab" role="tab" data-id="${esc(u.id)}" aria-selected="false">${esc(u.ad)}${u.sorun ? '<span class="sorun" title="' + esc(u.sorun) + '">●</span>' : ""}</button>`).join("");
-  tabs.querySelectorAll(".tab").forEach(b => b.onclick = () => urunSec(b.dataset.id));
-  const son = store.get("rf.urun");
-  urunSec(urunler.some(u => u.id === son) ? son : urunler[0]?.id);
+// ================= Ürünler
+async function projeleriYukle(sec) {
+  const liste = await api("/api/projeler");
+  $("projeSec").innerHTML = liste.map(p => `<option value="${esc(p.id)}">${esc(p.ad)}</option>`).join("");
+  $("projeSec").classList.toggle("hidden", !liste.length);
+  const hash = /^#([^/]+)(?:\/(\d))?$/.exec(location.hash || "");
+  const hedef = sec || (hash && hash[1]) || store.get("rf.proje");
+  const id = liste.some(p => p.id === hedef) ? hedef : liste[0]?.id;
+  if (!id) { yeniGoster(true); return; }
+  $("projeSec").value = id;
+  projeAc(id);
+}
+$("projeSec").onchange = () => projeAc($("projeSec").value);
+function yeniGoster(on) {
+  $("yeni").classList.toggle("hidden", !on);
+  $("calisma").classList.toggle("hidden", on);
+  $("yeniIptal").classList.toggle("hidden", !$("projeSec").options.length);
+  if (on) $("yeniAd").focus();
+}
+$("yeniBtn").onclick = () => yeniGoster(true);
+$("yeniIptal").querySelector("button").onclick = () => yeniGoster(false);
+$("olustur").onclick = async () => {
+  try { const p = await api("/api/proje", { ad: $("yeniAd").value }); $("yeniAd").value = ""; yeniGoster(false); await projeleriYukle(p.id); adimSec(1); }
+  catch (e) { alert(e.message); }
+};
+$("yeniAd").addEventListener("keydown", e => { if (e.key === "Enter") $("olustur").click(); });
+
+async function projeAc(id) {
+  pid = id; store.set("rf.proje", id);
+  yeniGoster(false);
+  await durumYenile();
+  const h = /^#([^/]+)\/(\d)$/.exec(location.hash || "");
+  const kayitli = h && h[1] === id ? +h[2] : store.get("rf.adim." + id);
+  adimSec(kayitli || (proje.kuralSayisi ? 3 : proje.okunanVaryantlar.length ? 2 : 1));
 }
 
-async function urunSec(id) {
-  if (!id) return;
-  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.id === id));
-  store.set("rf.urun", id);
-  urun = await api("/api/urun?id=" + encodeURIComponent(id));
-  $("urunAd").textContent = urun.ad;
-  $("urunAciklama").textContent = (urun.aciklama || "") + ` ${urun.kuralSayisi} kural (${urun.onayliKural} onaylı).`;
-  $("sorun").innerHTML = urun.sorun ? `<div class="status err">${esc(urun.sorun)}</div>` : "";
-  const kayitli = store.get("rf.form." + id);
-  durum = { girdiler: {}, tablolar: {} };
-  for (const g of urun.girdiler) durum.girdiler[g.name] = kayitli?.girdiler?.[g.name] ?? g.varsayilan ?? "";
-  for (const t of urun.tablolar) {
-    const satirlar = kayitli?.tablolar?.[t.name] ?? Array.from({ length: Math.max(t.minSatir, 1) }, () => Object.fromEntries(t.sutunlar.map(c => [c.name, c.varsayilan ?? ""])));
-    durum.tablolar[t.name] = satirlar;
+async function durumYenile() {
+  proje = await api("/api/proje?id=" + encodeURIComponent(pid));
+  const okundu = proje.okunanVaryantlar.length;
+  $("s1").textContent = okundu ? `${okundu} varyant okundu` : proje.masterYuklendi || proje.masterVar ? "Varyantları yükleyin" : "Master ve varyantları yükleyin";
+  $("s2").textContent = proje.kuralSayisi ? `${proje.kuralSayisi} kural · ${proje.onayliKural} onaylı` : "Henüz çıkarılmadı";
+  $("s3").textContent = proje.siparisSayisi ? `${proje.siparisSayisi} sipariş` : proje.kuralSayisi ? "Değerleri girin, üretin" : "Önce kurallar";
+  document.querySelector('[data-step="1"]').classList.toggle("done", okundu > 1);
+  document.querySelector('[data-step="2"]').classList.toggle("done", proje.kuralSayisi > 0);
+  document.querySelector('[data-step="3"]').classList.toggle("done", proje.siparisSayisi > 0);
+  adim1Ciz();
+}
+
+document.querySelectorAll(".step").forEach(b => b.onclick = () => adimSec(+b.dataset.step));
+function adimSec(n) {
+  adim = n; store.set("rf.adim." + pid, n); history.replaceState(null, "", "#" + pid + "/" + n);
+  document.querySelectorAll(".step").forEach(b => b.setAttribute("aria-selected", +b.dataset.step === n));
+  document.querySelectorAll("[data-pane]").forEach(p => p.classList.toggle("hidden", +p.dataset.pane !== n));
+  if (n === 2) kurallariYukle();
+  if (n === 3) formYukle();
+}
+
+// ================= Arka plan işleri
+function isIzle(isId, kutu, bitince) {
+  const tick = async () => {
+    let r;
+    try { r = await api("/api/is?is=" + isId); } catch { setTimeout(tick, 2000); return; }
+    const log = `<div class="log">${esc(r.gunluk.join("\n"))}</div>`;
+    const uyar = r.uyarilar.map(w => `<div class="status warn">${esc(w)}</div>`).join("");
+    if (r.durum === "calisiyor") {
+      kutu.innerHTML = `<div class="status info"><span class="spin"></span>Çalışıyor… ${r.sure} sn</div>` + log;
+      kutu.querySelector(".log").scrollTop = 1e9;
+      setTimeout(tick, 1500);
+      return;
+    }
+    kutu.innerHTML = (r.durum === "bitti" ? `<div class="status ok">Tamamlandı (${r.sure} sn).</div>` : r.hatalar.map(h => `<div class="status err">${esc(h)}</div>`).join("")) + uyar + log;
+    bitince && bitince(r);
+  };
+  tick();
+}
+
+// ================= 1) Yükleme
+function adim1Ciz() {
+  const m = $("dropMaster"), v = $("dropVaryant");
+  const masterDis = proje.masterVar && !proje.masterYuklendi;
+  m.classList.toggle("filled", proje.masterYuklendi || masterDis);
+  v.classList.toggle("filled", proje.varyantDosyaSayisi > 0 || proje.okunanVaryantlar.length > 0);
+  $("masterBilgi").innerHTML = proje.masterYuklendi
+    ? `<label class="lbl" for="masterSec">Ana montaj</label><select id="masterSec"><option value="">— seçin —</option>${proje.montajlar.map(f => `<option${f === proje.master ? " selected" : ""}>${esc(f)}</option>`).join("")}</select>
+       <p class="small muted">${proje.masterDosyaSayisi} dosya yüklendi. <button class="link danger" data-temizle="master">Kaldır</button></p>`
+    : masterDis ? `<p class="small muted">Master: <span class="path">${esc(proje.master)}</span></p>` : "";
+  m.querySelector("b").textContent = proje.masterYuklendi || masterDis ? "Master model ✓" : "Master model";
+  v.querySelector("b").textContent = proje.okunanVaryantlar.length ? `${proje.okunanVaryantlar.length} varyant okundu ✓` : proje.varyantDosyaSayisi ? "Varyantlar yüklendi" : "Varyantlar";
+  $("varyantBilgi").innerHTML = (proje.varyantDosyaSayisi ? `<p class="small muted">${proje.varyantDosyaSayisi} dosya, ${proje.varyantKlasorSayisi} klasör yüklendi. <button class="link danger" data-temizle="varyant">Kaldır</button></p>` : "")
+    + (proje.okunanVaryantlar.length ? `<div class="chips" style="margin-top:8px">${proje.okunanVaryantlar.map(n => `<span class="chip">${esc(n.split("__")[0])}</span>`).join("")}</div>` : "");
+  $("girdiBilgi").innerHTML = proje.girdiTablosu ? `<p class="small">Girdi tablosu yüklendi. <button class="link danger" data-temizle="girdi">Kaldır</button></p>` : "";
+  const ms = $("masterSec");
+  if (ms) ms.onchange = async () => { await api("/api/montaj-sec?id=" + pid, { master: ms.value }).catch(e => alert(e.message)); durumYenile(); };
+  document.querySelectorAll("[data-temizle]").forEach(b => b.onclick = async (e) => {
+    e.stopPropagation();
+    if (!confirm("Yüklenen dosyalar bu üründen kaldırılsın mı? (Orijinal dosyalarınıza dokunulmaz.)")) return;
+    await api("/api/temizle?id=" + pid + "&hedef=" + b.dataset.temizle, {}).catch(er => alert(er.message));
+    durumYenile();
+  });
+  const hazir = proje.masterVar;
+  $("okuBtn").disabled = !hazir;
+  $("okuNot").textContent = !hazir ? (proje.masterYuklendi ? "Ana montajı seçin." : "Önce master modeli yükleyin.") : !proje.varyantDosyaSayisi && !proje.okunanVaryantlar.length ? "Varyant yüklemeden okursanız sadece master okunur." : "SolidWorks'te okunur; varyant başına birkaç saniye sürer.";
+}
+
+let hedefDrop = null;
+for (const d of [$("dropMaster"), $("dropVaryant")]) {
+  d.onclick = () => { if (d.classList.contains("filled")) return; hedefDrop = d.dataset.hedef; $("klasorSec").value = ""; $("klasorSec").click(); };
+  d.ondragover = (e) => { e.preventDefault(); d.classList.add("over"); };
+  d.ondragleave = () => d.classList.remove("over");
+  d.ondrop = async (e) => {
+    e.preventDefault(); d.classList.remove("over");
+    const files = await birakilanlar(e.dataTransfer);
+    yukle(d.dataset.hedef, files);
+  };
+}
+$("klasorSec").onchange = () => yukle(hedefDrop, [...$("klasorSec").files].map(f => ({ file: f, yol: f.webkitRelativePath || f.name })));
+
+async function birakilanlar(dt) {
+  const out = [];
+  const oku = (entry, yol) => new Promise(res => {
+    if (entry.isFile) entry.file(f => { out.push({ file: f, yol: yol + f.name }); res(); }, () => res());
+    else if (entry.isDirectory) {
+      const reader = entry.createReader(), hepsi = [];
+      const devam = () => reader.readEntries(async (ents) => {
+        if (!ents.length) { for (const en of hepsi) await oku(en, yol + entry.name + "/"); res(); }
+        else { hepsi.push(...ents); devam(); }
+      }, () => res());
+      devam();
+    } else res();
+  });
+  const entries = [...dt.items].map(i => i.webkitGetAsEntry && i.webkitGetAsEntry()).filter(Boolean);
+  if (!entries.length) return [...dt.files].map(f => ({ file: f, yol: f.name }));
+  for (const en of entries) await oku(en, "");
+  return out;
+}
+
+async function yukle(hedef, files) {
+  const model = files.filter(f => MODEL.test(f.yol) && !f.file.name.startsWith("~$"));
+  if (!model.length) { $("yukleDurum").innerHTML = `<div class="status warn">Bu seçimde SolidWorks dosyası (.SLDASM, .SLDPRT, .SLDDRW) yok.</div>`; return; }
+  const ad = hedef === "master" ? "Master" : "Varyant";
+  for (let i = 0; i < model.length; i++) {
+    $("yukleDurum").innerHTML = `<div class="status info"><span class="spin"></span>${ad} dosyaları yükleniyor… ${i + 1} / ${model.length}</div>`;
+    try { await api(`/api/yukle?id=${encodeURIComponent(pid)}&hedef=${hedef}&yol=${encodeURIComponent(model[i].yol)}`, model[i].file, true); }
+    catch (e) { $("yukleDurum").innerHTML = `<div class="status err">${esc(model[i].yol)}: ${esc(e.message)}</div>`; return; }
   }
-  $("siparis").value = urun.siparisOnerisi;
-  formCiz();
-  hesapla();
-  siparisleriYukle();
-  kutuphane = null;
-  if (aktifGorunum === "kutuphane") kutuphaneYukle();
-}
-
-function alan(g, deger, onChange, idSuffix) {
-  const id = "g_" + g.name + (idSuffix || "");
-  let input;
-  if (g.tip === "secim") {
-    input = `<select id="${esc(id)}">` + g.secenekler.map(s => `<option value="${esc(s.deger)}"${String(s.deger) === String(deger) ? " selected" : ""}>${esc(s.etiket)}</option>`).join("") + `</select>`;
-  } else {
-    const num = g.tip === "sayi";
-    input = `<input id="${esc(id)}" type="${num ? "number" : "text"}" ${num ? 'step="any" inputmode="decimal"' : ""} value="${esc(deger)}">`;
+  $("yukleDurum").innerHTML = `<div class="status ok">${model.length} ${ad.toLowerCase()} dosyası yüklendi.</div>`;
+  await durumYenile();
+  if (hedef === "master" && !proje.master && proje.montajlar.length) {
+    await api("/api/montaj-sec?id=" + pid, { master: proje.montajlar[0] }).catch(() => { });
+    await durumYenile();
   }
-  return { id, html: `<div class="inwrap">${input}${g.birim ? `<span class="unit">${esc(g.birim)}</span>` : ""}</div>`, bagla: () => {
-    const el = $(id);
-    el.addEventListener(g.tip === "secim" ? "change" : "input", () => { onChange(el.value); aralikKontrol(el, g); });
-    aralikKontrol(el, g);
-  } };
+}
+$("girdiDosya").onchange = async () => {
+  const f = $("girdiDosya").files[0]; if (!f) return;
+  await api(`/api/yukle?id=${encodeURIComponent(pid)}&hedef=girdi`, f, true).catch(e => alert(e.message));
+  durumYenile();
+};
+
+$("okuBtn").onclick = async () => {
+  $("okuBtn").disabled = true;
+  try { const r = await api("/api/oku?id=" + pid, {}); isIzle(r.is, $("okuIs"), async (s) => { await durumYenile(); if (s.durum === "bitti" && proje.okunanVaryantlar.length > 1) $("okuIs").insertAdjacentHTML("beforeend", `<div class="actions"><button class="primary" onclick="adimSec(2)">Sonraki adım: Kurallar →</button></div>`); }); }
+  catch (e) { $("okuIs").innerHTML = `<div class="status err">${esc(e.message)}</div>`; $("okuBtn").disabled = false; }
+};
+
+// ================= 2) Kurallar
+let kurallar = null, durumF = "", acik = new Set();
+async function kurallariYukle() {
+  const n = proje.okunanVaryantlar.length;
+  $("cikarBtn").disabled = n < 2;
+  $("cikarNot").textContent = n < 2 ? "Önce en az 2 varyant okuyun (1. adım)." : `${n} varyant kullanılacak.`;
+  kurallar = await api("/api/kurallar?id=" + pid);
+  $("cikarBtn").textContent = kurallar.var ? "Kuralları yeniden çıkar" : "Kuralları çıkar";
+  $("kuralOzet").classList.toggle("hidden", !kurallar.var);
+  $("kuralKart").classList.toggle("hidden", !kurallar.var);
+  if (!kurallar.var) return;
+  const say = d => kurallar.kurallar.filter(k => k.durum === d).length;
+  $("ozet").innerHTML = [[kurallar.kurallar.length, "kural"], [say("approved"), "onaylı"], [say("proposed"), "önerilen"], [say("rejected"), "reddedilen"], [kurallar.varyantSayisi, "varyanttan"]]
+    .map(([v, t]) => `<div><b>${v}</b><span>${t}</span></div>`).join("");
+  $("girdiler").innerHTML = kurallar.girdiler.map(g => `<span class="chip" title="${esc(g.description || "")}">${esc(g.etiket)}</span>`).join("")
+    + kurallar.tablolar.map(t => `<span class="chip" title="${esc(t.description || "")}">${esc(t.etiket)} (tablo: ${esc(t.sutunlar.join(", "))})</span>`).join("");
+  const notlar = [...kurallar.sorular.map(s => "Soru: " + s), ...kurallar.notlar, ...(kurallar.aciklanamayan.length ? [`Açıklanamayan ${kurallar.aciklanamayan.length} değer: ${kurallar.aciklanamayan.slice(0, 8).join(", ")}${kurallar.aciklanamayan.length > 8 ? "…" : ""}`] : []), ...(kurallar.onerilenVaryant ? [`Belirsiz noktaları çözmek için ${kurallar.onerilenVaryant} yeni varyant öneriliyor (kurallar.oneriler.csv).`] : [])];
+  $("notlarKutu").classList.toggle("hidden", !notlar.length);
+  $("notlarKutu").querySelector("summary").textContent = `Notlar ve sorular (${notlar.length})`;
+  $("notlar").innerHTML = notlar.map(n => `<li>${esc(n)}</li>`).join("");
+  $("degiskenler").innerHTML = kurallar.degiskenler.length ? `<h3>Değişkenler</h3><table><tbody>${kurallar.degiskenler.map(v => `<tr><td><b>${esc(v.name)}</b><div class="small muted">${esc(v.description || "")}</div></td><td class="v">${esc(v.formul)}</td></tr>`).join("")}</tbody></table>` : "";
+  kurallariCiz();
 }
 
-function aralikKontrol(el, g) {
-  if (g.tip !== "sayi") return;
-  const v = parseFloat(String(el.value).replace(",", "."));
-  const out = !isNaN(v) && ((g.min != null && v < g.min) || (g.max != null && v > g.max));
-  el.classList.toggle("out", out);
-  const hint = el.closest(".field")?.querySelector(".hint");
-  if (hint) { hint.classList.toggle("out", out); hint.textContent = aralikMetni(g, out); }
+function kurallariCiz() {
+  const q = $("kuralAra").value.trim().toLocaleLowerCase("tr");
+  const liste = kurallar.kurallar.filter(k => (!durumF || k.durum === durumF) && (!q || [k.parca, k.hedef, k.formul, k.tur].join(" ").toLocaleLowerCase("tr").includes(q)));
+  if (!liste.length) { $("kuralListe").innerHTML = `<p class="muted">Eşleşen kural yok.</p>`; return; }
+  const gruplar = {};
+  for (const k of liste) (gruplar[k.parca] ||= []).push(k);
+  $("kuralListe").innerHTML = Object.entries(gruplar).map(([parca, ks]) => `<div class="group"><div class="gh"><span>${esc(parca.replace(/\.(SLDPRT|SLDASM)$/i, ""))}</span><span class="small muted">${ks.length}</span></div>`
+    + ks.map(k => `<div class="rule ${k.durum}" data-id="${esc(k.id)}"><div class="t">${esc(k.hedef)}<small>${esc(k.tur)}${k.satir ? " · her satır için" : ""}</small></div><div class="f">= ${esc(k.formul)}</div><div class="g">%${k.guven}</div>
+       <div class="decide"><button class="yes" title="Onayla" aria-pressed="${k.durum === "approved"}" data-k="${esc(k.id)}" data-d="approved">✓</button><button class="no" title="Reddet" aria-pressed="${k.durum === "rejected"}" data-k="${esc(k.id)}" data-d="rejected">✕</button></div>
+       ${acik.has(k.id) ? `<div class="k">${esc(k.kanit || "Kanıt yok.")}</div>` : ""}</div>`).join("") + `</div>`).join("");
+  $("kuralListe").querySelectorAll(".rule").forEach(r => r.onclick = (e) => { if (e.target.closest(".decide")) return; acik.has(r.dataset.id) ? acik.delete(r.dataset.id) : acik.add(r.dataset.id); kurallariCiz(); });
+  $("kuralListe").querySelectorAll(".decide button").forEach(b => b.onclick = () => {
+    const k = kurallar.kurallar.find(x => x.id === b.dataset.k);
+    durumDegistir([k.id], k.durum === b.dataset.d ? "proposed" : b.dataset.d);
+  });
+}
+async function durumDegistir(ids, durum) {
+  await api("/api/kural-durum?id=" + pid, { kurallar: ids, durum }).catch(e => alert(e.message));
+  for (const k of kurallar.kurallar) if (ids.includes(k.id)) k.durum = durum;
+  kurallariYukle(); durumYenile();
+}
+$("kuralAra").oninput = kurallariCiz;
+$("durumFiltre").querySelectorAll("button").forEach(b => b.onclick = () => { durumF = b.dataset.d; $("durumFiltre").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); kurallariCiz(); });
+$("topluOnay").onclick = () => {
+  const ids = kurallar.kurallar.filter(k => k.durum === "proposed" && k.guven >= 90).map(k => k.id);
+  if (!ids.length) { alert("Güveni %90 ve üzeri olan önerilen kural yok."); return; }
+  if (confirm(`${ids.length} kural onaylansın mı?`)) durumDegistir(ids, "approved");
+};
+$("cikarBtn").onclick = async () => {
+  $("cikarBtn").disabled = true;
+  try { const r = await api("/api/cikar?id=" + pid, {}); isIzle(r.is, $("cikarIs"), async () => { await durumYenile(); await kurallariYukle(); }); }
+  catch (e) { $("cikarIs").innerHTML = `<div class="status err">${esc(e.message)}</div>`; $("cikarBtn").disabled = false; }
+};
+
+// ================= 3) Form
+let form = null, deger = { girdiler: {}, tablolar: {} };
+async function formYukle() {
+  form = await api("/api/form?id=" + pid);
+  if (!form.var) { $("form").innerHTML = `<p class="muted">Önce kuralları çıkarın (2. adım).</p>`; $("uretBtn").disabled = true; $("hesap").innerHTML = ""; $("kokSecim").classList.add("hidden"); return; }
+  $("formSorun").innerHTML = form.sorun ? `<div class="status warn">${esc(form.sorun)}</div>` : "";
+  $("kokSecim").classList.toggle("hidden", !form.kokGerekli || !form.montajlar.length);
+  $("kokSec").innerHTML = `<option value="">— seçin —</option>` + form.montajlar.map(m => `<option${m === form.kok ? " selected" : ""}>${esc(m)}</option>`).join("");
+  $("kokSec").onchange = async () => { await api("/api/montaj-sec?id=" + pid, { kok: $("kokSec").value }).catch(e => alert(e.message)); formYukle(); };
+  const kayitli = store.get("rf.form." + pid) || {};
+  deger = { girdiler: {}, tablolar: {} };
+  for (const g of form.girdiler) deger.girdiler[g.name] = kayitli.girdiler?.[g.name] ?? g.varsayilan ?? "";
+  for (const t of form.tablolar) deger.tablolar[t.name] = kayitli.tablolar?.[t.name] ?? Array.from({ length: Math.max(t.minSatir, 1) }, () => Object.fromEntries(t.sutunlar.map(c => [c.name, c.varsayilan ?? ""])));
+  if (!$("siparis").value || $("siparis").dataset.pid !== pid) { $("siparis").value = form.siparisOnerisi; $("siparis").dataset.pid = pid; }
+  formCiz(); hesapla(); siparisleriYukle();
 }
 
-function aralikMetni(g, out) {
-  if (g.tip !== "sayi" || g.min == null) return "";
+function aralik(g, v) {
+  if (g.tip !== "sayi" || g.min == null) return { out: false, text: "" };
+  const n = parseFloat(String(v).replace(",", "."));
+  const out = !isNaN(n) && (n < g.min || n > g.max);
   const r = `${g.min} – ${g.max}${g.birim ? " " + g.birim : ""}`;
-  return out ? `Varyantlarda görülen aralığın (${r}) dışında: kurallar burada denenmedi.` : `Varyantlarda görülen aralık: ${r}`;
+  return { out, text: out ? `Varyantlarda görülen aralığın (${r}) dışında: kurallar burada denenmedi.` : `Varyantlarda görülen aralık: ${r}` };
+}
+function giris(g, v, id) {
+  return g.tip === "secim"
+    ? `<select id="${id}">${g.secenekler.map(s => `<option value="${esc(s.deger)}"${String(s.deger) === String(v) ? " selected" : ""}>${esc(s.etiket)}</option>`).join("")}</select>`
+    : `<input id="${id}" type="${g.tip === "sayi" ? "number" : "text"}" step="any" value="${esc(v)}">`;
 }
 
 function formCiz() {
-  const form = $("form");
-  const baglar = [];
-  let html = "";
-  for (const g of urun.girdiler) {
-    const a = alan(g, durum.girdiler[g.name], v => { durum.girdiler[g.name] = v; degisti(); });
-    baglar.push(a.bagla);
-    html += `<div class="field"><label for="${esc(a.id)}">${esc(g.etiket)}</label>${a.html}<div class="hint">${esc(aralikMetni(g, false))}</div></div>`;
-  }
-  for (const t of urun.tablolar) {
-    const satirlar = durum.tablolar[t.name];
-    html += `<div class="tableblock"><h3>${esc(t.etiket)}</h3><p class="sub" style="margin:2px 0 4px">${t.minSatir}–${t.maxSatir} ${esc(t.satirEtiketi.toLowerCase())}; her biri için ayrı değerler.</p><div class="rows">`;
-    satirlar.forEach((satir, i) => {
-      for (const c of t.sutunlar) {
-        const a = alan(c, satir[c.name], v => { satir[c.name] = v; degisti(); }, "_" + t.name + "_" + i);
-        baglar.push(a.bagla);
-        html += `<div class="row"><span class="n">${esc(t.satirEtiketi)} ${i + 1}</span>${a.html}<button type="button" class="icon" title="Sil" data-sil="${esc(t.name)}" data-i="${i}" ${satirlar.length <= t.minSatir ? "disabled" : ""}>✕</button></div>`;
-      }
-    });
-    html += `</div><button type="button" class="link" data-ekle="${esc(t.name)}" ${satirlar.length >= t.maxSatir ? "disabled" : ""}>+ ${esc(t.satirEtiketi)} ekle</button></div>`;
-  }
-  form.innerHTML = html;
-  baglar.forEach(b => b());
-  form.querySelectorAll("[data-sil]").forEach(b => b.onclick = () => { durum.tablolar[b.dataset.sil].splice(+b.dataset.i, 1); formCiz(); degisti(); });
-  form.querySelectorAll("[data-ekle]").forEach(b => b.onclick = () => {
-    const t = urun.tablolar.find(x => x.name === b.dataset.ekle);
-    const rows = durum.tablolar[t.name];
-    rows.push({ ...(rows[rows.length - 1] || Object.fromEntries(t.sutunlar.map(c => [c.name, c.varsayilan ?? ""]))) });
-    formCiz(); degisti();
+  let html = "", baglar = [];
+  form.girdiler.forEach((g, i) => {
+    const id = "f" + i, a = aralik(g, deger.girdiler[g.name]);
+    html += `<div class="field"><div class="name" data-ad="${esc(g.name)}"><span>${esc(g.etiket)}</span><button class="edit" title="Adını değiştir">✎</button></div>
+      <div class="inwrap">${giris(g, deger.girdiler[g.name], id)}<span class="unit">${esc(g.birim || "")}</span></div><div class="hint${a.out ? " out" : ""}">${esc(a.text)}</div></div>`;
+    baglar.push(() => bagla(id, g, v => deger.girdiler[g.name] = v));
   });
+  form.tablolar.forEach((t, ti) => {
+    const rows = deger.tablolar[t.name];
+    html += `<div class="field" style="align-items:start"><div class="name" data-tablo="${esc(t.name)}"><span>${esc(t.etiket)}</span><button class="edit" title="Adını değiştir">✎</button></div><div>`;
+    rows.forEach((row, ri) => t.sutunlar.forEach((c, ci) => {
+      const id = `t${ti}_${ri}_${ci}`;
+      html += `<div class="trow"><span class="muted">${esc(t.satirEtiketi)} ${ri + 1}</span><div class="inwrap">${giris(c, row[c.name], id)}<span class="unit">${esc(c.birim || "")}</span></div><button class="icon" data-sil="${ti}" data-i="${ri}" ${rows.length <= t.minSatir ? "disabled" : ""} title="Sil">✕</button></div>`;
+      baglar.push(() => bagla(id, c, v => row[c.name] = v));
+    }));
+    html += `<button class="link" data-ekle="${ti}" ${rows.length >= t.maxSatir ? "disabled" : ""}>+ ${esc(t.satirEtiketi)} ekle</button> <span class="small muted">(${t.minSatir}–${t.maxSatir})</span></div></div>`;
+  });
+  $("form").innerHTML = html;
+  baglar.forEach(f => f());
+  $("form").querySelectorAll("[data-sil]").forEach(b => b.onclick = () => { deger.tablolar[form.tablolar[+b.dataset.sil].name].splice(+b.dataset.i, 1); formCiz(); degisti(); });
+  $("form").querySelectorAll("[data-ekle]").forEach(b => b.onclick = () => { const t = form.tablolar[+b.dataset.ekle], rows = deger.tablolar[t.name]; rows.push({ ...rows[rows.length - 1] }); formCiz(); degisti(); });
+  $("form").querySelectorAll(".edit").forEach(b => b.onclick = () => etiketDuzenle(b.parentElement));
+}
+function bagla(id, g, set) {
+  const el = $(id);
+  el.addEventListener(g.tip === "secim" ? "change" : "input", () => {
+    set(el.value);
+    const a = aralik(g, el.value), hint = el.closest(".field")?.querySelector(".hint");
+    el.classList.toggle("out", a.out);
+    if (hint && el.closest(".field").querySelector(".inwrap") === el.parentElement) { hint.textContent = a.text; hint.classList.toggle("out", a.out); }
+    degisti();
+  });
+  el.classList.toggle("out", aralik(g, el.value).out);
+}
+function etiketDuzenle(el) {
+  const span = el.querySelector("span"), eski = span.textContent;
+  el.innerHTML = `<input type="text" value="${esc(eski)}">`;
+  const inp = el.querySelector("input"); inp.focus(); inp.select();
+  const bitir = async (kaydet) => {
+    if (kaydet && inp.value.trim() && inp.value.trim() !== eski)
+      await api("/api/form-etiket?id=" + pid, el.dataset.tablo ? { tablo: el.dataset.tablo, ad: "", etiket: inp.value } : { ad: el.dataset.ad, etiket: inp.value }).catch(e => alert(e.message));
+    formYukle();
+  };
+  inp.onkeydown = e => { if (e.key === "Enter") bitir(true); if (e.key === "Escape") bitir(false); };
+  inp.onblur = () => bitir(true);
 }
 
-let zamanlayici = null, istekNo = 0;
-function degisti() {
-  store.set("rf.form." + urun.id, durum);
-  clearTimeout(zamanlayici);
-  zamanlayici = setTimeout(hesapla, 250);
-}
-
-function istekGovdesi(extra) {
-  return { id: urun.id, girdiler: durum.girdiler, tablolar: durum.tablolar, onerilen: $("onerilen").checked, ...extra };
-}
-
+let zaman = null, no = 0, sonHesap = null, ayrinti = false;
+function degisti() { store.set("rf.form." + pid, deger); clearTimeout(zaman); zaman = setTimeout(hesapla, 250); }
+const govde = (extra) => ({ girdiler: deger.girdiler, tablolar: deger.tablolar, onerilen: $("onerilen").checked, ...extra });
 async function hesapla() {
-  const no = ++istekNo;
+  const n = ++no;
   let r;
-  try { r = await api("/api/hesapla", istekGovdesi()); }
-  catch (e) { if (no === istekNo) { $("hesapDurum").innerHTML = `<div class="status err">${esc(e.message)}</div>`; } return; }
-  if (no !== istekNo) return;
-  $("hesapDurum").innerHTML = r.basarili
-    ? `<div class="status ok">Kurallar hesaplandı: modele ${r.eylemler.length} değişiklik uygulanacak.</div>`
-    : `<div class="status err">Kurallar hesaplanamadı. Aşağıdaki hataları düzeltin.</div>`;
-  $("mesajlar").innerHTML = r.hatalar.map(h => `<li class="err">${esc(h)}</li>`).join("") + r.uyarilar.map(h => `<li class="warn">${esc(h)}</li>`).join("");
-  sonEylemler = r.eylemler;
-  const say = (f) => r.eylemler.filter(f).length;
-  const kart = (n, s) => `<div class="stat"><b>${n}</b><span>${esc(s)}</span></div>`;
-  $("istatistik").innerHTML = kart(say(a => a.tur === "Ölçü"), "ölçü") + kart(say(a => a.tur.includes("bastırma")), "bastırma")
-    + kart(say(a => a.tur === "Parça değişimi"), "parça değişimi") + kart(say(a => a.tur === "Özel özellik"), "özel özellik");
-  const turler = [...new Set(r.eylemler.map(a => a.tur))];
-  const sel = $("tur"), secili = sel.value;
-  sel.innerHTML = `<option value="">Tüm türler</option>` + turler.map(t => `<option${t === secili ? " selected" : ""}>${esc(t)}</option>`).join("");
-  eylemleriCiz();
-  $("uret").disabled = !r.basarili || !!urun.sorun;
+  try { r = await api("/api/hesapla?id=" + pid, govde()); } catch (e) { if (n === no) $("hesap").innerHTML = `<div class="status err">${esc(e.message)}</div>`; return; }
+  if (n !== no) return;
+  sonHesap = r;
+  hesapCiz();
+  $("uretBtn").disabled = !r.basarili || !!form.sorun;
 }
-
-function eylemleriCiz() {
-  const q = $("ara").value.trim().toLocaleLowerCase("tr");
-  const tur = $("tur").value;
-  const tablo = urun.tablolar[0];
-  const liste = sonEylemler.filter(a => (!tur || a.tur === tur) && (!q || (a.hedef + " " + a.deger).toLocaleLowerCase("tr").includes(q)));
-  if (!liste.length) { $("eylemler").innerHTML = `<div class="empty">${sonEylemler.length ? "Eşleşen eylem yok." : "Henüz eylem yok."}</div>`; return; }
-  const satirSutunu = sonEylemler.some(a => a.satir != null);
-  $("eylemler").innerHTML = `<table><thead><tr>${satirSutunu ? "<th>" + esc(tablo?.satirEtiketi || "Satır") + "</th>" : ""}<th>Tür</th><th>Hedef</th><th>Değer</th></tr></thead><tbody>`
-    + liste.slice(0, 600).map(a => `<tr>${satirSutunu ? `<td class="t">${a.satir ?? "hat"}</td>` : ""}<td class="t">${esc(a.tur)}</td><td class="h">${esc(a.hedef)}</td><td class="v">${esc(a.deger)}</td></tr>`).join("")
-    + `</tbody></table>` + (liste.length > 600 ? `<div class="empty">İlk 600 gösteriliyor (${liste.length}).</div>` : "");
+function hesapCiz() {
+  const r = sonHesap;
+  const ust = r.basarili ? `<div class="status ok">Modele ${r.eylemler.length} değişiklik uygulanacak. <button class="link" id="ayr" style="margin-left:auto">${ayrinti ? "Gizle" : "Ayrıntılar"}</button></div>`
+    : `<div class="status err">Kurallar hesaplanamadı.</div>`;
+  const msj = r.hatalar.map(h => `<div class="status err">${esc(h)}</div>`).join("") + r.uyarilar.map(h => `<div class="status warn">${esc(h)}</div>`).join("");
+  const tablo = ayrinti ? `<div class="scroll"><table><thead><tr><th></th><th>Tür</th><th>Hedef</th><th>Değer</th></tr></thead><tbody>${r.eylemler.map(a => `<tr><td class="muted">${a.satir ?? ""}</td><td class="muted">${esc(a.tur)}</td><td>${esc(a.hedef)}</td><td class="v">${esc(a.deger)}</td></tr>`).join("")}</tbody></table></div>` : "";
+  $("hesap").innerHTML = `<div style="margin-top:14px">${ust}${msj}${tablo}</div>`;
+  const b = $("ayr"); if (b) b.onclick = () => { ayrinti = !ayrinti; hesapCiz(); };
 }
-$("ara").addEventListener("input", eylemleriCiz);
-$("tur").addEventListener("change", eylemleriCiz);
-$("onerilen").addEventListener("change", hesapla);
+$("onerilen").onchange = hesapla;
 
-// ---- Üretim
-$("uret").onclick = async () => {
-  $("uret").disabled = true;
-  $("isPanel").classList.remove("hidden");
-  $("isSonuc").innerHTML = "";
-  $("isGunluk").textContent = "";
-  $("isDurum").innerHTML = `<div class="status info"><span class="spin"></span>Başlatılıyor…</div>`;
+$("uretBtn").onclick = async () => {
+  $("uretBtn").disabled = true;
   try {
-    const r = await api("/api/uret", istekGovdesi({ siparis: $("siparis").value, pdf: $("pdf").checked, step: $("step").checked }));
-    izle(r.is);
-  } catch (e) {
-    $("isDurum").innerHTML = `<div class="status err">${esc(e.message)}</div>`;
-    $("uret").disabled = false;
-  }
+    const r = await api("/api/uret?id=" + pid, govde({ siparis: $("siparis").value, pdf: $("pdf").checked, step: $("step").checked }));
+    isIzle(r.is, $("uretIs"), (s) => {
+      $("uretBtn").disabled = false;
+      if (s.durum === "bitti" && s.montaj) {
+        $("uretIs").insertAdjacentHTML("afterbegin", `<div class="status ok" style="flex-wrap:wrap">${esc(s.siparis)} hazır. ${esc(s.ozet || "")}
+          <span style="margin-left:auto;display:flex;gap:8px"><button class="secondary" data-ac="${esc(s.montaj)}" data-sw="1">SolidWorks'te aç</button><button class="secondary" data-ac="${esc(s.klasor)}">Klasörü aç</button></span></div>`);
+        acBagla($("uretIs"));
+        const m = /^(.*?)(\d+)$/.exec(s.siparis); $("siparis").value = m ? m[1] + String(+m[2] + 1).padStart(m[2].length, "0") : s.siparis + "-2";
+      }
+      siparisleriYukle(); durumYenile();
+    });
+  } catch (e) { $("uretIs").innerHTML = `<div class="status err">${esc(e.message)}</div>`; $("uretBtn").disabled = false; }
 };
-
-async function izle(id) {
-  let r;
-  try { r = await api("/api/is?id=" + id); } catch (e) { setTimeout(() => izle(id), 2000); return; }
-  $("isGunluk").textContent = r.gunluk.join("\n");
-  $("isGunluk").scrollTop = 1e9;
-  if (r.durum === "calisiyor") {
-    $("isDurum").innerHTML = `<div class="status info"><span class="spin"></span>${esc(r.siparis)} üretiliyor… ${r.sure} sn</div>`;
-    setTimeout(() => izle(id), 1500);
-    return;
-  }
-  const uyarilar = r.uyarilar.map(w => `<li class="warn">${esc(w)}</li>`).join("");
-  if (r.durum === "bitti") {
-    $("isDurum").innerHTML = `<div class="status ok">${esc(r.siparis)} hazır (${r.sure} sn). ${esc(r.kutuphane || "")}</div>` + (uyarilar ? `<ul class="msgs">${uyarilar}</ul>` : "");
-    $("isSonuc").innerHTML = `<button class="secondary" data-ac="${esc(r.montaj)}" data-sw="1">SolidWorks'te aç</button><button class="secondary" data-ac="${esc(r.klasor)}">Klasörü aç</button><span class="path">${esc(r.montaj)}</span>`;
-    baglaAc($("isSonuc"));
-    $("siparis").value = sonrakiAd(r.siparis);
-  } else {
-    $("isDurum").innerHTML = `<div class="status err">Üretim başarısız.</div><ul class="msgs">${r.hatalar.map(h => `<li class="err">${esc(h)}</li>`).join("")}${uyarilar}</ul>`;
-  }
-  $("uret").disabled = false;
-  siparisleriYukle();
-  kutuphane = null;
-  if (aktifGorunum === "kutuphane") kutuphaneYukle();
-}
-
-function sonrakiAd(ad) {
-  const m = /^(.*?)(\d+)$/.exec(ad);
-  return m ? m[1] + String(+m[2] + 1).padStart(m[2].length, "0") : ad + "-2";
-}
-
-function baglaAc(root) {
-  root.querySelectorAll("[data-ac]").forEach(b => b.onclick = async () => {
-    try { await api("/api/ac", { yol: b.dataset.ac, solidWorks: !!b.dataset.sw }); }
-    catch (e) { alert(e.message); }
-  });
-}
-
-// ---- Görünümler
-let aktifGorunum = "hesap";
-document.querySelectorAll(".view").forEach(b => b.onclick = () => {
-  aktifGorunum = b.dataset.view;
-  document.querySelectorAll(".view").forEach(x => x.setAttribute("aria-selected", x === b));
-  document.querySelectorAll("[data-pane]").forEach(p => p.classList.toggle("hidden", p.dataset.pane !== aktifGorunum));
-  if (aktifGorunum === "kutuphane" && !kutuphane) kutuphaneYukle();
-  if (aktifGorunum === "siparisler") siparisleriYukle();
-});
-
 async function siparisleriYukle() {
-  if (!urun) return;
-  const liste = await api("/api/siparisler?id=" + encodeURIComponent(urun.id)).catch(() => []);
-  $("siparisListe").innerHTML = liste.length
-    ? `<table><thead><tr><th>Sipariş</th><th>Tarih</th><th></th></tr></thead><tbody>` + liste.map(s => `<tr><td><b>${esc(s.ad)}</b><div class="path">${esc(s.montaj || "(montaj yok)")}</div></td><td class="t">${esc(s.tarih)}</td><td style="text-align:right;white-space:nowrap">${s.montaj ? `<button class="secondary" data-ac="${esc(s.montaj)}" data-sw="1">SolidWorks</button> ` : ""}<button class="secondary" data-ac="${esc(s.klasor)}">Klasör</button></td></tr>`).join("") + `</tbody></table>`
-    : `<div class="empty">Bu ürün için henüz sipariş üretilmedi.</div>`;
-  baglaAc($("siparisListe"));
+  const l = await api("/api/siparisler?id=" + pid).catch(() => []);
+  $("siparisler").innerHTML = l.length ? `<table><tbody>${l.map(s => `<tr><td><b>${esc(s.ad)}</b></td><td class="muted">${esc(s.tarih)}</td><td style="text-align:right;white-space:nowrap">${s.montaj ? `<button class="secondary" data-ac="${esc(s.montaj)}" data-sw="1">SolidWorks</button> ` : ""}<button class="secondary" data-ac="${esc(s.klasor)}">Klasör</button></td></tr>`).join("")}</tbody></table>` : "Henüz sipariş yok.";
+  acBagla($("siparisler"));
+}
+function acBagla(root) {
+  root.querySelectorAll("[data-ac]").forEach(b => b.onclick = () => api("/api/ac?id=" + pid, { yol: b.dataset.ac, solidWorks: !!b.dataset.sw }).catch(e => alert(e.message)));
 }
 
-async function kutuphaneYukle() {
-  kutuphane = await api("/api/kutuphane?id=" + encodeURIComponent(urun.id)).catch(() => ({ dosyalar: [] }));
-  kutuphaneCiz();
-}
-function kutuphaneCiz() {
-  const q = $("kutAra").value.trim().toLocaleLowerCase("tr");
-  const liste = (kutuphane?.dosyalar || []).filter(d => !q || [d.file, d.master, d.order, d.summary].join(" ").toLocaleLowerCase("tr").includes(q));
-  $("kutListe").innerHTML = liste.length
-    ? `<table><thead><tr><th>Dosya</th><th>Master</th><th>Açıklama</th><th>İlk sipariş</th></tr></thead><tbody>` + liste.map(d => `<tr><td class="f">${esc(d.file)}</td><td class="t">${esc(d.master)}</td><td class="h">${esc(d.summary || "")}</td><td class="t">${esc(d.order)}<div>${esc(d.tarih)}</div></td></tr>`).join("") + `</tbody></table>`
-    : `<div class="empty">${kutuphane?.dosyalar?.length ? "Eşleşen dosya yok." : "Kütüphane boş: ilk üretimden sonra dolacak."}</div>`;
-}
-$("kutAra").addEventListener("input", kutuphaneCiz);
-$("kutAc").onclick = () => kutuphane?.klasor && api("/api/ac", { yol: kutuphane.klasor }).catch(e => alert(e.message));
-
-basla();
+projeleriYukle().catch(e => { document.querySelector("main").innerHTML = `<div class="card"><div class="status err">Sunucuya bağlanılamadı: ${esc(e.message)}</div></div>`; });
 </script>
 </body>
 </html>

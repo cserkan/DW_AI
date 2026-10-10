@@ -42,8 +42,8 @@ Kullanım: ruleforge <komut> [seçenekler]
             [--library klasör | --no-library] [--root kök.SLDASM] [--slots ""Ad-5;Ad-8""]
             Yeni sipariş modelini üretir. Parçalar kütüphaneye benzersiz adlarla yazılır,
             aynısı daha önce üretildiyse yeniden kullanılır.                       [Windows + SolidWorks]
-  arayuz    [--config urunler.json] [--port 5050] [--no-browser]
-            Tarayıcı arayüzünü açar: ürün seç, değerleri gir, üret.                 [üretim: Windows + SolidWorks]
+  arayuz    [--projeler C:\RuleForge\Projeler] [--port 5050] [--no-browser]
+            Tarayıcı arayüzü: varyantları yükle, kuralları çıkar ve onayla, formla üret. [Windows + SolidWorks]
 ";
 
         private static async Task<int> Main(string[] argv)

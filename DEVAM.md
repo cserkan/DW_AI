@@ -155,3 +155,10 @@ yapay zekâ her konuşmanın başında bunu okur. Kural setleri zamanla büyür.
   tutulur; çelişen bilgi üzerine yazılmaz, birlikte gösterilir.
 - Reddedilen kural sonraki çıkarımda yeniden önerilmemeli (çıkarım şu an `Rejected` durumuna bakmıyor).
 - Notlar büyüyünce konu başlıklarıyla özetlenir.
+
+### Masaüstü uygulaması (WebView2) — kullanıcı onayladı, sırada: ŞİRKET BİLGİSİNDEN ÖNCE
+Mevcut tarayıcı arayüzünü Windows'ta tek bir .exe olarak açan küçük bir kabuk yapın (WebView2). Arayüz kodu aynen
+kalır; kabuk yerel sunucuyu başlatıp pencerede gösterir. Çift tıklayınca açılmalı (`RuleForge Arayuz.cmd`'nin yerini
+alır), kapatınca sunucu da kapanmalı; SolidWorks bağlantısı bu program içinde kalır. Kurulum paketi (installer)
+ya da tek dosya yayını yeterli. Sonucu kullanıcıya Türkçe ve sade anlatın; kullanıcı "nasıl olacak bakalım" dedi,
+önce çalışan bir ilk sürüm gösterin. Müşteriye açılacak web sürümü ayrı bir üründür, bununla karıştırmayın.

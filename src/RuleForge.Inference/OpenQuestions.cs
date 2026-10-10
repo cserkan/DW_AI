@@ -93,6 +93,9 @@ namespace RuleForge.Inference
     /// <summary>Kullanıcının cevabı. Choice: seçeneğin değeri ya da "formul"; Number: eşik; Formula: elle yazılan formül.</summary>
     public sealed class QuestionAnswer
     {
+        /// <summary>Her soruda geçerli seçim: "bu soru doğru değil".</summary>
+        public const string WrongQuestion = "yanlis-soru";
+
         public string? Choice { get; set; }
         public double? Number { get; set; }
         public string? Formula { get; set; }
@@ -121,6 +124,10 @@ namespace RuleForge.Inference
                 foreach (var r in ids.Select(R).Where(r => r != null)) r!.Status = RuleStatus.Approved;
             }
             AnswerResult Fail(string m) => new AnswerResult { Ok = false, Message = m };
+
+            // Kullanıcı sorunun kendisini yanlış buldu: kurallara dokunulmaz, onaylanmaz (kural listesinde gözden geçirilir).
+            if (a.Choice == QuestionAnswer.WrongQuestion)
+                return new AnswerResult { Ok = true, Message = "Soru yanlış olarak işaretlendi; ilgili kurallar değiştirilmedi ve onaylanmadı." };
 
             switch (q.Kind)
             {

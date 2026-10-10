@@ -608,16 +608,17 @@ namespace RuleForge.Cli.Arayuz
                     // Eşik sorusu: kurallar artık o değişkeni kullanmıyorsa (ör. başka girdi seçildi) geçersizdir.
                     bool gecersiz = q.Kind == QuestionKind.Threshold && q.Variable != null &&
                                     !rules.Rules.Any(r => Regex.IsMatch(r.Expression ?? string.Empty, @"\b" + Regex.Escape(q.Variable) + @"\b"));
+                    var (metin, aciklama, hesap) = SoruSunumu.Metin(q, rules, s => Okunurlastir(s, etiketler));
                     return new
                     {
                         q.Id,
                         Tur = q.Kind,
-                        Metin = Okunurlastir(q.Text, etiketler),
-                        Aciklama = q.Detail == null ? null : Okunurlastir(q.Detail, etiketler).Replace("«", "").Replace("»", ""),
+                        Metin = metin,
+                        Aciklama = aciklama,
+                        Hesap = hesap,
                         KuralSayisi = q.RuleIds.Count + q.Targets.Count,
-                        Kurallar = q.RuleIds.Select(id => rules.FindRule(id)).Where(r => r != null).Take(30)
-                            .Select(r => new { r!.Id, Hedef = r.Description, Formul = r.Expression }).ToList(),
-                        Secenekler = q.Options.Select(o => new { Etiket = q.Kind == QuestionKind.ChooseInput ? Okunurlastir(o.Label, etiketler).Trim('«', '»') : o.Label, Deger = o.Value }).ToList(),
+                        Etkilenenler = SoruSunumu.Etkilenenler(q, rules),
+                        Secenekler = q.Options.Select(o => new { Etiket = Okunurlastir(o.Label, etiketler).Replace("«", "").Replace("»", ""), Deger = o.Value }).ToList(),
                         FormulYazilabilir = q.AllowFormula,
                         q.Min,
                         q.Max,

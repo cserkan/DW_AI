@@ -66,6 +66,16 @@ namespace RuleForge.Tests
         }
 
         [Fact]
+        public void WrongQuestionLeavesRulesUntouched()
+        {
+            var rules = Rules();
+            var q = new OpenQuestion { Kind = QuestionKind.Threshold, Variable = "Boy_Esigi", Min = 569, Max = 800, RuleIds = { "raf" } };
+            Assert.True(QuestionApplier.Apply(rules, q, new QuestionAnswer { Choice = QuestionAnswer.WrongQuestion, Note = "Raf sayısı derinliğe bağlı." }).Ok);
+            Assert.Equal("750", rules.FindVariable("Boy_Esigi")!.Expression);
+            Assert.Equal(RuleStatus.Proposed, rules.FindRule("raf")!.Status);
+        }
+
+        [Fact]
         public void UnexplainedValueGetsAManualRule()
         {
             var rules = Rules();

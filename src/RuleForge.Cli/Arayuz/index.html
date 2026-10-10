@@ -133,6 +133,19 @@ td.v { font-family: var(--mono); font-size: 12.5px; word-break: break-word; }
 .q .qt { font-weight: 600; font-size: 15.5px; }
 .q .qt b { color: var(--accent); }
 .q .qd { color: var(--muted); font-size: 13.5px; margin: 4px 0 8px; }
+.q .qd b { color: var(--ink); }
+.q .hesap { font-size: 14px; margin: 0 0 8px; }
+.q .hesap code { font-family: var(--mono); font-size: 13px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px; }
+.q .hesap code b { color: var(--accent); }
+.q .etk { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin: 0 0 10px; background: var(--panel); }
+.q .etk summary { cursor: pointer; font-weight: 600; font-size: 13.5px; }
+.q .etk-p { margin-top: 6px; }
+.q .etk-n { font-weight: 600; font-size: 13.5px; }
+.q .etk ul { margin: 2px 0 0; padding-left: 20px; }
+.q .etk li { font-size: 13px; overflow-wrap: anywhere; }
+.q .etk-d { font-size: 12.5px; color: var(--accent); margin-left: 4px; }
+.ans .opt.wrong { border-top: 1px dashed var(--line); padding-top: 6px; margin-top: 4px; }
+.ans .opt.wrong span { color: var(--muted); }
 .q .rel summary { color: var(--muted); font-size: 13px; cursor: pointer; }
 .q .rel li { font-size: 13px; }
 .q .rel code { font-family: var(--mono); font-size: 12px; }
@@ -517,33 +530,48 @@ async function sorulariYukle() {
 
 function cevapMetni(q) {
   const c = q.cevap || {};
+  if (c.choice === "yanlis-soru") return "Bu soru doğru değil";
   if (c.number != null) return `${c.number} (${q.girdiEtiketi || ""})`;
   if (c.choice === "formul") return c.formula;
   const o = q.secenekler.find(x => x.deger === c.choice);
   return o ? o.etiket : (c.formula || c.choice || "");
 }
 
+function etkilenenCiz(q) {
+  const ps = q.etkilenenler || [];
+  if (!ps.length) return "";
+  const n = ps.reduce((t, p) => t + p.unsurlar.length, 0);
+  const durum = (u) => u.altinda != null && u.ustunde != null && u.altinda !== u.ustunde
+    ? ` <span class="etk-d">${esc(q.min)} → ${esc(u.altinda)}, ${esc(q.max)} → ${esc(u.ustunde)}</span>` : "";
+  return `<details class="etk"${n <= 8 ? " open" : ""}><summary>Etkilenen parçalar <span class="muted">(${ps.length} parça, ${n} unsur)</span></summary>
+    ${ps.map(p => `<div class="etk-p"><div class="etk-n">${esc(p.parca)}</div><ul>${p.unsurlar.map(u =>
+      `<li><b>${esc(u.ad)}</b> <span class="muted">· ${esc(durum(u) ? u.ne.replace(/ (açık \/ kapalı|görünür \/ gizli)$/, "") : u.ne)}</span>${durum(u)}</li>`).join("")}</ul></div>`).join("")}</details>`;
+}
+
 function soruCiz(q) {
   const id = "q_" + q.id.replace(/[^A-Za-z0-9]/g, "_");
-  const ilgili = q.kurallar.length ? `<details class="rel"><summary>İlgili kurallar (${q.kuralSayisi})</summary><ul>${q.kurallar.map(r => `<li>${esc(r.hedef)} = <code>${esc(r.formul)}</code></li>`).join("")}</ul></details>` : "";
+  const secili = q.cevap?.choice;
+  const radyo = (deger, icerik, sinif = "") => `<label class="opt${sinif}"><input type="radio" name="${id}" value="${esc(deger)}"${secili === deger ? " checked" : ""}><span>${icerik}</span></label>`;
   let ans = "";
   if (q.tur === "esik") {
-    ans = `<label class="lbl" for="${id}_n" style="margin-top:0">Sınır değer</label>
-      <div class="inwrap" style="max-width:320px"><input type="number" step="any" id="${id}_n" value="${q.cevap?.number ?? q.simdiki ?? ""}"><span class="unit">${esc(q.girdiEtiketi || "")}</span></div>
-      <p class="small muted">Varyantlara göre ${q.min}'den büyük, en fazla ${q.max} olabilir. ${q.girdiEtiketi} bu değere eşit ya da küçükse birinci durum, büyükse ikinci durum uygulanır.</p>
+    ans = radyo("sayi", "Sınır şu değer:") + `
+      <div class="inwrap" style="max-width:220px"><input type="number" step="any" id="${id}_n" value="${q.cevap?.number ?? q.simdiki ?? ""}"></div>
+      <p class="small muted">${esc(q.min)} ile ${esc(q.max)} arasında bir sayı. Bu değer ve altı bir durum, üstü öbür durum.</p>
       ${q.dene?.length ? `<p class="small muted">Bilmiyorsanız: DriveWorks'te ${esc(q.girdiEtiketi)} = ${q.dene.map(esc).join(", ")} olan varyantlar üretip 1. adımda yükleyin; sınır kendiliğinden bulunur.</p>` : ""}`;
   } else {
-    const secili = q.cevap?.choice;
-    ans = q.secenekler.map((o, i) => `<label class="opt"><input type="radio" name="${id}" value="${esc(o.deger)}"${secili === o.deger ? " checked" : ""}><span class="${q.tur === "formul-secimi" ? "mono" : ""}">${esc(o.etiket)}</span></label>`).join("");
+    ans = q.secenekler.map(o => radyo(o.deger, esc(o.etiket), q.tur === "formul-secimi" ? " mono" : "")).join("");
     if (q.formulYazilabilir) {
-      ans += `<label class="opt"><input type="radio" name="${id}" value="formul"${secili === "formul" ? " checked" : ""}><span>${q.tur === "aciklanamayan" ? "Formülü şöyle:" : "Hayır, doğrusu şu formül:"}</span></label>
+      ans += radyo("formul", q.tur === "aciklanamayan" ? "Şöyle hesaplanıyor:" : "Hayır, doğrusu şu:") + `
         <input type="text" class="mono" id="${id}_f" placeholder="ör. ${esc(sorular.girdiler[0]?.ad || "Girdi")} / 2 - 4" value="${esc(q.cevap?.formula || "")}">
         <div class="names">${sorular.girdiler.map(g => `<button type="button" title="${esc(g.etiket)}" data-ekle="${esc(g.ad)}">${esc(g.ad)}</button>`).join("")}</div>
-        <p class="small muted">${q.varyantSayisi ? `Yazdığınız formül ${q.varyantSayisi} varyantın gerçek değerleriyle sınanır.` : ""} Excel gibi: + - * /, IF(...), ROUND(...), "metin" & Girdi.</p>`;
+        <p class="small muted">${q.varyantSayisi ? `Yazdığınız hesap ${q.varyantSayisi} varyantın gerçek değerleriyle sınanır.` : ""} Excel gibi: + - * /, IF(...), ROUND(...).</p>`;
     }
   }
+  ans += radyo("yanlis-soru", "Bu soru doğru değil", " wrong");
   return `<div class="q" data-id="${esc(q.id)}" data-tur="${esc(q.tur)}" data-k="${id}">
-    <div class="qt">${vurgula(q.metin)}</div><div class="qd">${esc(q.aciklama || "")}</div>${ilgili}
+    <div class="qt">${vurgula(q.metin)}</div><div class="qd">${vurgula(q.aciklama || "")}</div>
+    ${q.hesap ? `<div class="hesap">Bulduğumuz hesap: <code>${vurgula(q.hesap)}</code></div>` : ""}
+    ${etkilenenCiz(q)}
     <div class="ans">${ans}
       <textarea id="${id}_not" placeholder="Not (isteğe bağlı): neden böyle? Bu bilgi ürünle birlikte saklanır.">${esc(q.cevap?.note || "")}</textarea>
       <div class="row"><button class="primary" type="button" data-cevapla>Cevapla</button><span class="small" data-mesaj></span></div>
@@ -559,10 +587,20 @@ function baglaSoru(el) {
     el.querySelector('input[value="formul"]').checked = true;
   });
   if (f) f.addEventListener("input", () => { const r = el.querySelector('input[value="formul"]'); if (r) r.checked = true; });
+  const sayi = $(k + "_n"), sayiSec = el.querySelector('input[value="sayi"]');
+  if (sayi) { sayi.addEventListener("input", () => { sayiSec.checked = true; }); if (!el.querySelector("input[type=radio]:checked")) sayiSec.checked = true; }
+  const not = $(k + "_not"), yanlis = el.querySelector('input[value="yanlis-soru"]');
+  const notIpucu = () => { not.placeholder = yanlis.checked
+    ? "Neden doğru değil? Kısaca yazın (ör. bu parçalar uzunluğa değil yüke göre değişiyor)."
+    : "Not (isteğe bağlı): neden böyle? Bu bilgi ürünle birlikte saklanır."; };
+  el.querySelectorAll("input[type=radio]").forEach(r => r.addEventListener("change", notIpucu)); notIpucu();
   el.querySelector("[data-cevapla]").onclick = async () => {
     const msg = el.querySelector("[data-mesaj]");
     const body = { soru: el.dataset.id, not: $(k + "_not").value };
-    if (tur === "esik") {
+    if (yanlis.checked) {
+      if (!body.not.trim()) { msg.innerHTML = `<span style="color:var(--err)">Notta neyin yanlış olduğunu kısaca yazın.</span>`; not.focus(); return; }
+      body.secim = "yanlis-soru";
+    } else if (tur === "esik") {
       const v = parseFloat(String($(k + "_n").value).replace(",", "."));
       if (isNaN(v)) { msg.innerHTML = `<span style="color:var(--err)">Bir sayı girin.</span>`; return; }
       body.sayi = v;
